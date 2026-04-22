@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WTM — Profile</title>
+<title>WTM — Account Settings</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#000;font-family:-apple-system,BlinkMacSystemFont,'Inter','SF Pro Display',system-ui,sans-serif;color:#fff;overflow-x:hidden}
@@ -796,211 +796,82 @@ body{display:flex;justify-content:center;align-items:flex-start;min-height:100vh
 </style>
 <div class="phone">
 
-<div class="screen active" id="profile-main">
+<div class="screen active" id="account-main">
   <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
   <div class="glow purple"></div>
-  <div style="flex:1;overflow-y:auto;padding:0 0 100px;position:relative;z-index:1;">
-    <!-- Hero -->
-    <div style="padding:20px 20px 0;">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#ec4899);display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;">😊</div>
-        <div>
-          <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;">Alex Chen</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:2px;">📍 Los Angeles, CA</div>
-          <div style="display:flex;gap:8px;margin-top:6px;">
-            <span style="background:rgba(74,222,128,0.12);color:#4ade80;border-radius:20px;padding:3px 10px;font-size:11px;">✓ Verified</span>
-          </div>
-        </div>
-        <button onclick="go('settings-edit-profile',this)" style="margin-left:auto;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:7px 14px;color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;">Edit</button>
-      </div>
-      <!-- Stats strip -->
-      <div style="display:flex;gap:1px;margin-bottom:20px;">
-        
-        <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;text-align:center;margin:0 4px;">
-          <div style="font-size:22px;font-weight:900;color:#fff;">12</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">Experiences</div>
-        </div>
-        <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;text-align:center;margin:0 4px;">
-          <div style="font-size:22px;font-weight:900;color:#fff;">4</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">Saved Lists</div>
-        </div>
-        <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;text-align:center;margin:0 4px;">
-          <div style="font-size:22px;font-weight:900;color:#fff;">4.8</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">Avg Rating</div>
-        </div>
-      </div>
-      <!-- Tabs -->
-      <div style="display:flex;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;" id="profileTabs">
-        
-        <div onclick="document.querySelectorAll('[data-prof-panel]').forEach(p=>p.style.display='none');document.getElementById('prof-history').style.display='block';document.querySelectorAll('#profileTabs div').forEach(t=>{t.style.borderBottom='2px solid transparent';t.style.color='rgba(255,255,255,0.4)';});this.style.borderBottom='2px solid #8b5cf6';this.style.color='#fff';" style="flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid #8b5cf6;color:#fff;transition:all 0.15s;">History</div>
-        <div onclick="document.querySelectorAll('[data-prof-panel]').forEach(p=>p.style.display='none');document.getElementById('prof-saved').style.display='block';document.querySelectorAll('#profileTabs div').forEach(t=>{t.style.borderBottom='2px solid transparent';t.style.color='rgba(255,255,255,0.4)';});this.style.borderBottom='2px solid #8b5cf6';this.style.color='#fff';" style="flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:rgba(255,255,255,0.4);transition:all 0.15s;">Saved</div>
-        <div onclick="document.querySelectorAll('[data-prof-panel]').forEach(p=>p.style.display='none');document.getElementById('prof-vibes').style.display='block';document.querySelectorAll('#profileTabs div').forEach(t=>{t.style.borderBottom='2px solid transparent';t.style.color='rgba(255,255,255,0.4)';});this.style.borderBottom='2px solid #8b5cf6';this.style.color='#fff';" style="flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:rgba(255,255,255,0.4);transition:all 0.15s;">Vibes</div>
-        <div onclick="document.querySelectorAll('[data-prof-panel]').forEach(p=>p.style.display='none');document.getElementById('prof-settings').style.display='block';document.querySelectorAll('#profileTabs div').forEach(t=>{t.style.borderBottom='2px solid transparent';t.style.color='rgba(255,255,255,0.4)';});this.style.borderBottom='2px solid #8b5cf6';this.style.color='#fff';" style="flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:rgba(255,255,255,0.4);transition:all 0.15s;">Settings</div>
-      </div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:24px;">Account</div>
+    <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:16px;margin-bottom:24px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#ec4899);display:flex;align-items:center;justify-content:center;font-size:26px;">😊</div>
+      <div style="flex:1;"><div style="font-size:17px;font-weight:700;color:#fff;">Alex Chen</div><div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:2px;">alex@email.com · Los Angeles, CA</div></div>
+      <button onclick="go('account-edit-profile',this)" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:7px 14px;color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;">Edit</button>
     </div>
-
-    <!-- History panel -->
-    <div id="prof-history" data-prof-panel style="padding:0 20px;">
-      
-      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
-        <div style="width:52px;height:52px;border-radius:12px;background:url('https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Private Omakase for Two</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">May 10, 2026</div>
-          <div style="font-size:13px;margin-top:4px;">⭐⭐⭐⭐⭐</div>
-        </div>
-        <span style="background:rgba(74,222,128,0.1);color:#4ade80;border-radius:20px;padding:4px 10px;font-size:11px;height:fit-content;white-space:nowrap;">✓ Verified</span>
-      </div>
-      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
-        <div style="width:52px;height:52px;border-radius:12px;background:url('https://images.unsplash.com/photo-1591010117618-77598dd10a28?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Desert Sound Bath</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Apr 18, 2026</div>
-          <div style="font-size:13px;margin-top:4px;">⭐⭐⭐⭐⭐</div>
-        </div>
-        <span style="background:rgba(74,222,128,0.1);color:#4ade80;border-radius:20px;padding:4px 10px;font-size:11px;height:fit-content;white-space:nowrap;">✓ Verified</span>
-      </div>
-      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
-        <div style="width:52px;height:52px;border-radius:12px;background:url('https://images.unsplash.com/photo-1595351298020-038700609878?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Ceramic Wheel Throwing</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Mar 29, 2026</div>
-          <div style="font-size:13px;margin-top:4px;">⭐⭐⭐⭐⭐</div>
-        </div>
-        <span style="background:rgba(74,222,128,0.1);color:#4ade80;border-radius:20px;padding:4px 10px;font-size:11px;height:fit-content;white-space:nowrap;">✓ Verified</span>
-      </div>
-      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
-        <div style="width:52px;height:52px;border-radius:12px;background:url('https://images.unsplash.com/photo-1531971772042-d189c2021395?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Jazz Speakeasy Night</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Feb 22, 2026</div>
-          <div style="font-size:13px;margin-top:4px;">⭐⭐⭐⭐</div>
-        </div>
-        <span style="background:rgba(74,222,128,0.1);color:#4ade80;border-radius:20px;padding:4px 10px;font-size:11px;height:fit-content;white-space:nowrap;">✓ Verified</span>
-      </div>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Personal Info</div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:20px;">
+      <div onclick="go('account-edit-profile',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Edit Profile</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Name, photo, bio, display name</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
+      <div onclick="go('city-selector',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">City & Location</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Los Angeles, CA</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
+      <div onclick="go('settings-security',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Email & Password</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">alex@email.com</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
     </div>
-
-    <!-- Saved panel (hidden) -->
-    <div id="prof-saved" data-prof-panel style="display:none;padding:0 20px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:4px;">
-        
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1605387202149-47169c4ea58a?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Sunset Yacht Charter</div>
-              <div style="font-size:12px;color:#2dd4bf;margin-top:2px;font-weight:600;">$420</div>
-            </div>
-          </div>
-        </div>
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Fine Dining Tasting</div>
-              <div style="font-size:12px;color:#c084fc;margin-top:2px;font-weight:600;">$290</div>
-            </div>
-          </div>
-        </div>
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1654330352875-1f86a5b011cf?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Joshua Tree Glamping</div>
-              <div style="font-size:12px;color:#fb923c;margin-top:2px;font-weight:600;">$395</div>
-            </div>
-          </div>
-        </div>
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1656873592841-8ae63d15be24?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Napa Wine Weekend</div>
-              <div style="font-size:12px;color:#3b82f6;margin-top:2px;font-weight:600;">$680</div>
-            </div>
-          </div>
-        </div>
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Rooftop Yoga</div>
-              <div style="font-size:12px;color:#4ade80;margin-top:2px;font-weight:600;">$75</div>
-            </div>
-          </div>
-        </div>
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1764032760214-bbf340016105?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Painting Workshop</div>
-              <div style="font-size:12px;color:#f472b6;margin-top:2px;font-weight:600;">$95</div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Payments</div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:20px;">
+      <div onclick="go('account-payments',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Payment Methods</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Visa ···· 4411, Apple Pay</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
+      <div onclick="go('account-billing',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Billing History</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">View past receipts and invoices</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
+      <div onclick="go('account-payments',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Payout Method</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">For hosts: Bank ···· 8821</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
     </div>
-
-    <!-- Vibes panel (hidden) -->
-    <div id="prof-vibes" data-prof-panel style="display:none;padding:0 20px;">
-      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:14px;line-height:1.6;">Your selected vibes shape your home feed, Surprise Me picks, and recommendations.</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;">
-        
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="1" style="background:linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25));border:1px solid #8b5cf6;border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Food</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="1" style="background:linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25));border:1px solid #8b5cf6;border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">After Hours</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="1" style="background:linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25));border:1px solid #8b5cf6;border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Art</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Travel</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Touch Grass</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Wellness</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="1" style="background:linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25));border:1px solid #8b5cf6;border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Entertainment</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Thrill Seeking</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Surprise Me</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Kid-Friendly</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Pet-Friendly</div>
-      </div>
-      <button style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:16px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px;">Save Preferences</button>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Preferences</div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:20px;">
+      <div onclick="go('account-accessibility',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Accessibility</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Screen reader, reduced motion</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
+      <div onclick="go('account-language',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Language</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">English (US)</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
+      <div onclick="go('prof-vibes',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">My Vibes</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Food, After Hours, Art · +1 more</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
     </div>
-
-    <!-- Settings sub-panel (hidden) -->
-    <div id="prof-settings" data-prof-panel style="display:none;padding:0 20px;">
-      
-      <div onclick="go('settings-main',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Account</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Edit Profile, City, Payment Methods</div>
-        </div>
-        <span style="color:rgba(255,255,255,0.3);font-size:18px;">→</span>
-      </div>
-      <div onclick="go('settings-main',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Notifications</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Push, Email, SMS</div>
-        </div>
-        <span style="color:rgba(255,255,255,0.3);font-size:18px;">→</span>
-      </div>
-      <div onclick="go('settings-main',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Preferences</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Vibes, Accessibility, Language</div>
-        </div>
-        <span style="color:rgba(255,255,255,0.3);font-size:18px;">→</span>
-      </div>
-      <div onclick="go('settings-main',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Hosting</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Dashboard, New Listing</div>
-        </div>
-        <span style="color:rgba(255,255,255,0.3);font-size:18px;">→</span>
-      </div>
-      <div onclick="go('settings-main',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Support & Legal</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Help, Terms, Privacy, About</div>
-        </div>
-        <span style="color:rgba(255,255,255,0.3);font-size:18px;">→</span>
-      </div>
-      <button onclick="go('splash',this)" style="width:100%;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:14px;padding:15px;color:#ef4444;font-size:15px;font-weight:600;cursor:pointer;margin-top:20px;">Sign Out</button>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Support</div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:24px;">
+      <div onclick="go('account-help',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Help & Support</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Get help, report an issue</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
+      <div onclick="" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Terms of Service</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
+      <div onclick="" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Privacy Policy</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
+      <div onclick="" style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">About WTM</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Version 1.0.0</div></div>
+    <span style="color:rgba(255,255,255,0.3);font-size:16px;">→</span>
+  </div>
     </div>
+    <button onclick="go('splash',this)" style="width:100%;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:14px;padding:15px;color:#ef4444;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:12px;">Sign Out</button>
+    <div style="text-align:center;"><button style="background:transparent;border:none;color:rgba(255,255,255,0.2);font-size:13px;cursor:pointer;">Delete Account</button></div>
   </div>
   <div class="bottom-nav">
     <div onclick="go('home',this)" class="nav-item"><div class="nav-icon">🏠</div><div>Home</div></div>
@@ -1008,9 +879,273 @@ body{display:flex;justify-content:center;align-items:flex-start;min-height:100vh
     <div onclick="go('plans',this)" class="nav-item"><div class="nav-icon">📋</div><div>My Plans</div></div>
     <div class="nav-item active"><div class="nav-icon">👤</div><div>Profile</div></div>
   </div>
+</div><div class="screen" id="account-edit-profile">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="go('account-main',this)" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;">←</button>
+      <div style="font-size:20px;font-weight:800;color:#fff;">Edit Profile</div>
+    </div>
+    
+  <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:28px;">
+    <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#ec4899);display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:10px;">😊</div>
+    <button style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:8px 20px;color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;">Change Photo</button>
+  </div>
+  
+  <div style="margin-bottom:18px;">
+    <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">First Name</div>
+    <input value="Alex" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;outline:none;"/>
+  </div>
+  <div style="margin-bottom:18px;">
+    <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Last Name</div>
+    <input value="Chen" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;outline:none;"/>
+  </div>
+  <div style="margin-bottom:18px;">
+    <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Display Name</div>
+    <input value="alex_explores" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;outline:none;"/>
+  </div>
+  <div style="margin-bottom:18px;">
+    <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Email</div>
+    <input value="alex@email.com" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;outline:none;"/>
+  </div>
+  <div style="margin-bottom:18px;">
+    <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Phone</div>
+    <input value="+1 (555) 012-3456" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;outline:none;"/>
+  </div>
+  <div style="margin-bottom:24px;">
+    <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Bio</div>
+    <textarea style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;outline:none;resize:none;height:90px;">Always on the hunt for the next unforgettable experience.</textarea>
+  </div>
+  <button style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:18px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">Save Changes</button>
+
+  </div>
+</div><div class="screen" id="account-payments">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="go('account-main',this)" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;">←</button>
+      <div style="font-size:20px;font-weight:800;color:#fff;">Payment Methods</div>
+    </div>
+    
+  <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Saved Cards</div>
+  
+  <div style="background:rgba(255,255,255,0.04);border:1px solid #8b5cf6;border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;">
+    <div style="font-size:28px;">💳</div>
+    <div style="flex:1;"><div style="font-size:15px;font-weight:600;color:#fff;">Visa ···· 4411</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Expires 09/27 · Default</div></div>
+    <button style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 12px;color:rgba(255,255,255,0.6);font-size:12px;cursor:pointer;">Remove</button>
+  </div>
+  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;">
+    <div style="font-size:28px;">💳</div>
+    <div style="flex:1;"><div style="font-size:15px;font-weight:600;color:#fff;">Mastercard ···· 7823</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Expires 03/26</div></div>
+    <button style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 12px;color:rgba(255,255,255,0.6);font-size:12px;cursor:pointer;">Remove</button>
+  </div>
+  <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.5px;margin:20px 0 12px;">Digital Wallets</div>
+  
+  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:14px;font-weight:600;color:#fff;">Apple Pay</div>
+    <span style="font-size:12px;color:#4ade80;">Connected</span>
+  </div>
+  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:14px;font-weight:600;color:#fff;">Google Pay</div>
+    <span style="font-size:12px;color:rgba(255,255,255,0.35);">Not Connected</span>
+  </div>
+  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:14px;font-weight:600;color:#fff;">PayPal</div>
+    <span style="font-size:12px;color:rgba(255,255,255,0.35);">Not Connected</span>
+  </div>
+  <button style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:15px;color:rgba(255,255,255,0.7);font-size:15px;cursor:pointer;margin-top:16px;">+ Add Payment Method</button>
+
+  </div>
+</div><div class="screen" id="account-billing">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="go('account-main',this)" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;">←</button>
+      <div style="font-size:20px;font-weight:800;color:#fff;">Billing History</div>
+    </div>
+    
+  <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px;">All transactions are all-inclusive. No hidden fees, taxes, or service charges.</div>
+  
+  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 16px;margin-bottom:8px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div style="font-size:14px;font-weight:700;color:#fff;flex:1;padding-right:8px;">Private Omakase for Two</div>
+      <div style="font-size:15px;font-weight:700;color:#fff;">$380.00</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;">
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);">May 10, 2026 · Visa ···· 4411</div>
+      <div style="font-size:11px;color:#4ade80;">Complete</div>
+    </div>
+  </div>
+  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 16px;margin-bottom:8px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div style="font-size:14px;font-weight:700;color:#fff;flex:1;padding-right:8px;">Desert Sound Bath</div>
+      <div style="font-size:15px;font-weight:700;color:#fff;">$95.00</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;">
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);">Apr 18, 2026 · Apple Pay</div>
+      <div style="font-size:11px;color:#4ade80;">Complete</div>
+    </div>
+  </div>
+  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 16px;margin-bottom:8px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div style="font-size:14px;font-weight:700;color:#fff;flex:1;padding-right:8px;">Ceramic Wheel Throwing</div>
+      <div style="font-size:15px;font-weight:700;color:#fff;">$110.00</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;">
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);">Mar 29, 2026 · Visa ···· 4411</div>
+      <div style="font-size:11px;color:#4ade80;">Complete</div>
+    </div>
+  </div>
+  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 16px;margin-bottom:8px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div style="font-size:14px;font-weight:700;color:#fff;flex:1;padding-right:8px;">Jazz Speakeasy Night</div>
+      <div style="font-size:15px;font-weight:700;color:#ef4444;">$120.00</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;">
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);">Feb 22, 2026 · Visa ···· 4411</div>
+      <div style="font-size:11px;color:#ef4444;">Refunded</div>
+    </div>
+  </div>
+
+  </div>
+</div><div class="screen" id="account-accessibility">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="go('account-main',this)" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;">←</button>
+      <div style="font-size:20px;font-weight:800;color:#fff;">Accessibility</div>
+    </div>
+    
+  
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Reduce Motion</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;">Minimize animations throughout the app</div></div>
+    <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.15)':'linear-gradient(135deg,#8b5cf6,#ec4899)';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');this.querySelector('div').style.left=this.getAttribute('data-on')==='1'?'22px':'2px';" data-on="0" style="width:44px;height:24px;background:rgba(255,255,255,0.15);border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;">
+      <div style="position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:left 0.2s;"></div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Large Text</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;">Increase base font size across screens</div></div>
+    <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.15)':'linear-gradient(135deg,#8b5cf6,#ec4899)';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');this.querySelector('div').style.left=this.getAttribute('data-on')==='1'?'22px':'2px';" data-on="0" style="width:44px;height:24px;background:rgba(255,255,255,0.15);border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;">
+      <div style="position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:left 0.2s;"></div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">High Contrast</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;">Increase contrast for better readability</div></div>
+    <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.15)':'linear-gradient(135deg,#8b5cf6,#ec4899)';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');this.querySelector('div').style.left=this.getAttribute('data-on')==='1'?'22px':'2px';" data-on="0" style="width:44px;height:24px;background:rgba(255,255,255,0.15);border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;">
+      <div style="position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:left 0.2s;"></div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+    <div><div style="font-size:14px;font-weight:600;color:#fff;">Screen Reader Support</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;">Optimized for VoiceOver and TalkBack</div></div>
+    <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.15)':'linear-gradient(135deg,#8b5cf6,#ec4899)';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');this.querySelector('div').style.left=this.getAttribute('data-on')==='1'?'22px':'2px';" data-on="1" style="width:44px;height:24px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;">
+      <div style="position:absolute;top:2px;left:22px;width:20px;height:20px;background:#fff;border-radius:50%;transition:left 0.2s;"></div>
+    </div>
+  </div>
+
+  </div>
+</div><div class="screen" id="account-language">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="go('account-main',this)" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;">←</button>
+      <div style="font-size:20px;font-weight:800;color:#fff;">Language</div>
+    </div>
+    
+  <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px;">Select your preferred language. Content will display in the selected language where available.</div>
+  
+  <div onclick="this.parentNode.querySelectorAll('[data-lang]').forEach(d=>{d.style.borderColor='rgba(255,255,255,0.08)';d.querySelector('.lang-check').style.display='none';});this.style.borderColor='#8b5cf6';this.querySelector('.lang-check').style.display='flex';" data-lang="English (US)" style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);border:1px solid #8b5cf6;border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;">
+    <div style="font-size:15px;font-weight:600;color:#fff;">English (US)</div>
+    <div class="lang-check" style="display:flex;width:22px;height:22px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;align-items:center;justify-content:center;color:#fff;font-size:12px;">✓</div>
+  </div>
+  <div onclick="this.parentNode.querySelectorAll('[data-lang]').forEach(d=>{d.style.borderColor='rgba(255,255,255,0.08)';d.querySelector('.lang-check').style.display='none';});this.style.borderColor='#8b5cf6';this.querySelector('.lang-check').style.display='flex';" data-lang="English (UK)" style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;">
+    <div style="font-size:15px;font-weight:600;color:#fff;">English (UK)</div>
+    <div class="lang-check" style="display:none;width:22px;height:22px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;align-items:center;justify-content:center;color:#fff;font-size:12px;">✓</div>
+  </div>
+  <div onclick="this.parentNode.querySelectorAll('[data-lang]').forEach(d=>{d.style.borderColor='rgba(255,255,255,0.08)';d.querySelector('.lang-check').style.display='none';});this.style.borderColor='#8b5cf6';this.querySelector('.lang-check').style.display='flex';" data-lang="Español" style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;">
+    <div style="font-size:15px;font-weight:600;color:#fff;">Español</div>
+    <div class="lang-check" style="display:none;width:22px;height:22px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;align-items:center;justify-content:center;color:#fff;font-size:12px;">✓</div>
+  </div>
+  <div onclick="this.parentNode.querySelectorAll('[data-lang]').forEach(d=>{d.style.borderColor='rgba(255,255,255,0.08)';d.querySelector('.lang-check').style.display='none';});this.style.borderColor='#8b5cf6';this.querySelector('.lang-check').style.display='flex';" data-lang="Français" style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;">
+    <div style="font-size:15px;font-weight:600;color:#fff;">Français</div>
+    <div class="lang-check" style="display:none;width:22px;height:22px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;align-items:center;justify-content:center;color:#fff;font-size:12px;">✓</div>
+  </div>
+  <div onclick="this.parentNode.querySelectorAll('[data-lang]').forEach(d=>{d.style.borderColor='rgba(255,255,255,0.08)';d.querySelector('.lang-check').style.display='none';});this.style.borderColor='#8b5cf6';this.querySelector('.lang-check').style.display='flex';" data-lang="Deutsch" style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;">
+    <div style="font-size:15px;font-weight:600;color:#fff;">Deutsch</div>
+    <div class="lang-check" style="display:none;width:22px;height:22px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;align-items:center;justify-content:center;color:#fff;font-size:12px;">✓</div>
+  </div>
+  <div onclick="this.parentNode.querySelectorAll('[data-lang]').forEach(d=>{d.style.borderColor='rgba(255,255,255,0.08)';d.querySelector('.lang-check').style.display='none';});this.style.borderColor='#8b5cf6';this.querySelector('.lang-check').style.display='flex';" data-lang="日本語" style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;">
+    <div style="font-size:15px;font-weight:600;color:#fff;">日本語</div>
+    <div class="lang-check" style="display:none;width:22px;height:22px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;align-items:center;justify-content:center;color:#fff;font-size:12px;">✓</div>
+  </div>
+  <div onclick="this.parentNode.querySelectorAll('[data-lang]').forEach(d=>{d.style.borderColor='rgba(255,255,255,0.08)';d.querySelector('.lang-check').style.display='none';});this.style.borderColor='#8b5cf6';this.querySelector('.lang-check').style.display='flex';" data-lang="한국어" style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;">
+    <div style="font-size:15px;font-weight:600;color:#fff;">한국어</div>
+    <div class="lang-check" style="display:none;width:22px;height:22px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;align-items:center;justify-content:center;color:#fff;font-size:12px;">✓</div>
+  </div>
+  <div onclick="this.parentNode.querySelectorAll('[data-lang]').forEach(d=>{d.style.borderColor='rgba(255,255,255,0.08)';d.querySelector('.lang-check').style.display='none';});this.style.borderColor='#8b5cf6';this.querySelector('.lang-check').style.display='flex';" data-lang="中文 (繁體)" style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;">
+    <div style="font-size:15px;font-weight:600;color:#fff;">中文 (繁體)</div>
+    <div class="lang-check" style="display:none;width:22px;height:22px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;align-items:center;justify-content:center;color:#fff;font-size:12px;">✓</div>
+  </div>
+  <button style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:16px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;">Save Language</button>
+
+  </div>
+</div><div class="screen" id="account-help">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="go('account-main',this)" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;">←</button>
+      <div style="font-size:20px;font-weight:800;color:#fff;">Help & Support</div>
+    </div>
+    
+  <div style="margin-bottom:24px;">
+    <div style="display:flex;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 16px;margin-bottom:16px;">
+      <span style="font-size:16px;">🔍</span>
+      <input placeholder="Search help articles..." style="background:transparent;border:none;color:#fff;font-size:15px;outline:none;flex:1;"/>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Common Topics</div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;">
+      
+      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:14px;color:#fff;">How do I cancel a booking?</div>
+        <span style="color:rgba(255,255,255,0.3);">→</span>
+      </div>
+      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:14px;color:#fff;">What is the refund policy?</div>
+        <span style="color:rgba(255,255,255,0.3);">→</span>
+      </div>
+      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:14px;color:#fff;">How do I message my host?</div>
+        <span style="color:rgba(255,255,255,0.3);">→</span>
+      </div>
+      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:14px;color:#fff;">Can I change my booking date?</div>
+        <span style="color:rgba(255,255,255,0.3);">→</span>
+      </div>
+      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:14px;color:#fff;">How do I become a host?</div>
+        <span style="color:rgba(255,255,255,0.3);">→</span>
+      </div>
+      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:14px;color:#fff;">Why was my card declined?</div>
+        <span style="color:rgba(255,255,255,0.3);">→</span>
+      </div>
+    </div>
+  </div>
+  <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Contact Us</div>
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <button style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:16px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">💬 Live Chat</button>
+    <button style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:15px;color:rgba(255,255,255,0.7);font-size:15px;cursor:pointer;">📧 Email Support</button>
+  </div>
+
+  </div>
 </div>
 <!-- dev nav -->
-<div class="debug-nav"><button onclick="go('profile-main',this)">Profile</button></div>
+<div class="debug-nav"><button onclick="go('account-main',this)">Account</button><button onclick="go('account-edit-profile',this)">Edit Profile</button><button onclick="go('account-payments',this)">Payments</button><button onclick="go('account-billing',this)">Billing</button><button onclick="go('account-accessibility',this)">Access</button><button onclick="go('account-language',this)">Language</button><button onclick="go('account-help',this)">Help</button></div>
 </div>
 <script>
 const GREETINGS = [

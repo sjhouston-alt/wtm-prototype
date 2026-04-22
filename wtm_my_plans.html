@@ -794,335 +794,375 @@ body{display:flex;justify-content:center;align-items:flex-start;min-height:100vh
 .sm-action-shuffle{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff}
 .sm-action-book{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;box-shadow:0 8px 20px rgba(139,92,246,0.4)}
 </style>
-</head>
-<body>
-
 <div class="phone">
+
+<div class="screen active" id="plans-all">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
   <div class="glow purple"></div>
-  <div class="glow pink"></div>
-  <div class="glow teal"></div>
-
-<!-- MY PLANS -->
-  <div class="screen active" id="plans">
-    <span class="flow-tag">MY PLANS</span>
-    <div class="status-bar"><span>9:41</span><span class="icons">􀙇 􀛨 􀋦</span></div>
-
-    <div class="plans-scroll">
-      <div class="plans-header">
-        <h1 class="plans-title">My Plans</h1>
-        <button class="plans-add-btn" onclick="alert('→ Create A Named Plan (e.g. Vegas Bachelorette, Mom\\'s Birthday Weekend)')">+ New Plan</button>
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:1;">
+    <div style="padding:16px 20px 0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-0.5px;">My Plans</div>
+        <button onclick="go('plans-named',this)" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:7px 14px;color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;">Named Plans</button>
       </div>
-
-      <!-- Mode: Bookings vs Plans -->
-      <div class="mode-switch">
-        <div class="mode-btn active" onclick="setPlansMode('bookings', this)">All Bookings</div>
-        <div class="mode-btn" onclick="setPlansMode('named', this)">Named Plans</div>
+      <div style="display:flex;gap:0;background:rgba(255,255,255,0.05);border-radius:12px;padding:3px;margin-bottom:16px;" id="bookingTabs">
+        
+        <div onclick="document.querySelectorAll('[data-booking-panel]').forEach(p=>p.style.display='none');document.getElementById('bp-upcoming').style.display='flex';document.querySelectorAll('#bookingTabs div').forEach(t=>{t.style.background='transparent';t.style.color='rgba(255,255,255,0.45)';});this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" style="flex:1;text-align:center;padding:9px 0;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;background:rgba(255,255,255,0.1);color:#fff;transition:all 0.2s;">Upcoming <span style="font-size:11px;opacity:0.6;">3</span></div>
+        <div onclick="document.querySelectorAll('[data-booking-panel]').forEach(p=>p.style.display='none');document.getElementById('bp-confirmed').style.display='flex';document.querySelectorAll('#bookingTabs div').forEach(t=>{t.style.background='transparent';t.style.color='rgba(255,255,255,0.45)';});this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" style="flex:1;text-align:center;padding:9px 0;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;background:transparent;color:rgba(255,255,255,0.45);transition:all 0.2s;">Confirmed <span style="font-size:11px;opacity:0.6;">2</span></div>
+        <div onclick="document.querySelectorAll('[data-booking-panel]').forEach(p=>p.style.display='none');document.getElementById('bp-past').style.display='flex';document.querySelectorAll('#bookingTabs div').forEach(t=>{t.style.background='transparent';t.style.color='rgba(255,255,255,0.45)';});this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" style="flex:1;text-align:center;padding:9px 0;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;background:transparent;color:rgba(255,255,255,0.45);transition:all 0.2s;">Past <span style="font-size:11px;opacity:0.6;">8</span></div>
       </div>
-
-      <!-- ===== BOOKINGS MODE ===== -->
-      <div id="plans-bookings-mode">
-        <!-- Status tabs -->
-        <div class="status-tabs">
-          <div class="status-tab active" onclick="setBookingsTab('upcoming', this)">Upcoming <span class="badge">2</span></div>
-          <div class="status-tab" onclick="setBookingsTab('confirmed', this)">Confirmed <span class="badge">1</span></div>
-          <div class="status-tab" onclick="setBookingsTab('past', this)">Past <span class="badge">3</span></div>
-        </div>
-
-        <!-- UPCOMING -->
-        <div class="booking-list" id="tab-upcoming">
-          <div class="booking-card confirmed">
-            <div class="booking-head">
-              <div class="booking-emoji dining">👨‍🍳</div>
-              <div class="booking-info">
-                <div class="booking-status-row">
-                  <div class="booking-status confirmed">✓ CONFIRMED</div>
-                  <span class="verified-mini"><span class="v-check">✓</span>Verified Chef</span>
-                </div>
-                <div class="booking-title">Private Chef, Five Course Tasting</div>
-                <div class="booking-when">Sat, April 25, 2026 · 7:00 PM</div>
-                <div class="booking-where">West Hollywood, CA · 2 guests</div>
-              </div>
-            </div>
-            <div class="booking-actions">
-              <button class="booking-action primary" onclick="go('detail')">View Details</button>
-              <button class="booking-action" onclick="alert('Opened Messages with Chef Marco')">Message Host</button>
-              <button class="booking-action" onclick="alert('Added to Calendar')">+ Calendar</button>
-            </div>
-          </div>
-
-          <div class="booking-card">
-            <div class="booking-head">
-              <div class="booking-emoji water">⛵</div>
-              <div class="booking-info">
-                <div class="booking-status-row">
-                  <div class="booking-status upcoming">UPCOMING</div>
-                  <span class="verified-mini"><span class="v-check">✓</span>Verified Captain</span>
-                </div>
-                <div class="booking-title">Sunset Sail, Catalina Channel</div>
-                <div class="booking-when">Sun, May 3, 2026 · 5:30 PM</div>
-                <div class="booking-where">Marina del Rey, CA · 4 guests</div>
-              </div>
-            </div>
-            <div class="booking-actions">
-              <button class="booking-action primary" onclick="go('detail')">View Details</button>
-              <button class="booking-action" onclick="alert('Opened Messages')">Message Host</button>
-              <button class="booking-action" onclick="alert('Added to Calendar')">+ Calendar</button>
-            </div>
+    </div>
+    <!-- Upcoming panel -->
+    <div id="bp-upcoming" data-booking-panel style="flex:1;overflow-y:auto;padding:0 20px 100px;display:flex;flex-direction:column;">
+      
+      <div onclick="go('manage-booking',this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;overflow:hidden;margin-bottom:12px;cursor:pointer;">
+        <div style="height:110px;background:url('https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));"></div>
+          <div style="position:absolute;top:10px;right:10px;background:#4ade8022;border:1px solid #4ade80;border-radius:20px;padding:4px 10px;font-size:11px;color:#4ade80;">Confirmed</div>
+          <div style="position:absolute;bottom:10px;left:12px;right:12px;">
+            <div style="font-size:15px;font-weight:800;color:#fff;">Private Omakase for Two</div>
           </div>
         </div>
-
-        <!-- CONFIRMED -->
-        <div class="booking-list" id="tab-confirmed" style="display:none">
-          <div class="booking-card confirmed">
-            <div class="booking-head">
-              <div class="booking-emoji dining">👨‍🍳</div>
-              <div class="booking-info">
-                <div class="booking-status-row">
-                  <div class="booking-status confirmed">✓ CONFIRMED</div>
-                  <span class="verified-mini"><span class="v-check">✓</span>Verified Chef</span>
-                </div>
-                <div class="booking-title">Private Chef, Five Course Tasting</div>
-                <div class="booking-when">Sat, April 25, 2026 · 7:00 PM</div>
-                <div class="booking-where">West Hollywood, CA · 2 guests</div>
-              </div>
-            </div>
-            <div class="booking-actions">
-              <button class="booking-action primary" onclick="go('detail')">View Details</button>
-              <button class="booking-action" onclick="alert('Opened Messages with Chef Marco')">Message Host</button>
-              <button class="booking-action" onclick="alert('Added to Calendar')">+ Calendar</button>
-            </div>
+        <div style="padding:12px 14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Chef Kenji Mori</div>
+            <div style="font-size:14px;font-weight:700;color:#fff;">$380</div>
           </div>
-        </div>
-
-        <!-- PAST -->
-        <div class="booking-list" id="tab-past" style="display:none">
-          <div class="booking-card">
-            <div class="booking-head">
-              <div class="booking-emoji arts">🎨</div>
-              <div class="booking-info">
-                <div class="booking-status-row">
-                  <div class="booking-status past">COMPLETED</div>
-                  <span class="verified-mini"><span class="v-check">✓</span>Verified Venue</span>
-                </div>
-                <div class="booking-title">Private Gallery Night</div>
-                <div class="booking-when">Fri, March 14, 2026 · 8:00 PM</div>
-                <div class="booking-where">Arts District, LA · 2 guests</div>
-              </div>
-            </div>
-            <div class="rate-card">
-              <div class="rate-stars">
-                <span class="rate-star" onclick="rateStar(this,1)">★</span>
-                <span class="rate-star" onclick="rateStar(this,2)">★</span>
-                <span class="rate-star" onclick="rateStar(this,3)">★</span>
-                <span class="rate-star" onclick="rateStar(this,4)">★</span>
-                <span class="rate-star" onclick="rateStar(this,5)">★</span>
-              </div>
-              <div class="rate-text">Rate This Experience</div>
-            </div>
-            <div class="booking-actions">
-              <button class="booking-action review" onclick="alert('→ Write A Review (posts publicly to the listing)')">✎ Write Review</button>
-              <button class="booking-action" onclick="go('detail')">Book Again</button>
-            </div>
-          </div>
-
-          <div class="booking-card">
-            <div class="booking-head">
-              <div class="booking-emoji wellness">🧘</div>
-              <div class="booking-info">
-                <div class="booking-status-row">
-                  <div class="booking-status past">COMPLETED</div>
-                  <span class="verified-mini"><span class="v-check">✓</span>Verified Host</span>
-                </div>
-                <div class="booking-title">Rooftop Sound Bath At Sunrise</div>
-                <div class="booking-when">Sat, February 8, 2026 · 6:30 AM</div>
-                <div class="booking-where">Venice, CA · 1 guest</div>
-              </div>
-            </div>
-            <div class="booking-actions" style="border-top:1px solid rgba(255,255,255,0.06)">
-              <button class="booking-action review" onclick="alert('Review Posted ★★★★★')">★★★★★ Reviewed</button>
-              <button class="booking-action" onclick="go('detail')">Book Again</button>
-            </div>
-          </div>
-
-          <div class="booking-card">
-            <div class="booking-head">
-              <div class="booking-emoji nightlife">🍸</div>
-              <div class="booking-info">
-                <div class="booking-status-row">
-                  <div class="booking-status past">COMPLETED</div>
-                  <span class="verified-mini"><span class="v-check">✓</span>Verified Guide</span>
-                </div>
-                <div class="booking-title">Speakeasy Cocktail Tour</div>
-                <div class="booking-when">Fri, January 17, 2026 · 8:00 PM</div>
-                <div class="booking-where">Downtown LA · 6 guests</div>
-              </div>
-            </div>
-            <div class="booking-actions" style="border-top:1px solid rgba(255,255,255,0.06)">
-              <button class="booking-action review" onclick="alert('Review Posted ★★★★★')">★★★★★ Reviewed</button>
-              <button class="booking-action" onclick="go('detail')">Book Again</button>
-            </div>
+          <div style="display:flex;gap:14px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.45);">📅 Sat, May 10 · 7:00 PM</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.45);">👥 2</span>
           </div>
         </div>
       </div>
-
-      <!-- ===== NAMED PLANS MODE ===== -->
-      <div id="plans-named-mode" style="display:none">
-        <div class="named-plan-card" onclick="alert('→ Opens full plan detail view')">
-          <div class="named-plan-header">
-            <div>
-              <div class="named-plan-title">Vegas Bachelorette 🎉</div>
-              <div class="named-plan-meta">
-                <span>May 15 – 18, 2026</span>
-                <span class="dot"></span>
-                <span>Organized by you</span>
-              </div>
-            </div>
-            <div class="named-plan-count">4 Stops</div>
-          </div>
-          <div class="timeline">
-            <div class="timeline-item">
-              <div class="timeline-dot-col">
-                <div class="timeline-time">FRI<br>8 PM</div>
-                <div class="timeline-dot dining"></div>
-                <div class="timeline-line"></div>
-              </div>
-              <div class="timeline-body">
-                <div class="timeline-title">Omakase At Kata Robata</div>
-                <div class="timeline-loc">The Venetian · Las Vegas, NV · 8 guests</div>
-                <div class="timeline-status confirmed">✓ CONFIRMED</div>
-              </div>
-            </div>
-            <div class="timeline-item">
-              <div class="timeline-dot-col">
-                <div class="timeline-time">SAT<br>2 PM</div>
-                <div class="timeline-dot wellness"></div>
-                <div class="timeline-line"></div>
-              </div>
-              <div class="timeline-body">
-                <div class="timeline-title">Poolside Cabana, Encore Beach</div>
-                <div class="timeline-loc">Wynn · Las Vegas, NV · 8 guests</div>
-                <div class="timeline-status confirmed">✓ CONFIRMED</div>
-              </div>
-            </div>
-            <div class="timeline-item">
-              <div class="timeline-dot-col">
-                <div class="timeline-time">SAT<br>10 PM</div>
-                <div class="timeline-dot nightlife"></div>
-                <div class="timeline-line"></div>
-              </div>
-              <div class="timeline-body">
-                <div class="timeline-title">VIP Table, XS Nightclub</div>
-                <div class="timeline-loc">Wynn · Las Vegas, NV · 8 guests</div>
-                <div class="timeline-status pending">PENDING CONFIRMATION</div>
-              </div>
-            </div>
-            <div class="timeline-item">
-              <div class="timeline-dot-col">
-                <div class="timeline-time">SUN<br>11 AM</div>
-                <div class="timeline-dot dining"></div>
-              </div>
-              <div class="timeline-body">
-                <div class="timeline-title">Recovery Brunch At Bouchon</div>
-                <div class="timeline-loc">The Venetian · Las Vegas, NV · 8 guests</div>
-                <div class="timeline-status confirmed">✓ CONFIRMED</div>
-              </div>
-            </div>
-          </div>
-          <div class="named-plan-footer">
-            <button class="plan-foot-btn primary" onclick="event.stopPropagation();alert('Share plan with invitees')">↗ Share Plan</button>
-            <button class="plan-foot-btn" onclick="event.stopPropagation();alert('Add another experience')">+ Add Stop</button>
+      <div onclick="go('manage-booking',this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;overflow:hidden;margin-bottom:12px;cursor:pointer;">
+        <div style="height:110px;background:url('https://images.unsplash.com/photo-1591010117618-77598dd10a28?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));"></div>
+          <div style="position:absolute;top:10px;right:10px;background:#4ade8022;border:1px solid #4ade80;border-radius:20px;padding:4px 10px;font-size:11px;color:#4ade80;">Confirmed</div>
+          <div style="position:absolute;bottom:10px;left:12px;right:12px;">
+            <div style="font-size:15px;font-weight:800;color:#fff;">Desert Sound Bath</div>
           </div>
         </div>
-
-        <div class="named-plan-card" onclick="alert('→ Opens full plan detail view')">
-          <div class="named-plan-header">
-            <div>
-              <div class="named-plan-title">Anniversary Weekend 🥂</div>
-              <div class="named-plan-meta">
-                <span>June 20 – 21, 2026</span>
-                <span class="dot"></span>
-                <span>Organized by you</span>
-              </div>
-            </div>
-            <div class="named-plan-count">3 Stops</div>
+        <div style="padding:12px 14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Harmonic Collective</div>
+            <div style="font-size:14px;font-weight:700;color:#fff;">$95</div>
           </div>
-          <div class="timeline">
-            <div class="timeline-item">
-              <div class="timeline-dot-col">
-                <div class="timeline-time">SAT<br>10 AM</div>
-                <div class="timeline-dot wellness"></div>
-                <div class="timeline-line"></div>
-              </div>
-              <div class="timeline-body">
-                <div class="timeline-title">Couples Massage, Oceanfront</div>
-                <div class="timeline-loc">Malibu, CA · 2 guests</div>
-                <div class="timeline-status confirmed">✓ CONFIRMED</div>
-              </div>
-            </div>
-            <div class="timeline-item">
-              <div class="timeline-dot-col">
-                <div class="timeline-time">SAT<br>5 PM</div>
-                <div class="timeline-dot water"></div>
-                <div class="timeline-line"></div>
-              </div>
-              <div class="timeline-body">
-                <div class="timeline-title">Sunset Sail, Catalina Channel</div>
-                <div class="timeline-loc">Marina del Rey, CA · 2 guests</div>
-                <div class="timeline-status confirmed">✓ CONFIRMED</div>
-              </div>
-            </div>
-            <div class="timeline-item">
-              <div class="timeline-dot-col">
-                <div class="timeline-time">SAT<br>8 PM</div>
-                <div class="timeline-dot dining"></div>
-              </div>
-              <div class="timeline-body">
-                <div class="timeline-title">Private Chef, Rooftop Dinner</div>
-                <div class="timeline-loc">Santa Monica, CA · 2 guests</div>
-                <div class="timeline-status confirmed">✓ CONFIRMED</div>
-              </div>
-            </div>
-          </div>
-          <div class="named-plan-footer">
-            <button class="plan-foot-btn primary" onclick="event.stopPropagation();alert('Share plan')">↗ Share Plan</button>
-            <button class="plan-foot-btn" onclick="event.stopPropagation();alert('Add another experience')">+ Add Stop</button>
+          <div style="display:flex;gap:14px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.45);">📅 Sun, May 18 · 6:00 PM</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.45);">👥 1</span>
           </div>
         </div>
-
-        <!-- empty-state style CTA to create one more -->
-        <div style="padding:8px 24px 20px">
-          <button class="conf-done-btn" onclick="alert('→ Create A Named Plan')">+ Create Another Plan</button>
+      </div>
+      <div onclick="go('manage-booking',this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;overflow:hidden;margin-bottom:12px;cursor:pointer;">
+        <div style="height:110px;background:url('https://images.unsplash.com/photo-1667355745020-f4be36f3fc80?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));"></div>
+          <div style="position:absolute;top:10px;right:10px;background:#fb923c22;border:1px solid #fb923c;border-radius:20px;padding:4px 10px;font-size:11px;color:#fb923c;">Pending</div>
+          <div style="position:absolute;bottom:10px;left:12px;right:12px;">
+            <div style="font-size:15px;font-weight:800;color:#fff;">Rooftop Silent Disco</div>
+          </div>
+        </div>
+        <div style="padding:12px 14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Skyline Events</div>
+            <div style="font-size:14px;font-weight:700;color:#fff;">$380</div>
+          </div>
+          <div style="display:flex;gap:14px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.45);">📅 Fri, May 23 · 9:00 PM</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.45);">👥 4</span>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- Bottom Nav -->
-    <div class="bottom-nav">
-      <div class="nav-item" onclick="go('home')">
-        <div class="nav-icon">⌂</div>
-        <div class="nav-label">Home</div>
+    <!-- Confirmed panel (hidden) -->
+    <div id="bp-confirmed" data-booking-panel style="display:none;flex:1;overflow-y:auto;padding:0 20px 100px;flex-direction:column;">
+      
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;overflow:hidden;margin-bottom:12px;">
+        <div style="height:90px;background:url('https://images.unsplash.com/photo-1605387202149-47169c4ea58a?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));"></div>
+          <div style="position:absolute;top:10px;right:10px;background:#4ade8022;border:1px solid #4ade80;border-radius:20px;padding:4px 10px;font-size:11px;color:#4ade80;">Confirmed ✓</div>
+          <div style="position:absolute;bottom:10px;left:12px;font-size:15px;font-weight:800;color:#fff;">Sunset Yacht Charter</div>
+        </div>
+        <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;">
+          <div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Capt. Marcus Webb</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">📅 Sat, Jun 7 · 5:00 PM · 👥 6</div></div>
+          <div style="font-size:14px;font-weight:700;color:#fff;">$420</div>
+        </div>
       </div>
-      <div class="nav-item" onclick="go('explore')">
-        <div class="nav-icon">⌕</div>
-        <div class="nav-label">Explore</div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;overflow:hidden;margin-bottom:12px;">
+        <div style="height:90px;background:url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));"></div>
+          <div style="position:absolute;top:10px;right:10px;background:#4ade8022;border:1px solid #4ade80;border-radius:20px;padding:4px 10px;font-size:11px;color:#4ade80;">Confirmed ✓</div>
+          <div style="position:absolute;bottom:10px;left:12px;font-size:15px;font-weight:800;color:#fff;">Rooftop Yoga at Sunrise</div>
+        </div>
+        <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;">
+          <div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Sol Studio</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">📅 Sun, Jun 15 · 7:00 AM · 👥 1</div></div>
+          <div style="font-size:14px;font-weight:700;color:#fff;">$75</div>
+        </div>
       </div>
-      <div class="nav-item active">
-        <div class="nav-icon">◉</div>
-        <div class="nav-label">My Plans</div>
+    </div>
+    <!-- Past panel (hidden) -->
+    <div id="bp-past" data-booking-panel style="display:none;flex:1;overflow-y:auto;padding:0 20px 100px;flex-direction:column;">
+      
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center;">
+        <div style="width:56px;height:56px;border-radius:12px;background:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">Private Chef Tasting Menu</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Chef Amara Osei · Apr 12, 2026</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+            <div style="font-size:13px;">⭐⭐⭐⭐⭐</div>
+            <button onclick="go('write-review',this)" style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.25);border-radius:20px;padding:4px 12px;color:#c084fc;font-size:12px;cursor:pointer;">Review</button>
+          </div>
+        </div>
       </div>
-      <div class="nav-item" onclick="go('profile')">
-        <div class="nav-icon">◎</div>
-        <div class="nav-label">Profile</div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center;">
+        <div style="width:56px;height:56px;border-radius:12px;background:url('https://images.unsplash.com/photo-1595351298020-038700609878?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">Ceramic Wheel Throwing</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Clay & Co. · Mar 29, 2026</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+            <div style="font-size:13px;">⭐⭐⭐⭐⭐</div>
+            <button onclick="go('write-review',this)" style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.25);border-radius:20px;padding:4px 12px;color:#c084fc;font-size:12px;cursor:pointer;">Review</button>
+          </div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center;">
+        <div style="width:56px;height:56px;border-radius:12px;background:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">Sunrise Ridge Hike</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Peak Collective · Mar 15, 2026</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+            <div style="font-size:13px;">⭐⭐⭐⭐☆</div>
+            <button onclick="go('write-review',this)" style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.25);border-radius:20px;padding:4px 12px;color:#c084fc;font-size:12px;cursor:pointer;">Review</button>
+          </div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center;">
+        <div style="width:56px;height:56px;border-radius:12px;background:url('https://images.unsplash.com/photo-1531971772042-d189c2021395?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">Jazz Speakeasy Night</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">The Blue Note Underground · Feb 22, 2026</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+            <div style="font-size:13px;">⭐⭐⭐⭐⭐</div>
+            <button onclick="go('write-review',this)" style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.25);border-radius:20px;padding:4px 12px;color:#c084fc;font-size:12px;cursor:pointer;">Review</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+  <div class="bottom-nav">
+    <div onclick="go('home',this)" class="nav-item"><div class="nav-icon">🏠</div><div>Home</div></div>
+    <div onclick="go('explore',this)" class="nav-item"><div class="nav-icon">🔍</div><div>Explore</div></div>
+    <div class="nav-item active"><div class="nav-icon">📋</div><div>My Plans</div></div>
+    <div onclick="go('profile',this)" class="nav-item"><div class="nav-icon">👤</div><div>Profile</div></div>
+  </div>
 </div>
-
+<div class="screen" id="plans-named">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-0.5px;">Named Plans</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="go('plans-all',this)" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:7px 14px;color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;">All Bookings</button>
+        <button onclick="go('plan-builder',this)" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:20px;padding:7px 14px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">+ New</button>
+      </div>
+    </div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;">Multi-stop itineraries you've built</div>
+    
+    <div onclick="go('plan-detail',this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;margin-bottom:14px;cursor:pointer;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;height:110px;">
+        <div style="background:url('https://images.unsplash.com/photo-1667355745020-f4be36f3fc80?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;"></div><div style="background:url('https://images.unsplash.com/photo-1621275471769-e6aa344546d5?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;"></div><div style="background:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;"></div><div style="background:url('https://images.unsplash.com/photo-1531971772042-d189c2021395?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;"></div>
+      </div>
+      <div style="padding:14px 16px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="font-size:16px;font-weight:800;color:#fff;">Vegas Bachelorette 🎰</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;">📅 Jun 13–15, 2026 · 4 stops</div>
+          </div>
+          <div style="font-size:11px;background:rgba(251,146,60,0.15);color:#fb923c;border-radius:20px;padding:4px 10px;margin-top:2px;">In Progress</div>
+        </div>
+      </div>
+    </div>
+    <div onclick="go('plan-detail',this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;margin-bottom:14px;cursor:pointer;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;height:110px;">
+        <div style="background:url('https://images.unsplash.com/photo-1605387202149-47169c4ea58a?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;"></div><div style="background:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;"></div><div style="background:url('https://images.unsplash.com/photo-1591010117618-77598dd10a28?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;"></div>
+      </div>
+      <div style="padding:14px 16px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="font-size:16px;font-weight:800;color:#fff;">Anniversary Weekend 💜</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;">📅 Jul 4–5, 2026 · 3 stops</div>
+          </div>
+          <div style="font-size:11px;background:rgba(74,222,128,0.15);color:#4ade80;border-radius:20px;padding:4px 10px;margin-top:2px;">Confirmed</div>
+        </div>
+      </div>
+    </div>
+    <div onclick="go('plan-detail',this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;margin-bottom:14px;cursor:pointer;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;height:110px;">
+        <div style="background:url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;"></div><div style="background:url('https://images.unsplash.com/photo-1591010117618-77598dd10a28?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;"></div><div style="background:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;"></div>
+      </div>
+      <div style="padding:14px 16px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="font-size:16px;font-weight:800;color:#fff;">Summer Wellness Reset 🧘</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;">📅 Aug 1–3, 2026 · 3 stops</div>
+          </div>
+          <div style="font-size:11px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border-radius:20px;padding:4px 10px;margin-top:2px;">Planning</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div onclick="go('home',this)" class="nav-item"><div class="nav-icon">🏠</div><div>Home</div></div>
+    <div onclick="go('explore',this)" class="nav-item"><div class="nav-icon">🔍</div><div>Explore</div></div>
+    <div class="nav-item active"><div class="nav-icon">📋</div><div>My Plans</div></div>
+    <div onclick="go('profile',this)" class="nav-item"><div class="nav-icon">👤</div><div>Profile</div></div>
+  </div>
+</div>
+<div class="screen" id="plan-detail">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <button onclick="go('plans-named',this)" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;">←</button>
+      <div>
+        <div style="font-size:20px;font-weight:900;color:#fff;">Vegas Bachelorette 🎰</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Jun 13–15, 2026 · 4 stops · 6 guests</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      <span style="background:rgba(251,146,60,0.15);color:#fb923c;border-radius:20px;padding:4px 12px;font-size:12px;">In Progress</span>
+      <span style="font-size:12px;color:rgba(255,255,255,0.4);padding:4px 0;">3 of 4 stops confirmed</span>
+    </div>
+    
+    <div style="display:flex;gap:14px;margin-bottom:16px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+        <div style="width:36px;height:36px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;">1</div>
+        <div style="width:2px;flex:1;min-height:40px;background:rgba(255,255,255,0.08);margin-top:4px;"></div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:4px;">
+        <div style="height:90px;background:url('https://images.unsplash.com/photo-1621275471769-e6aa344546d5?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));"></div>
+          <div style="position:absolute;top:8px;left:10px;font-size:11px;color:rgba(255,255,255,0.7);">Fri Jun 13 · 8:00 PM</div>
+          <div style="position:absolute;top:8px;right:10px;background:#4ade8022;border:1px solid #4ade80;border-radius:20px;padding:3px 8px;font-size:10px;color:#4ade80;">Confirmed</div>
+          <div style="position:absolute;bottom:8px;left:10px;font-size:14px;font-weight:700;color:#fff;">Rooftop Cocktail Welcome</div>
+        </div>
+        <div style="padding:10px 12px;display:flex;justify-content:space-between;align-items:center;">
+          <div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Skyline Events · DTLA</div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">🎶 Nightlife</div></div>
+          <div style="font-size:13px;font-weight:700;color:#fff;">$95/guest</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;margin-bottom:16px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+        <div style="width:36px;height:36px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;">2</div>
+        <div style="width:2px;flex:1;min-height:40px;background:rgba(255,255,255,0.08);margin-top:4px;"></div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:4px;">
+        <div style="height:90px;background:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));"></div>
+          <div style="position:absolute;top:8px;left:10px;font-size:11px;color:rgba(255,255,255,0.7);">Sat Jun 14 · 7:00 PM</div>
+          <div style="position:absolute;top:8px;right:10px;background:#4ade8022;border:1px solid #4ade80;border-radius:20px;padding:3px 8px;font-size:10px;color:#4ade80;">Confirmed</div>
+          <div style="position:absolute;bottom:8px;left:10px;font-size:14px;font-weight:700;color:#fff;">Private Chef Tasting Menu</div>
+        </div>
+        <div style="padding:10px 12px;display:flex;justify-content:space-between;align-items:center;">
+          <div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Chef Amara Osei · Tribeca</div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">🍽️ Dining</div></div>
+          <div style="font-size:13px;font-weight:700;color:#fff;">$290/guest</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;margin-bottom:16px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+        <div style="width:36px;height:36px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;">3</div>
+        <div style="width:2px;flex:1;min-height:40px;background:rgba(255,255,255,0.08);margin-top:4px;"></div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:4px;">
+        <div style="height:90px;background:url('https://images.unsplash.com/photo-1667355745020-f4be36f3fc80?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));"></div>
+          <div style="position:absolute;top:8px;left:10px;font-size:11px;color:rgba(255,255,255,0.7);">Sat Jun 14 · 10:00 PM</div>
+          <div style="position:absolute;top:8px;right:10px;background:#4ade8022;border:1px solid #4ade80;border-radius:20px;padding:3px 8px;font-size:10px;color:#4ade80;">Confirmed</div>
+          <div style="position:absolute;bottom:8px;left:10px;font-size:14px;font-weight:700;color:#fff;">Rooftop Silent Disco</div>
+        </div>
+        <div style="padding:10px 12px;display:flex;justify-content:space-between;align-items:center;">
+          <div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Skyline Events · DTLA</div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">🎶 Nightlife</div></div>
+          <div style="font-size:13px;font-weight:700;color:#fff;">$95/guest</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;margin-bottom:16px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+        <div style="width:36px;height:36px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;">4</div>
+        
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:4px;">
+        <div style="height:90px;background:url('https://images.unsplash.com/photo-1591010117618-77598dd10a28?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));"></div>
+          <div style="position:absolute;top:8px;left:10px;font-size:11px;color:rgba(255,255,255,0.7);">Sun Jun 15 · 11:00 AM</div>
+          <div style="position:absolute;top:8px;right:10px;background:#fb923c22;border:1px solid #fb923c;border-radius:20px;padding:3px 8px;font-size:10px;color:#fb923c;">Pending</div>
+          <div style="position:absolute;bottom:8px;left:10px;font-size:14px;font-weight:700;color:#fff;">Recovery Sound Bath</div>
+        </div>
+        <div style="padding:10px 12px;display:flex;justify-content:space-between;align-items:center;">
+          <div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Harmonic Collective</div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">🧘 Wellness</div></div>
+          <div style="font-size:13px;font-weight:700;color:#fff;">$95/guest</div>
+        </div>
+      </div>
+    </div>
+    <button onclick="go('plan-builder',this)" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:15px;color:rgba(255,255,255,0.7);font-size:14px;cursor:pointer;margin-bottom:10px;">+ Add Another Stop</button>
+    <button onclick="go('plans-named',this)" style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:16px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Share This Plan</button>
+  </div>
+</div>
+<div class="screen" id="plan-builder">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="go('plans-named',this)" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;">←</button>
+      <div style="font-size:20px;font-weight:800;color:#fff;">New Named Plan</div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Plan Name</div>
+      <input placeholder="e.g. Anniversary Weekend, Girls Trip" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;outline:none;"/>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Date Range</div>
+      <div style="display:flex;gap:10px;">
+        <input type="date" style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:13px 14px;color:#fff;font-size:14px;outline:none;"/>
+        <input type="date" style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:13px 14px;color:#fff;font-size:14px;outline:none;"/>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Guest Count</div>
+      <div style="display:flex;align-items:center;gap:20px;">
+        <button style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:40px;height:40px;color:#fff;font-size:20px;cursor:pointer;">−</button>
+        <span style="font-size:24px;font-weight:700;color:#fff;">2</span>
+        <button style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:40px;height:40px;color:#fff;font-size:20px;cursor:pointer;">+</button>
+      </div>
+    </div>
+    <div style="margin-bottom:24px;">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:12px;">Add Experiences</div>
+      
+      <div style="display:flex;gap:12px;align-items:center;padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;margin-bottom:8px;">
+        <div style="width:48px;height:48px;border-radius:10px;background:url('https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#fff;">Private Omakase for Two</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">$380/guest</div></div>
+        <button style="background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:20px;padding:6px 14px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;">+ Add</button>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;margin-bottom:8px;">
+        <div style="width:48px;height:48px;border-radius:10px;background:url('https://images.unsplash.com/photo-1605387202149-47169c4ea58a?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#fff;">Sunset Yacht Charter</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">$420/guest</div></div>
+        <button style="background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:20px;padding:6px 14px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;">+ Add</button>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;margin-bottom:8px;">
+        <div style="width:48px;height:48px;border-radius:10px;background:url('https://images.unsplash.com/photo-1591010117618-77598dd10a28?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#fff;">Desert Sound Bath</div><div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">$95/guest</div></div>
+        <button style="background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:20px;padding:6px 14px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;">+ Add</button>
+      </div>
+      <button onclick="go('explore',this)" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:13px;color:rgba(255,255,255,0.6);font-size:14px;cursor:pointer;margin-top:4px;">Browse All Experiences →</button>
+    </div>
+    <button onclick="go('plans-named',this)" style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:18px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">Create Plan</button>
+  </div>
+</div>
 <!-- dev nav -->
-<div class="debug-nav">
-  <button class="active" onclick="go('plans', this)">Plans</button>
+<div class="debug-nav"><button onclick="go('plans-all',this)">All Bookings</button><button onclick="go('plans-named',this)">Named Plans</button><button onclick="go('plan-detail',this)">Plan Detail</button><button onclick="go('plan-builder',this)">Plan Builder</button></div>
 </div>
-
 <script>
 const GREETINGS = [
   "Less planning. More living.",

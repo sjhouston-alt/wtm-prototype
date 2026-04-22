@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WTM — Profile</title>
+<title>WTM — Gifting</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#000;font-family:-apple-system,BlinkMacSystemFont,'Inter','SF Pro Display',system-ui,sans-serif;color:#fff;overflow-x:hidden}
@@ -796,221 +796,239 @@ body{display:flex;justify-content:center;align-items:flex-start;min-height:100vh
 </style>
 <div class="phone">
 
-<div class="screen active" id="profile-main">
+<div class="screen active" id="gift-landing">
   <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
-  <div class="glow purple"></div>
+  <div class="glow purple"></div><div class="glow pink" style="top:auto;bottom:-100px;right:-80px;"></div>
   <div style="flex:1;overflow-y:auto;padding:0 0 100px;position:relative;z-index:1;">
-    <!-- Hero -->
-    <div style="padding:20px 20px 0;">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#ec4899);display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;">😊</div>
-        <div>
-          <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;">Alex Chen</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:2px;">📍 Los Angeles, CA</div>
-          <div style="display:flex;gap:8px;margin-top:6px;">
-            <span style="background:rgba(74,222,128,0.12);color:#4ade80;border-radius:20px;padding:3px 10px;font-size:11px;">✓ Verified</span>
-          </div>
-        </div>
-        <button onclick="go('settings-edit-profile',this)" style="margin-left:auto;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:7px 14px;color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;">Edit</button>
-      </div>
-      <!-- Stats strip -->
-      <div style="display:flex;gap:1px;margin-bottom:20px;">
-        
-        <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;text-align:center;margin:0 4px;">
-          <div style="font-size:22px;font-weight:900;color:#fff;">12</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">Experiences</div>
-        </div>
-        <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;text-align:center;margin:0 4px;">
-          <div style="font-size:22px;font-weight:900;color:#fff;">4</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">Saved Lists</div>
-        </div>
-        <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;text-align:center;margin:0 4px;">
-          <div style="font-size:22px;font-weight:900;color:#fff;">4.8</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">Avg Rating</div>
-        </div>
-      </div>
-      <!-- Tabs -->
-      <div style="display:flex;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;" id="profileTabs">
-        
-        <div onclick="document.querySelectorAll('[data-prof-panel]').forEach(p=>p.style.display='none');document.getElementById('prof-history').style.display='block';document.querySelectorAll('#profileTabs div').forEach(t=>{t.style.borderBottom='2px solid transparent';t.style.color='rgba(255,255,255,0.4)';});this.style.borderBottom='2px solid #8b5cf6';this.style.color='#fff';" style="flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid #8b5cf6;color:#fff;transition:all 0.15s;">History</div>
-        <div onclick="document.querySelectorAll('[data-prof-panel]').forEach(p=>p.style.display='none');document.getElementById('prof-saved').style.display='block';document.querySelectorAll('#profileTabs div').forEach(t=>{t.style.borderBottom='2px solid transparent';t.style.color='rgba(255,255,255,0.4)';});this.style.borderBottom='2px solid #8b5cf6';this.style.color='#fff';" style="flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:rgba(255,255,255,0.4);transition:all 0.15s;">Saved</div>
-        <div onclick="document.querySelectorAll('[data-prof-panel]').forEach(p=>p.style.display='none');document.getElementById('prof-vibes').style.display='block';document.querySelectorAll('#profileTabs div').forEach(t=>{t.style.borderBottom='2px solid transparent';t.style.color='rgba(255,255,255,0.4)';});this.style.borderBottom='2px solid #8b5cf6';this.style.color='#fff';" style="flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:rgba(255,255,255,0.4);transition:all 0.15s;">Vibes</div>
-        <div onclick="document.querySelectorAll('[data-prof-panel]').forEach(p=>p.style.display='none');document.getElementById('prof-settings').style.display='block';document.querySelectorAll('#profileTabs div').forEach(t=>{t.style.borderBottom='2px solid transparent';t.style.color='rgba(255,255,255,0.4)';});this.style.borderBottom='2px solid #8b5cf6';this.style.color='#fff';" style="flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:rgba(255,255,255,0.4);transition:all 0.15s;">Settings</div>
+    <div style="height:200px;background:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(8,8,16,0.95));"></div>
+      <div style="position:absolute;bottom:20px;left:20px;right:20px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:6px;">🎁</div>
+        <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.5px;">Gift an Experience</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px;">Give something worth showing up for</div>
       </div>
     </div>
-
-    <!-- History panel -->
-    <div id="prof-history" data-prof-panel style="padding:0 20px;">
+    <div style="padding:24px 20px 0;">
+      <div style="display:flex;gap:12px;margin-bottom:28px;">
+        
+        <div onclick="go('gift-picker',this)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;">
+          <div style="font-size:24px;margin-bottom:6px;">🎉</div>
+          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;">Any Occasion</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.4;">Birthdays, holidays, thank yous</div>
+        </div>
+        <div onclick="go('gift-picker',this)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;">
+          <div style="font-size:24px;margin-bottom:6px;">💜</div>
+          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;">Date Night</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.4;">For couples and connections</div>
+        </div>
+        <div onclick="go('gift-picker',this)" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;">
+          <div style="font-size:24px;margin-bottom:6px;">🏆</div>
+          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;">Celebrate</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.4;">Promotions, milestones, big wins</div>
+        </div>
+      </div>
+      <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:14px;">Popular Gifts</div>
       
-      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
-        <div style="width:52px;height:52px;border-radius:12px;background:url('https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Private Omakase for Two</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">May 10, 2026</div>
-          <div style="font-size:13px;margin-top:4px;">⭐⭐⭐⭐⭐</div>
+      <div onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:10px;cursor:pointer;">
+        <div style="height:100px;background:url('https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.55));"></div>
+          <div style="position:absolute;top:8px;left:10px;font-size:11px;color:#c084fc;background:#c084fc22;border:1px solid #c084fc;border-radius:20px;padding:3px 8px;">✓ Verified Chef</div>
+          <div style="position:absolute;bottom:8px;left:10px;right:10px;font-size:14px;font-weight:700;color:#fff;">Private Omakase for Two</div>
         </div>
-        <span style="background:rgba(74,222,128,0.1);color:#4ade80;border-radius:20px;padding:4px 10px;font-size:11px;height:fit-content;white-space:nowrap;">✓ Verified</span>
-      </div>
-      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
-        <div style="width:52px;height:52px;border-radius:12px;background:url('https://images.unsplash.com/photo-1591010117618-77598dd10a28?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Desert Sound Bath</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Apr 18, 2026</div>
-          <div style="font-size:13px;margin-top:4px;">⭐⭐⭐⭐⭐</div>
+        <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);">Chef Kenji Mori · SoHo</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;">🎁 $380</div>
         </div>
-        <span style="background:rgba(74,222,128,0.1);color:#4ade80;border-radius:20px;padding:4px 10px;font-size:11px;height:fit-content;white-space:nowrap;">✓ Verified</span>
       </div>
-      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
-        <div style="width:52px;height:52px;border-radius:12px;background:url('https://images.unsplash.com/photo-1595351298020-038700609878?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Ceramic Wheel Throwing</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Mar 29, 2026</div>
-          <div style="font-size:13px;margin-top:4px;">⭐⭐⭐⭐⭐</div>
+      <div onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:10px;cursor:pointer;">
+        <div style="height:100px;background:url('https://images.unsplash.com/photo-1605387202149-47169c4ea58a?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.55));"></div>
+          <div style="position:absolute;top:8px;left:10px;font-size:11px;color:#2dd4bf;background:#2dd4bf22;border:1px solid #2dd4bf;border-radius:20px;padding:3px 8px;">✓ Verified Captain</div>
+          <div style="position:absolute;bottom:8px;left:10px;right:10px;font-size:14px;font-weight:700;color:#fff;">Sunset Yacht Charter</div>
         </div>
-        <span style="background:rgba(74,222,128,0.1);color:#4ade80;border-radius:20px;padding:4px 10px;font-size:11px;height:fit-content;white-space:nowrap;">✓ Verified</span>
-      </div>
-      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">
-        <div style="width:52px;height:52px;border-radius:12px;background:url('https://images.unsplash.com/photo-1531971772042-d189c2021395?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Jazz Speakeasy Night</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Feb 22, 2026</div>
-          <div style="font-size:13px;margin-top:4px;">⭐⭐⭐⭐</div>
+        <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);">Capt. Marcus Webb · Marina del Rey</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;">🎁 $420</div>
         </div>
-        <span style="background:rgba(74,222,128,0.1);color:#4ade80;border-radius:20px;padding:4px 10px;font-size:11px;height:fit-content;white-space:nowrap;">✓ Verified</span>
       </div>
-    </div>
-
-    <!-- Saved panel (hidden) -->
-    <div id="prof-saved" data-prof-panel style="display:none;padding:0 20px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:4px;">
+      <div onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:10px;cursor:pointer;">
+        <div style="height:100px;background:url('https://images.unsplash.com/photo-1591010117618-77598dd10a28?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.55));"></div>
+          <div style="position:absolute;top:8px;left:10px;font-size:11px;color:#4ade80;background:#4ade8022;border:1px solid #4ade80;border-radius:20px;padding:3px 8px;">✓ Verified Host</div>
+          <div style="position:absolute;bottom:8px;left:10px;right:10px;font-size:14px;font-weight:700;color:#fff;">Desert Sound Bath</div>
+        </div>
+        <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);">Harmonic Collective · Topanga</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;">🎁 $95</div>
+        </div>
+      </div>
+      <div onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:10px;cursor:pointer;">
+        <div style="height:100px;background:url('https://images.unsplash.com/photo-1531971772042-d189c2021395?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.55));"></div>
+          <div style="position:absolute;top:8px;left:10px;font-size:11px;color:#818cf8;background:#818cf822;border:1px solid #818cf8;border-radius:20px;padding:3px 8px;">✓ Verified Venue</div>
+          <div style="position:absolute;bottom:8px;left:10px;right:10px;font-size:14px;font-weight:700;color:#fff;">Jazz Speakeasy Night</div>
+        </div>
+        <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);">The Blue Note Underground · Hollywood</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;">🎁 $120</div>
+        </div>
+      </div>
+      <div style="font-size:15px;font-weight:800;color:#fff;margin:20px 0 14px;">Gift Cards</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
         
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1605387202149-47169c4ea58a?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Sunset Yacht Charter</div>
-              <div style="font-size:12px;color:#2dd4bf;margin-top:2px;font-weight:600;">$420</div>
-            </div>
-          </div>
-        </div>
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Fine Dining Tasting</div>
-              <div style="font-size:12px;color:#c084fc;margin-top:2px;font-weight:600;">$290</div>
-            </div>
-          </div>
-        </div>
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1654330352875-1f86a5b011cf?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Joshua Tree Glamping</div>
-              <div style="font-size:12px;color:#fb923c;margin-top:2px;font-weight:600;">$395</div>
-            </div>
-          </div>
-        </div>
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1656873592841-8ae63d15be24?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Napa Wine Weekend</div>
-              <div style="font-size:12px;color:#3b82f6;margin-top:2px;font-weight:600;">$680</div>
-            </div>
-          </div>
-        </div>
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Rooftop Yoga</div>
-              <div style="font-size:12px;color:#4ade80;margin-top:2px;font-weight:600;">$75</div>
-            </div>
-          </div>
-        </div>
-        <div style="border-radius:14px;overflow:hidden;cursor:pointer;">
-          <div style="height:110px;background:url('https://images.unsplash.com/photo-1764032760214-bbf340016105?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));"></div>
-            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
-              <div style="font-size:12px;font-weight:700;color:#fff;line-height:1.3;">Painting Workshop</div>
-              <div style="font-size:12px;color:#f472b6;margin-top:2px;font-weight:600;">$95</div>
-            </div>
-          </div>
-        </div>
+        <div onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;">$50</div>
+        <div onclick="go('gift-customize',this)" style="background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(236,72,153,0.2));border:1px solid #8b5cf6;border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;">$100</div>
+        <div onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;">$150</div>
+        <div onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;">$200</div>
+        <div onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;">$300</div>
+        <div onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;">$500</div>
+        <div onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;">Custom</div>
       </div>
-    </div>
-
-    <!-- Vibes panel (hidden) -->
-    <div id="prof-vibes" data-prof-panel style="display:none;padding:0 20px;">
-      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:14px;line-height:1.6;">Your selected vibes shape your home feed, Surprise Me picks, and recommendations.</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;">
-        
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="1" style="background:linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25));border:1px solid #8b5cf6;border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Food</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="1" style="background:linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25));border:1px solid #8b5cf6;border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">After Hours</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="1" style="background:linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25));border:1px solid #8b5cf6;border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Art</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Travel</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Touch Grass</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Wellness</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="1" style="background:linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25));border:1px solid #8b5cf6;border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Entertainment</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Thrill Seeking</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Surprise Me</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Kid-Friendly</div>
-        <div onclick="this.style.background=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.06)':'linear-gradient(135deg,rgba(139,92,246,0.35),rgba(236,72,153,0.25))';this.style.borderColor=this.getAttribute('data-on')==='1'?'rgba(255,255,255,0.1)':'#8b5cf6';this.setAttribute('data-on',this.getAttribute('data-on')==='1'?'0':'1');" data-on="0" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 16px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.2s;">Pet-Friendly</div>
-      </div>
-      <button style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:16px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px;">Save Preferences</button>
-    </div>
-
-    <!-- Settings sub-panel (hidden) -->
-    <div id="prof-settings" data-prof-panel style="display:none;padding:0 20px;">
-      
-      <div onclick="go('settings-main',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Account</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Edit Profile, City, Payment Methods</div>
-        </div>
-        <span style="color:rgba(255,255,255,0.3);font-size:18px;">→</span>
-      </div>
-      <div onclick="go('settings-main',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Notifications</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Push, Email, SMS</div>
-        </div>
-        <span style="color:rgba(255,255,255,0.3);font-size:18px;">→</span>
-      </div>
-      <div onclick="go('settings-main',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Preferences</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Vibes, Accessibility, Language</div>
-        </div>
-        <span style="color:rgba(255,255,255,0.3);font-size:18px;">→</span>
-      </div>
-      <div onclick="go('settings-main',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Hosting</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Dashboard, New Listing</div>
-        </div>
-        <span style="color:rgba(255,255,255,0.3);font-size:18px;">→</span>
-      </div>
-      <div onclick="go('settings-main',this)" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:#fff;">Support & Legal</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Help, Terms, Privacy, About</div>
-        </div>
-        <span style="color:rgba(255,255,255,0.3);font-size:18px;">→</span>
-      </div>
-      <button onclick="go('splash',this)" style="width:100%;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:14px;padding:15px;color:#ef4444;font-size:15px;font-weight:600;cursor:pointer;margin-top:20px;">Sign Out</button>
     </div>
   </div>
   <div class="bottom-nav">
-    <div onclick="go('home',this)" class="nav-item"><div class="nav-icon">🏠</div><div>Home</div></div>
+    <div onclick="go('home',this)" class="nav-item active"><div class="nav-icon">🏠</div><div>Home</div></div>
     <div onclick="go('explore',this)" class="nav-item"><div class="nav-icon">🔍</div><div>Explore</div></div>
     <div onclick="go('plans',this)" class="nav-item"><div class="nav-icon">📋</div><div>My Plans</div></div>
-    <div class="nav-item active"><div class="nav-icon">👤</div><div>Profile</div></div>
+    <div onclick="go('profile',this)" class="nav-item"><div class="nav-icon">👤</div><div>Profile</div></div>
+  </div>
+</div>
+<div class="screen" id="gift-customize">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="go('gift-landing',this)" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;">←</button>
+      <div style="font-size:20px;font-weight:800;color:#fff;">Personalize Your Gift</div>
+    </div>
+    <!-- Selected experience preview -->
+    <div style="border-radius:18px;overflow:hidden;margin-bottom:20px;">
+      <div style="height:120px;background:url('https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));"></div>
+        <div style="position:absolute;top:10px;left:12px;font-size:11px;color:#c084fc;background:rgba(192,132,252,0.2);border:1px solid #c084fc;border-radius:20px;padding:3px 10px;">✓ Verified Chef</div>
+        <div style="position:absolute;bottom:10px;left:12px;">
+          <div style="font-size:16px;font-weight:800;color:#fff;">Private Omakase for Two</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px;">Chef Kenji Mori · SoHo</div>
+        </div>
+        <div style="position:absolute;bottom:10px;right:12px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:12px;padding:6px 12px;font-size:14px;font-weight:700;color:#fff;">$380</div>
+      </div>
+    </div>
+    <!-- Recipient -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Recipient's Name</div>
+      <input placeholder="Who is this for?" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;outline:none;"/>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Recipient's Email (for delivery)</div>
+      <input type="email" placeholder="their@email.com" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;outline:none;"/>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:8px;">Personal Message</div>
+      <textarea placeholder="Write a personal message to go with the gift..." style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;outline:none;resize:none;height:100px;"></textarea>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:12px;">Send Date</div>
+      <div style="display:flex;gap:8px;">
+        <div onclick="this.parentNode.querySelectorAll('div').forEach(d=>{d.style.background='rgba(255,255,255,0.06)';d.style.borderColor='rgba(255,255,255,0.1)';d.style.color='rgba(255,255,255,0.6)';});this.style.background='rgba(139,92,246,0.2)';this.style.borderColor='#8b5cf6';this.style.color='#fff';" style="flex:1;text-align:center;background:rgba(139,92,246,0.2);border:1px solid #8b5cf6;border-radius:12px;padding:12px;font-size:14px;color:#fff;cursor:pointer;transition:all 0.15s;">Send Now</div><div onclick="this.parentNode.querySelectorAll('div').forEach(d=>{d.style.background='rgba(255,255,255,0.06)';d.style.borderColor='rgba(255,255,255,0.1)';d.style.color='rgba(255,255,255,0.6)';});this.style.background='rgba(139,92,246,0.2)';this.style.borderColor='#8b5cf6';this.style.color='#fff';" style="flex:1;text-align:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;font-size:14px;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.15s;">Schedule</div>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:14px;color:rgba(255,255,255,0.6);">Gift Total</span><span style="font-size:14px;font-weight:700;color:#fff;">$380.00</span></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);">All-inclusive. No fees added at checkout.</div>
+    </div>
+    <button onclick="go('gift-confirm',this)" style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:18px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">Review Gift →</button>
+  </div>
+</div>
+<div class="screen" id="gift-confirm">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="go('gift-customize',this)" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;">←</button>
+      <div style="font-size:20px;font-weight:800;color:#fff;">Review Gift</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;overflow:hidden;margin-bottom:20px;">
+      <div style="height:100px;background:url('https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.4);"></div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;">🎁</div>
+      </div>
+      <div style="padding:16px;">
+        
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <span style="font-size:13px;color:rgba(255,255,255,0.45);flex-shrink:0;width:80px;">Experience</span>
+          <span style="font-size:13px;font-weight:600;color:#fff;text-align:right;flex:1;">Private Omakase for Two</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <span style="font-size:13px;color:rgba(255,255,255,0.45);flex-shrink:0;width:80px;">To</span>
+          <span style="font-size:13px;font-weight:600;color:#fff;text-align:right;flex:1;">Sarah Chen · sarah@email.com</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <span style="font-size:13px;color:rgba(255,255,255,0.45);flex-shrink:0;width:80px;">Message</span>
+          <span style="font-size:13px;font-weight:600;color:#fff;text-align:right;flex:1;">"Happy Birthday! You deserve something incredible."</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <span style="font-size:13px;color:rgba(255,255,255,0.45);flex-shrink:0;width:80px;">Send Date</span>
+          <span style="font-size:13px;font-weight:600;color:#fff;text-align:right;flex:1;">Saturday, May 10, 2026</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <span style="font-size:13px;color:rgba(255,255,255,0.45);flex-shrink:0;width:80px;">Total</span>
+          <span style="font-size:13px;font-weight:600;color:#fff;text-align:right;flex:1;">$380.00 (all-inclusive)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <span style="font-size:13px;color:rgba(255,255,255,0.45);flex-shrink:0;width:80px;">Payment</span>
+          <span style="font-size:13px;font-weight:600;color:#fff;text-align:right;flex:1;">Visa ···· 4411</span>
+        </div>
+      </div>
+    </div>
+    <button onclick="go('gift-sent',this)" style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:18px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:10px;">Send Gift 🎁</button>
+    <button onclick="go('gift-customize',this)" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:15px;color:rgba(255,255,255,0.6);font-size:14px;cursor:pointer;">Edit Gift</button>
+  </div>
+</div>
+<div class="screen" id="gift-sent">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div><div class="glow pink" style="top:auto;bottom:-80px;right:-80px;"></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;text-align:center;position:relative;z-index:1;">
+    <div style="width:80px;height:80px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:24px;">🎁</div>
+    <div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:8px;">Gift Sent!</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:32px;">Sarah will receive a beautifully presented gift email with instructions to book their experience.</div>
+    <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:20px;width:100%;margin-bottom:28px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;">What Happens Next</div>
+      <div style="display:flex;gap:10px;font-size:13px;color:rgba(255,255,255,0.6);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">→ Sarah receives a gift email with a unique code</div><div style="display:flex;gap:10px;font-size:13px;color:rgba(255,255,255,0.6);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">→ They create a WTM account or sign in</div><div style="display:flex;gap:10px;font-size:13px;color:rgba(255,255,255,0.6);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">→ They choose their preferred booking date</div><div style="display:flex;gap:10px;font-size:13px;color:rgba(255,255,255,0.6);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">→ You get notified when they redeem it</div>
+    </div>
+    <button onclick="go('home',this)" style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:17px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:12px;">Back To Home</button>
+    <button onclick="go('gift-landing',this)" style="background:transparent;border:none;color:rgba(139,92,246,0.8);font-size:14px;cursor:pointer;">Gift Another Experience</button>
+  </div>
+</div>
+<div class="screen" id="gift-redeem">
+  <div class="status-bar"><span>9:41</span><div class="icons">●●●</div></div>
+  <div class="glow purple"></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 100px;position:relative;z-index:1;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:40px;margin-bottom:12px;">🎁</div>
+      <div style="font-size:24px;font-weight:900;color:#fff;margin-bottom:6px;">You Received a Gift!</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);">From Alex Chen</div>
+    </div>
+    <div style="border-radius:18px;overflow:hidden;margin-bottom:20px;">
+      <div style="height:150px;background:url('https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=800&q=80&fm=jpg&fit=crop') center/cover no-repeat;position:relative;">
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.65));"></div>
+        <div style="position:absolute;bottom:12px;left:14px;right:14px;">
+          <div style="font-size:18px;font-weight:800;color:#fff;">Private Omakase for Two</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:3px;">Chef Kenji Mori · SoHo, New York</div>
+        </div>
+        <div style="position:absolute;top:12px;right:12px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:12px;padding:6px 12px;font-size:14px;font-weight:700;color:#fff;">$380</div>
+      </div>
+    </div>
+    <div style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:16px;padding:16px;margin-bottom:20px;text-align:center;">
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;">Your Gift Code</div>
+      <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:3px;">WTM-GIFT-4821</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:20px;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7;font-style:italic;">"Happy Birthday! You deserve something truly special. Enjoy every course — I hear Chef Kenji is incredible." — Alex</div>
+    <button onclick="go('detail',this)" style="width:100%;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;padding:18px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:12px;">Book My Experience</button>
+    <button onclick="go('sign-in',this)" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:15px;color:rgba(255,255,255,0.6);font-size:14px;cursor:pointer;">Sign In to Redeem</button>
   </div>
 </div>
 <!-- dev nav -->
-<div class="debug-nav"><button onclick="go('profile-main',this)">Profile</button></div>
+<div class="debug-nav"><button onclick="go('gift-landing',this)">Gift Home</button><button onclick="go('gift-customize',this)">Customize</button><button onclick="go('gift-confirm',this)">Confirm</button><button onclick="go('gift-sent',this)">Sent</button><button onclick="go('gift-redeem',this)">Redeem</button></div>
 </div>
 <script>
 const GREETINGS = [
