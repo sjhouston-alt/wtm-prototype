@@ -565,7 +565,7 @@ body{display:flex;justify-content:center;align-items:flex-start;min-height:100vh
     <span class="flow-tag">ONBOARDING 1 / 3</span>
     <div class="status-bar"><span>9:41</span><span class="icons">􀙇 􀛨 􀋦</span></div>
     <div class="onb-content">
-      <div class="onb-visual onb-v1"><span class="emoji">✨</span></div>
+      <div class="onb-visual onb-v1"><span class="emoji"></span></div>
       <h1 class="onb-title">Unforgettable moments, <span class="accent">made simple.</span></h1>
       <p class="onb-sub">Discover and book the best experiences in your city without the hassle.</p>
     </div>
@@ -585,9 +585,9 @@ body{display:flex;justify-content:center;align-items:flex-start;min-height:100vh
     <div class="onb-content">
       <div class="onb-visual onb-v2">
         <div class="onb-v2-grid">
-          <div class="onb-v2-tile">🍽️</div><div class="onb-v2-tile">🎨</div><div class="onb-v2-tile">🌊</div>
-          <div class="onb-v2-tile">🎵</div><div class="onb-v2-tile">🧘</div><div class="onb-v2-tile">🏔️</div>
-          <div class="onb-v2-tile">✈️</div><div class="onb-v2-tile">🌃</div><div class="onb-v2-tile">🎭</div>
+          <div class="onb-v2-tile"></div><div class="onb-v2-tile"></div><div class="onb-v2-tile"></div>
+          <div class="onb-v2-tile"></div><div class="onb-v2-tile"></div><div class="onb-v2-tile"></div>
+          <div class="onb-v2-tile"></div><div class="onb-v2-tile"></div><div class="onb-v2-tile"></div>
         </div>
       </div>
       <h1 class="onb-title">Every category, <span class="accent">thoughtfully curated.</span></h1>
@@ -608,9 +608,9 @@ body{display:flex;justify-content:center;align-items:flex-start;min-height:100vh
     <div class="status-bar"><span>9:41</span><span class="icons">􀙇 􀛨 􀋦</span></div>
     <div class="onb-content">
       <div class="onb-visual onb-v3">
-        <div class="onb-v3-row"><span style="color:#22c55e;font-weight:700">✓</span>No fees. No surprises.</div>
-        <div class="onb-v3-row" style="opacity:0.75"><span style="color:#fb923c;font-weight:700">✓</span>Price shown is price paid</div>
-        <div class="onb-v3-row" style="opacity:0.55"><span style="color:#c084fc;font-weight:700">✓</span>Always. Every booking.</div>
+        <div class="onb-v3-row"><span style="color:#22c55e;font-weight:700"></span>No fees. No surprises.</div>
+        <div class="onb-v3-row" style="opacity:0.75"><span style="color:#fb923c;font-weight:700"></span>Price shown is price paid</div>
+        <div class="onb-v3-row" style="opacity:0.55"><span style="color:#c084fc;font-weight:700"></span>Always. Every booking.</div>
       </div>
       <h1 class="onb-title">The price you see <span class="accent">is the price you pay.</span></h1>
       <p class="onb-sub">Always. That's the promise.</p>
@@ -692,17 +692,17 @@ body{display:flex;justify-content:center;align-items:flex-start;min-height:100vh
 
       <div class="ps-section-label">What Moves You?<span class="optional-note">Optional</span></div>
       <div class="tags-wrap">
-        <div class="tag" onclick="toggleTag(this)">🍽️ Food <span class="check">✓</span></div>
-        <div class="tag" onclick="toggleTag(this)">🌙 After Hours <span class="check">✓</span></div>
-        <div class="tag" onclick="toggleTag(this)">🎨 Art <span class="check">✓</span></div>
-        <div class="tag" onclick="toggleTag(this)">✈️ Travel <span class="check">✓</span></div>
-        <div class="tag" onclick="toggleTag(this)">🌿 Touch Grass <span class="check">✓</span></div>
-        <div class="tag" onclick="toggleTag(this)">🧘 Wellness <span class="check">✓</span></div>
-        <div class="tag" onclick="toggleTag(this)">🎭 Entertainment <span class="check">✓</span></div>
-        <div class="tag" onclick="toggleTag(this)">⚡ Thrill Seeking <span class="check">✓</span></div>
-        <div class="tag" onclick="toggleTag(this)">🎁 Surprise Me <span class="check">✓</span></div>
-        <div class="tag" onclick="toggleTag(this)">👶 Kid-Friendly <span class="check">✓</span></div>
-        <div class="tag" onclick="toggleTag(this)">🐶 Pet-Friendly <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">Food <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">After Hours <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">Art <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">Travel <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">Touch Grass <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">Wellness <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">Entertainment <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">Thrill Seeking <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">Surprise Me <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">Kid-Friendly <span class="check">✓</span></div>
+        <div class="tag" onclick="toggleTag(this)">Pet-Friendly <span class="check">✓</span></div>
       </div>
     </div>
     <div class="ps-footer">
@@ -909,7 +909,7 @@ function openManualCity(){
 function handleManualCity(input){
   const chip=document.querySelector('.manual-chip');
   if(input.value.trim().length > 0){
-    chip.textContent = '📍 ' + input.value.trim();
+    chip.textContent = '' + input.value.trim();
   } else {
     chip.textContent = '+ Other City';
   }
