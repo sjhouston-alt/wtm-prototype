@@ -1,0 +1,117 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run every Monday at 6 AM UTC — catch newly disclosed vulnerabilities
+    - cron: '0 6 * * 1'
+
+jobs:
+
+  # ─────────────────────────────────────────────
+  # DEPENDENCY VULNERABILITY SCAN
+  # Fails the build if any high/critical CVEs are found.
+  # ─────────────────────────────────────────────
+  dependency-audit:
+    name: npm audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit (fail on high/critical)
+        run: npm audit --audit-level=high
+        # To auto-fix: npm audit fix --force (review changes before merging)
+
+      - name: Check for known malicious packages
+        run: npx better-npm-audit audit --level high
+
+  # ─────────────────────────────────────────────
+  # SECRET SCANNING
+  # Prevent API keys, tokens, passwords from being committed.
+  # ─────────────────────────────────────────────
+  secret-scan:
+    name: Secret Detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history for secret scanning
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Gitleaks scans for API keys, tokens, passwords, private keys
+        # Config in .gitleaks.toml if you need custom rules
+
+  # ─────────────────────────────────────────────
+  # STATIC ANALYSIS
+  # ESLint security plugin catches common JS security issues.
+  # ─────────────────────────────────────────────
+  static-analysis:
+    name: Static Security Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint security scan
+        run: npx eslint security/ --rulesdir .eslint-security --max-warnings 0
+        # Requires eslint-plugin-security in devDependencies
+
+  # ─────────────────────────────────────────────
+  # DOCKER IMAGE SCAN (when you containerize)
+  # ─────────────────────────────────────────────
+  # container-scan:
+  #   name: Container Vulnerability Scan
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Build image
+  #       run: docker build -t wtm-api:${{ github.sha }} .
+  #     - name: Run Trivy scan
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         image-ref: wtm-api:${{ github.sha }}
+  #         format: 'sarif'
+  #         severity: 'CRITICAL,HIGH'
+  #         exit-code: '1'
+
+  # ─────────────────────────────────────────────
+  # NOTIFY ON FAILURE
+  # ─────────────────────────────────────────────
+  notify-on-failure:
+    name: Notify on Security Failure
+    runs-on: ubuntu-latest
+    needs: [dependency-audit, secret-scan, static-analysis]
+    if: failure()
+    steps:
+      - name: Send Slack alert
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "🚨 WTM Security Scan FAILED on branch ${{ github.ref_name }} — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_SECURITY_WEBHOOK }}
