@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1.0,user-scalable=no">
+<title>WTM Rewards</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="wtm_experiences_db.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{overflow:hidden;height:100%;scrollbar-width:none;}
+*::-webkit-scrollbar{display:none;}
+:root{
+  --base:#080810;--surface:#0f0f1a;--surface2:#151525;--surface3:#1a1a2e;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --text:#fff;--text2:rgba(255,255,255,0.65);--text3:rgba(255,255,255,0.35);
+  --amethyst:#a855f7;--amethyst-light:#c084fc;--amethyst-grad:linear-gradient(135deg,#c084fc,#a855f7,#7e22ce);
+  --emerald:#10b981;--emerald-light:#34d399;--emerald-grad:linear-gradient(135deg,#34d399,#10b981,#047857);
+  --ruby:#e11d48;--ruby-light:#fb7185;--ruby-grad:linear-gradient(135deg,#fb7185,#e11d48,#9f1239);
+  --brand:linear-gradient(90deg,#c084fc,#f472b6,#fb923c);
+  --cta:linear-gradient(135deg,#8b5cf6,#ec4899);
+  --green:#22c55e;--amber:#f59e0b;
+  /* current tier = Regular / Emerald */
+  --tier:#10b981;--tier-light:#34d399;--tier-grad:linear-gradient(135deg,#34d399,#10b981,#047857);
+  --tier-bg:rgba(16,185,129,0.08);--tier-border:rgba(16,185,129,0.28);
+}
+[data-theme="light"]{
+  --base:#FAF8F5;--surface:#F2EFE9;--surface2:#EAE6DE;--surface3:#E2DDD5;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);
+  --text:#111018;--text2:rgba(17,16,24,0.60);--text3:rgba(17,16,24,0.35);
+}
+body{background:var(--base);color:var(--text);font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;height:100vh;}
+
+/* Ambient orbs — matches home screen */
+.amb{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.o1{position:absolute;border-radius:50%;filter:blur(110px);width:450px;height:450px;top:-160px;left:-100px;background:#7c3aed;opacity:.13;}
+.o2{position:absolute;border-radius:50%;filter:blur(100px);width:380px;height:380px;top:-100px;right:-100px;background:#db2777;opacity:.10;}
+.o3{position:absolute;border-radius:50%;filter:blur(120px);width:320px;height:320px;bottom:-60px;left:50%;transform:translateX(-50%);background:#0d9488;opacity:.10;}
+[data-theme="light"] .o1{opacity:.05;} [data-theme="light"] .o2{opacity:.04;} [data-theme="light"] .o3{opacity:.04;}
+
+.page{position:fixed;inset:0;display:flex;flex-direction:column;}
+
+/* Top nav — identical to home screen */
+.top-nav{z-index:10;background:rgba(8,8,16,0.97);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:max(14px,env(safe-area-inset-top)) 16px 14px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+[data-theme="light"] .top-nav{background:rgba(250,248,245,0.97);}
+.back-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);}
+.back-btn svg{width:17px;height:17px;}
+.nav-title{flex:1;font-family:'Manrope',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.3px;}
+.theme-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);}
+.theme-btn svg{width:16px;height:16px;}
+
+.scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;padding-bottom:max(40px,env(safe-area-inset-bottom));position:relative;z-index:1;}
+
+/* ── HERO — minimal, dark, matches home ── */
+.hero{margin:16px 16px 0;border-radius:20px;overflow:hidden;position:relative;padding:20px 20px 22px;border:1px solid var(--tier-border);background:var(--tier-bg);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(52,211,153,.18),transparent 60%);pointer-events:none;}
+.hero-eyebrow{display:flex;align-items:center;gap:6px;font-family:'Manrope',sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--tier);margin-bottom:6px;position:relative;z-index:1;}
+.hero-eyebrow svg{width:12px;height:12px;}
+.tier-display{display:flex;align-items:baseline;gap:12px;margin-bottom:4px;position:relative;z-index:1;}
+.tier-name{font-family:'Instrument Serif',serif;font-style:italic;font-size:48px;font-weight:400;letter-spacing:-.5px;line-height:1;background:var(--tier-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.tier-gem-label{font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;color:var(--text2);font-style:italic;align-self:flex-end;padding-bottom:4px;}
+.pts-row{display:flex;align-items:baseline;gap:8px;margin-bottom:3px;position:relative;z-index:1;}
+.pts-num{font-family:'DM Mono',monospace;font-size:34px;font-weight:500;color:var(--text);letter-spacing:-.5px;}
+.pts-label{font-size:14px;color:var(--text2);}
+.pts-note{font-size:11px;color:var(--tier);font-weight:600;margin-bottom:16px;position:relative;z-index:1;}
+.progress-labels{display:flex;justify-content:space-between;font-family:'Manrope',sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;position:relative;z-index:1;}
+.progress-labels .left{color:var(--text2);}
+.progress-labels .right{color:var(--tier);}
+.progress-track{height:6px;background:rgba(255,255,255,.07);border-radius:50px;overflow:hidden;border:1px solid var(--tier-border);position:relative;z-index:1;}
+.progress-fill{height:100%;background:var(--tier-grad);border-radius:50px;transition:width 1.4s cubic-bezier(.4,0,.2,1);}
+.progress-foot{font-size:11px;color:var(--text2);margin-top:7px;position:relative;z-index:1;}
+.progress-foot strong{color:var(--text);}
+
+/* ── TIME TABS ── */
+.time-tabs{display:flex;gap:6px;margin:14px 16px 0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;}
+.time-tab{flex:1;padding:8px 4px;border-radius:8px;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;text-align:center;cursor:pointer;color:var(--text2);transition:all .18s;}
+.time-tab.on{background:var(--tier-grad);color:#fff;}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 16px 0;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:14px 10px;text-align:center;cursor:pointer;}
+.stat-num{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;letter-spacing:-.3px;}
+.stat-num.amethyst{color:var(--amethyst);}
+.stat-num.emerald{color:var(--emerald);}
+.stat-num.ruby{color:var(--ruby);}
+.stat-label{font-family:'Manrope',sans-serif;font-size:9.5px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-top:3px;line-height:1.3;}
+
+/* ── SECTION HEADERS ── */
+.sec{padding:22px 16px 10px;display:flex;align-items:flex-end;justify-content:space-between;}
+.sec-title{font-family:'Manrope',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.3px;}
+.sec-sub{font-size:11.5px;color:var(--text2);margin-top:2px;line-height:1.4;}
+.sec-note{font-size:11px;color:var(--text3);font-style:italic;}
+
+/* ── AI CONCIERGE ── */
+.concierge{margin:0 16px;padding:17px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(16,185,129,.07));border:1px solid rgba(139,92,246,.28);border-radius:16px;cursor:pointer;}
+.concierge-eye{font-family:'Manrope',sans-serif;font-size:9.5px;font-weight:800;letter-spacing:1.8px;color:var(--emerald);text-transform:uppercase;margin-bottom:4px;}
+.concierge-title{font-family:'Manrope',sans-serif;font-size:16px;font-weight:800;margin-bottom:4px;}
+.concierge-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px;}
+.concierge-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:50px;background:linear-gradient(135deg,#8b5cf6,#10b981);font-family:'Manrope',sans-serif;font-size:11.5px;font-weight:800;color:#fff;cursor:pointer;border:none;}
+.concierge-btn svg{width:13px;height:13px;}
+
+/* ── STATUS LADDER ── */
+.ladder{padding:0 16px;display:flex;flex-direction:column;gap:8px;}
+
+.tier-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.tier-card.current{border-color:var(--tier-border);background:var(--tier-bg);}
+
+.tier-header{display:flex;align-items:center;gap:13px;padding:14px;cursor:pointer;}
+
+/* UNIQUE TIER ICONS — different shape per tier */
+.tier-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tier-icon.amethyst{background:var(--amethyst-grad);}
+.tier-icon.emerald{background:var(--emerald-grad);}
+.tier-icon.ruby{background:var(--ruby-grad);}
+.tier-icon svg{width:20px;height:20px;color:#fff;fill:currentColor;}
+
+.tier-info{flex:1;}
+.tier-name-label{font-family:'Manrope',sans-serif;font-size:15px;font-weight:800;letter-spacing:-.2px;}
+.tier-gem-name{font-size:11px;color:var(--text3);font-style:italic;margin-top:1px;}
+.tier-qe{font-size:11px;color:var(--text2);margin-top:2px;}
+.tier-current-badge{padding:4px 10px;border-radius:50px;font-family:'Manrope',sans-serif;font-size:9px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;background:var(--tier-bg);color:var(--tier);border:1px solid var(--tier-border);}
+.tier-chevron{color:var(--text3);flex-shrink:0;transition:transform .2s;}
+.tier-chevron.open{transform:rotate(180deg);}
+.tier-chevron svg{width:15px;height:15px;}
+
+.tier-benefits{padding:0 14px 14px;}
+.benefit-list{list-style:none;}
+.benefit-item{display:flex;align-items:flex-start;gap:9px;padding:5px 0;font-size:12px;line-height:1.45;}
+.benefit-item.on{color:var(--text2);}
+.benefit-item.locked{color:var(--text3);}
+.benefit-icon-check{width:15px;height:15px;flex-shrink:0;margin-top:1px;color:var(--green);}
+.benefit-icon-lock{width:15px;height:15px;flex-shrink:0;margin-top:1px;color:var(--text3);}
+
+/* ── EXPERIENCE CARDS — full bleed like Image 3 ── */
+.exp-scroll{display:flex;gap:12px;padding:0 16px;overflow-x:auto;}
+.exp-full-card{flex-shrink:0;width:200px;height:280px;border-radius:16px;overflow:hidden;cursor:pointer;position:relative;background:var(--surface);}
+.exp-full-img{position:absolute;inset:0;background-size:cover;background-position:center;}
+.exp-full-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 35%,rgba(0,0,0,.85) 100%);}
+.exp-full-cat{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border-radius:8px;padding:4px 9px;font-family:'Manrope',sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#fff;}
+.exp-full-fav{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;}
+.exp-full-fav svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:2;}
+.exp-full-body{position:absolute;bottom:0;left:0;right:0;padding:12px;}
+.exp-full-title{font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;color:#fff;line-height:1.25;margin-bottom:5px;}
+.exp-full-meta{font-size:11px;color:rgba(255,255,255,.7);margin-bottom:8px;}
+.exp-full-price{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:#fff;}
+.exp-full-price span{font-size:11px;color:rgba(255,255,255,.65);font-family:'DM Sans',sans-serif;font-weight:400;}
+.exp-full-pts{font-size:10px;color:var(--emerald-light);font-weight:700;font-family:'Manrope',sans-serif;margin-top:2px;}
+.exp-verified-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.3);color:#4ade80;font-family:'Manrope',sans-serif;font-size:8.5px;font-weight:800;padding:3px 7px;border-radius:6px;letter-spacing:.3px;margin-top:5px;}
+.exp-verified-chip svg{width:9px;height:9px;}
+
+/* ── HOW STATUS WORKS ── */
+.qe-box{margin:0 16px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:16px;}
+.qe-title{font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;margin-bottom:10px;}
+.qe-grid{display:grid;grid-template-columns:1fr auto;gap:7px 12px;font-size:12px;}
+.qe-label{color:var(--text2);}
+.qe-val{font-family:'DM Mono',monospace;font-weight:500;color:var(--tier);text-align:right;}
+.qe-note{font-size:10.5px;color:var(--text3);margin-top:10px;line-height:1.5;font-style:italic;}
+
+/* ── REDEMPTIONS ── */
+.redeem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:0 16px;}
+.redeem-card{border-radius:13px;background:var(--surface);border:1px solid var(--border);overflow:hidden;cursor:pointer;}
+.redeem-img{height:78px;background-size:cover;background-position:center;}
+.redeem-body{padding:9px;}
+.redeem-title{font-family:'Manrope',sans-serif;font-size:11px;font-weight:800;line-height:1.3;margin-bottom:5px;min-height:28px;color:var(--text);}
+.redeem-pts{display:flex;align-items:center;gap:3px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--tier);}
+.redeem-pts svg{width:9px;height:9px;}
+.redeem-cap{font-size:9px;color:var(--text3);margin-top:2px;}
+.seasonal-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:var(--amber);font-family:'Manrope',sans-serif;font-size:9px;font-weight:800;padding:3px 8px;border-radius:50px;letter-spacing:.4px;text-transform:uppercase;margin:0 16px 8px;}
+
+/* ── EARN WAYS ── */
+.earn-list{padding:0 16px;display:flex;flex-direction:column;gap:7px;}
+.earn-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:13px;background:var(--surface);border:1px solid var(--border);cursor:pointer;}
+.earn-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.earn-icon svg{width:17px;height:17px;}
+.earn-icon.p{background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.22);color:var(--amethyst);}
+.earn-icon.e{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22);color:var(--emerald);}
+.earn-icon.r{background:rgba(225,29,72,.12);border:1px solid rgba(225,29,72,.22);color:var(--ruby);}
+.earn-icon.a{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.22);color:var(--amber);}
+.earn-info{flex:1;}
+.earn-title{font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;}
+.earn-desc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4;}
+.earn-mult{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--tier);}
+
+/* ── LEDGER ── */
+.ledger{padding:0 16px;display:flex;flex-direction:column;gap:6px;}
+.ledger-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--border);cursor:pointer;}
+.ledger-img{width:38px;height:38px;border-radius:10px;background-size:cover;background-position:center;flex-shrink:0;background-color:var(--surface2);}
+.ledger-info{flex:1;}
+.ledger-title{font-family:'Manrope',sans-serif;font-size:12.5px;font-weight:700;}
+.ledger-date{font-size:10.5px;color:var(--text3);margin-top:1px;}
+.ledger-status{font-size:9px;color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+.ledger-amt{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--green);}
+.ledger-amt.minus{color:var(--text2);}
+.ledger-amt.pending{color:var(--amber);}
+
+.footer-note{padding:22px 16px max(30px,env(safe-area-inset-bottom));font-size:11px;color:var(--text3);text-align:center;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="amb"><div class="o1"></div><div class="o2"></div><div class="o3"></div></div>
+<div class="page">
+
+  <!-- TOP NAV — matches home screen exactly -->
+  <div class="top-nav">
+    <div class="back-btn" onclick="history.back()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div class="nav-title">Rewards</div>
+    <div class="theme-btn" onclick="toggleTheme()">
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="sun" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+    </div>
+  </div>
+
+  <div class="scroll">
+
+    <!-- HERO — dark, minimal, on-brand -->
+    <div class="hero">
+      <div class="hero-eyebrow">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+        Member Status
+      </div>
+      <div class="tier-display">
+        <div class="tier-name">The Regular</div>
+              </div>
+      <div class="pts-row">
+        <div class="pts-num">3,820</div>
+        <div class="pts-label">points</div>
+      </div>
+      <div class="pts-note">Points never expire. Yours to keep.</div>
+      <div class="progress-labels">
+        <span class="left">Next: The Local</span>
+        <span class="right">12 of 18</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:67%"></div></div>
+      <div class="progress-foot"><strong>6 more experiences</strong> to reach The Local by Dec 31, 2026.</div>
+    </div>
+
+    <!-- TIME TABS -->
+    <div class="time-tabs">
+      <div class="time-tab on" onclick="switchPeriod(this,'month')">This Month</div>
+      <div class="time-tab" onclick="switchPeriod(this,'quarter')">This Quarter</div>
+      <div class="time-tab" onclick="switchPeriod(this,'year')">This Year</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row" id="stats-row"></div>
+
+    <!-- EXPERIENCES TO EARN TOWARD -->
+    <div class="sec"><div><div class="sec-title">Earn Points on These</div><div class="sec-sub">Every booking adds to your balance. Points credit 48–72h after completion.</div></div></div>
+    <div class="exp-scroll" id="earn-experiences"></div>
+
+    <!-- STATUS LADDER — unique icon per tier -->
+    <div class="sec"><div><div class="sec-title">Status Ladder</div><div class="sec-sub">Earned through experiences, not spending.</div></div></div>
+    <div class="ladder">
+
+      <!-- ROOKIE -->
+      <div class="tier-card" id="tc-rookie">
+        <div class="tier-header" onclick="toggleTier('rookie')">
+          <div class="tier-info">
+            <div class="tier-name-label">The Rookie</div>
+            <div class="tier-qe">0 to 6 Experiences</div>
+          </div>
+          <div class="tier-chevron" id="chev-rookie">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="tier-benefits" id="ben-rookie" style="display:none">
+          <ul class="benefit-list">
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Full public catalog of experiences</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Save to favorites and wishlist</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Birthday week 2× points</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Preview 3 Regular experiences</li>
+            <li class="benefit-item locked"><svg class="benefit-icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Members-only experiences (Regular+)</li>
+            <li class="benefit-item locked"><svg class="benefit-icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>AI Concierge (Regular+)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- REGULAR -->
+      <div class="tier-card current" id="tc-regular">
+        <div class="tier-header" onclick="toggleTier('regular')">
+          <div class="tier-info">
+            <div class="tier-name-label">The Regular</div>
+            <div class="tier-qe">7 to 17 Experiences</div>
+          </div>
+          <div class="tier-current-badge">Current</div>
+          <div class="tier-chevron open" id="chev-regular">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="tier-benefits" id="ben-regular">
+          <ul class="benefit-list">
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Everything in Rookie</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Members-only experiences unlocked</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>5% off every experience</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>24-hour early access to new experiences</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>1.05× points multiplier</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>AI Concierge for custom experience planning</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Preview 3 Local experiences</li>
+            <li class="benefit-item locked"><svg class="benefit-icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>48-hour early access (Local)</li>
+            <li class="benefit-item locked"><svg class="benefit-icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Priority on sold-out experiences (Local)</li>
+            <li class="benefit-item locked"><svg class="benefit-icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Human concierge escalation (Local)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LOCAL -->
+      <div class="tier-card" id="tc-local">
+        <div class="tier-header" onclick="toggleTier('local')">
+          <div class="tier-info">
+            <div class="tier-name-label">The Local</div>
+            <div class="tier-qe">18+ Experiences</div>
+          </div>
+          <div class="tier-chevron" id="chev-local">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="tier-benefits" id="ben-local" style="display:none">
+          <ul class="benefit-list">
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Everything in Regular</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>10% off every experience</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>1.10× points multiplier</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>48-hour early access to new experiences</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Priority booking on sold-out experiences</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>AI Concierge + priority human escalation</li>
+            <li class="benefit-item on"><svg class="benefit-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Personal concierge for bespoke requests</li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- /ladder -->
+
+    <!-- REDEEM POINTS -->
+    <div class="sec">
+      <div>
+        <div class="sec-title">Redeem Points</div>
+        <div class="sec-sub">100 pts = $1 toward any booking. Seasonal rewards rotate monthly.</div>
+      </div>
+    </div>
+    <div class="seasonal-chip">
+      <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg>
+      Fall Rewards Active
+    </div>
+    <div class="redeem-grid" id="redeem-grid"></div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="sec"><div><div class="sec-title">Recent Activity</div></div></div>
+    <div class="ledger" id="ledger"></div>
+
+    <!-- HOW TO EARN -->
+    <div class="sec"><div><div class="sec-title">How You Earn</div><div class="sec-sub">Points credit 48 to 72 hours after your experience completes.</div></div></div>
+    <div class="earn-list">
+      <div class="earn-row" onclick="showToast('1 point per dollar. Your 1.05× Regular multiplier applies automatically. Credits 48-72h after completion.',2800)">
+        <div class="earn-icon p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <div class="earn-info"><div class="earn-title">Every Experience</div><div class="earn-desc">1 point per dollar. Tier multiplier applies automatically.</div></div>
+        <div class="earn-mult">1×</div>
+      </div>
+      <div class="earn-row" onclick="showToast('Exclusive bookings earn 2× points AND Best earning opportunity, count double toward status.',2800)">
+        <div class="earn-icon e"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+        <div class="earn-info"><div class="earn-title">Members-Only Experiences</div><div class="earn-desc">Exclusive bookings earn double points and count double toward status.</div></div>
+        <div class="earn-mult">2×</div>
+      </div>
+      <div class="earn-row" onclick="showToast('500 points when your friend completes their 2nd paid booking. Max 10 referrals per year.',2800)">
+        <div class="earn-icon r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg></div>
+        <div class="earn-info"><div class="earn-title">Refer a Friend</div><div class="earn-desc">500 points when they complete their 2nd paid booking.</div></div>
+        <div class="earn-mult">+500</div>
+      </div>
+      <div class="earn-row" onclick="showToast('Leave a written review with at least one photo to earn 100 bonus points.',2500)">
+        <div class="earn-icon a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div class="earn-info"><div class="earn-title">Leave a Review</div><div class="earn-desc">100 points for a written review with photos.</div></div>
+        <div class="earn-mult">+100</div>
+      </div>
+      <div class="earn-row" onclick="showToast('1.5× points on every booking during your birthday week, every year. Applied automatically.',2800)">
+        <div class="earn-icon r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg></div>
+        <div class="earn-info"><div class="earn-title">Birthday Week Bonus</div><div class="earn-desc">1.5× points on every booking during your birthday week, every year.</div></div>
+        <div class="earn-mult">1.5×</div>
+      </div>
+    </div>
+
+
+    <div class="footer-note">Points never expire. Status year resets December 31. Free experiences count toward up to 25% of your annual total.</div>
+  </div>
+</div>
+
+<script>
+// ── THEME ──
+const stored = localStorage.getItem('wtm-theme');
+if(stored==='light') document.documentElement.setAttribute('data-theme','light');
+function toggleTheme(){
+  const light = document.documentElement.getAttribute('data-theme')==='light';
+  document.documentElement.setAttribute('data-theme',light?'dark':'light');
+  localStorage.setItem('wtm-theme',light?'dark':'light');
+  document.querySelectorAll('.moon').forEach(e=>e.style.display=light?'block':'none');
+  document.querySelectorAll('.sun').forEach(e=>e.style.display=light?'none':'block');
+}
+if(stored==='light'){
+  document.querySelectorAll('.moon').forEach(e=>e.style.display='none');
+  document.querySelectorAll('.sun').forEach(e=>e.style.display='block');
+}
+
+// ── TOAST ──
+function showToast(msg, dur=1800){
+  let t=document.getElementById('toast');
+  if(!t){
+    t=document.createElement('div');t.id='toast';
+    t.style.cssText='position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:rgba(15,15,26,.97);color:#fff;font-family:Manrope,sans-serif;font-size:12px;font-weight:700;padding:10px 18px;border-radius:50px;border:1px solid rgba(255,255,255,0.12);white-space:nowrap;z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;backdrop-filter:blur(24px);max-width:88vw;overflow:hidden;text-overflow:ellipsis;';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;
+  t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},dur);
+}
+
+// ── STATS ──
+const STATS={
+  month:[{n:'3',label:'Experiences\nThis Month',cls:'emerald'},{n:'889',label:'Points\nEarned',cls:'amethyst'},{n:'3',label:'Categories\nExplored',cls:'ruby'}],
+  quarter:[{n:'9',label:'Experiences\nThis Quarter',cls:'emerald'},{n:'2,640',label:'Points\nEarned',cls:'amethyst'},{n:'5',label:'Categories\nExplored',cls:'ruby'}],
+  year:[{n:'12',label:'Experiences\nThis Year',cls:'emerald'},{n:'3,820',label:'Points\nEarned',cls:'amethyst'},{n:'6',label:'of 7 Categories',cls:'ruby'}],
+};
+const MSGS={
+  month:['3 experiences this month.','889 points this month. Multiplier: 1.05×.','Dining, Offshore, Arts explored this month.'],
+  quarter:['9 experiences this quarter. 5 categories explored.','2,640 points this quarter. On track for The Local.','5 of 7 categories explored. Try Adventure.'],
+  year:['12 experiences this year. 6 more experiences to reach The Local.','3,820 points earned this year. Points never expire.','6 of 7 categories explored this year. Missing: Kid-Friendly.'],
+};
+let curPeriod='month';
+function renderStats(p){
+  curPeriod=p;
+  document.getElementById('stats-row').innerHTML=STATS[p].map((s,i)=>`
+    <div class="stat-card" onclick="showToast('${MSGS[p][i]}',3000)">
+      <div class="stat-num ${s.cls}">${s.n}</div>
+      <div class="stat-label">${s.label.replace('\n','<br>')}</div>
+    </div>`).join('');
+}
+function switchPeriod(el,p){
+  document.querySelectorAll('.time-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderStats(p);
+}
+renderStats('month');
+
+// ── TIER TOGGLE ──
+function toggleTier(id){
+  const b=document.getElementById('ben-'+id);
+  const c=document.getElementById('chev-'+id);
+  const open=b.style.display!=='none';
+  b.style.display=open?'none':'';
+  c.classList.toggle('open',!open);
+}
+
+// ── CONCIERGE ──
+function openConcierge(){
+  showToast('Opening AI Concierge',1500);
+  setTimeout(()=>{
+    const r=prompt('AI Concierge\n\nDescribe your custom experience:\n\nExample: "Sunset hike, violinist at the summit, dinner after."');
+    if(r&&r.trim()) showToast('Request received. Planning your experience.',2500);
+  },400);
+}
+
+// ── EXPERIENCE CARDS (earn toward) ──
+function buildEarnCards(){
+  if(!window.WTM) return;
+  const picks = WTM.EXPERIENCES
+    .filter(e=>!e.is_free&&e.rating>=4.8)
+    .sort((a,b)=>b.rating-a.rating)
+    .slice(0,5);
+  document.getElementById('earn-experiences').innerHTML = picks.map(e=>{
+    const cat = WTM.CATEGORIES[e.category];
+    const pts = Math.round(e.price_base * 1.05);
+    return `
+      <div class="exp-full-card" onclick="showToast('Opening ${e.title}',1500)">
+        <div class="exp-full-img" style="background-image:url('${e.image}')"></div>
+        <div class="exp-full-overlay"></div>
+        <div class="exp-full-cat">${cat.label}</div>
+        <div class="exp-full-fav"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <div class="exp-full-body">
+          <div class="exp-full-title">${e.title}</div>
+          <div class="exp-full-meta">${e.city} · ${Math.round(e.duration_min/60)}h</div>
+          <div class="exp-full-price"><span>From </span>$${e.price_base}</div>
+          <div class="exp-full-pts">+${pts} pts with your multiplier</div>
+          <div class="exp-verified-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Verified</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+buildEarnCards();
+
+// ── REDEEM GRID ──
+function buildRedeemGrid(){
+  if(!window.WTM) return;
+  const month = new Date().getMonth();
+  const rewards = WTM.getActiveRedemptions('regular', month);
+  document.getElementById('redeem-grid').innerHTML = rewards.map(r=>`
+    <div class="redeem-card" onclick="redeemTap('${r.id}')">
+      <div class="redeem-img" style="background-image:url('${r.image}')"></div>
+      <div class="redeem-body">
+        <div class="redeem-title">${r.title}</div>
+        <div class="redeem-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>${r.points_cost.toLocaleString()} pts</div>
+        ${r.caps?.global_per_quarter?`<div class="redeem-cap">Cap: ${r.caps.global_per_quarter}/qtr</div>`:''}
+      </div>
+    </div>`).join('');
+}
+function redeemTap(id){
+  if(!window.WTM) return;
+  const all=[...WTM.REDEMPTION_CATALOG.core,...Object.values(WTM.REDEMPTION_CATALOG.rotating).flat(),...(WTM.REDEMPTION_CATALOG.local_only||[])];
+  const r=all.find(x=>x.id===id);
+  if(!r) return;
+  showToast('Redeeming: '+r.title+' for '+r.points_cost.toLocaleString()+' pts',2000);
+  setTimeout(()=>showToast('Redemption confirmed. Balance updated.',2200),2200);
+}
+buildRedeemGrid();
+
+// ── LEDGER with experience images ──
+const LEDGER = [
+  {title:'Private Chef Tasting',    date:'Apr 19, Booking', amt:'+299', cls:'', status:'Pending, credits Apr 21-22', img:'gradient:linear-gradient(135deg,#3b0764,#7c3aed,#a855f7)'},
+  {title:'Pottery Wheel Class',      date:'Apr 12, Booking',         amt:'+89',  cls:'', img:'gradient:linear-gradient(135deg,#500724,#be185d,#ec4899)'},
+  {title:'Rooftop Yoga Review',    date:'Apr 9, Review Bonus',     amt:'+100', cls:'', img:'gradient:linear-gradient(135deg,#052e16,#166534,#22c55e)'},
+  {title:'Referral Bonus, Maya',          date:'Apr 4, Referral Bonus',   amt:'+500', cls:'', img:'gradient:linear-gradient(135deg,#1e1b4b,#3730a3,#6366f1)'},
+  {title:'$25 Booking Credit',       date:'Mar 28, Redeemed',        amt:'−2,500',cls:'minus', img:'gradient:linear-gradient(135deg,#3b0764,#6d28d9,#c084fc)'},
+  {title:'Mushroom Foraging Tour',   date:'Mar 22, Booking', amt:'+229', cls:'', img:'gradient:linear-gradient(135deg,#1e3a1e,#2d6a2d,#4ade80)'},
+];
+document.getElementById('ledger').innerHTML = LEDGER.map(l=>`
+  <div class="ledger-row" onclick="showToast('${l.amt.includes('+')?(l.title+' — '+l.amt.replace('+','')+' points earned'):'Redeemed: '+l.title}',2200)">
+    <div class="ledger-img" style="background-image:url('${l.img}')"></div>
+    <div class="ledger-info">
+      <div class="ledger-title">${l.title}</div>
+      <div class="ledger-date">${l.date}</div>
+      ${l.status?`<div class="ledger-status">${l.status}</div>`:''}
+    </div>
+    <div class="ledger-amt ${l.cls||''} ${l.status?'pending':''}">${l.amt}</div>
+  </div>`).join('');
+</script>
+</body>
+</html>
