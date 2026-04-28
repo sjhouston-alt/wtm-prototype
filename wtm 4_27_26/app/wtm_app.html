@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1.0,user-scalable=no">
+<title>What's the Move</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#080810;color:#fff;font-family:'Manrope',sans-serif}
+:root{
+  --base:#080810;--surface:#0f0f1a;--surface2:#151525;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.11);
+  --text:#fff;--text2:rgba(255,255,255,.62);--text3:rgba(255,255,255,.32);
+  --purple:#a855f7;--teal:#14b8a6;--pink:#ec4899;--amber:#f59e0b;--green:#22c55e;--indigo:#6366f1;
+  --amethyst:#a855f7;--emerald:#10b981;--ruby:#e11d48;
+  --cta:linear-gradient(135deg,#8b5cf6,#ec4899);
+  --brand:linear-gradient(90deg,#c084fc,#f472b6,#fb923c);
+  --tier:var(--emerald);--tier-bg:rgba(16,185,129,.08);--tier-border:rgba(16,185,129,.22);
+}
+[data-theme="light"]{
+  --base:#FAF8F5;--surface:#F2EFE9;--surface2:#e8e4dc;--border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.12);
+  --text:#111018;--text2:rgba(17,16,24,.6);--text3:rgba(17,16,24,.35);
+}
+#wtm-app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--base)}
+#screen{flex:1;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#screen::-webkit-scrollbar{display:none}
+.bottom-nav{flex-shrink:0;display:flex;background:rgba(8,8,16,.96);border-top:1px solid var(--border);
+  padding:8px 0 max(12px,env(safe-area-inset-bottom));backdrop-filter:blur(24px)}
+[data-theme="light"] .bottom-nav{background:rgba(250,248,245,.96)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;
+  background:none;border:none;cursor:pointer;color:var(--text3);transition:color .15s}
+.nav-btn.on{color:var(--emerald)}
+.nav-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+.nav-btn span{font-size:10px;font-weight:700;font-family:'Manrope',sans-serif}
+
+/* ── TOP BAR ── */
+.top-bar{position:sticky;top:0;z-index:50;background:rgba(8,8,16,.96);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);padding:max(14px,env(safe-area-inset-top)) 16px 13px;
+  display:flex;align-items:center;gap:10px;flex-shrink:0}
+[data-theme="light"] .top-bar{background:rgba(250,248,245,.96)}
+.top-bar-title{font-family:'Manrope',sans-serif;font-size:17px;font-weight:800;flex:1}
+.top-back{width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.top-back svg{width:18px;height:18px;stroke:var(--text);fill:none;stroke-width:2}
+.icon-btn{width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0}
+.icon-btn svg{width:18px;height:18px;stroke:var(--text);fill:none;stroke-width:1.8}
+.notif-dot{position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;
+  background:var(--ruby);border:1.5px solid var(--base)}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6d28d9,#ec4899);
+  border:2px solid rgba(16,185,129,.45);cursor:pointer;flex-shrink:0}
+
+/* ── SHARED SECTION ── */
+.sec{padding:22px 16px 10px;display:flex;align-items:center;justify-content:space-between}
+.sec-title{font-family:'Manrope',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.35px}
+.sec-link{font-size:13px;font-weight:700;color:var(--purple);cursor:pointer;white-space:nowrap}
+
+/* ── SCROLL ROWS ── */
+.scroll-row{display:flex;gap:12px;padding:0 16px;overflow-x:auto;overscroll-behavior-x:contain}
+.scroll-row::-webkit-scrollbar{display:none}
+
+/* ── EXPERIENCE CARDS ── */
+.exp-card{flex-shrink:0;width:220px;border-radius:16px;background:var(--surface);
+  border:1px solid var(--border2);overflow:hidden;cursor:pointer;position:relative}
+.exp-img{height:130px;background-size:cover;background-position:center;position:relative}
+.exp-chips{position:absolute;top:8px;left:8px;display:flex;gap:5px;flex-wrap:wrap}
+.exp-fav{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;
+  background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+.exp-fav svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:2;transition:all .15s}
+.exp-fav.on svg{fill:#e11d48;stroke:#e11d48}
+.exp-body{padding:10px 11px 12px}
+.exp-cat{font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;margin-bottom:3px}
+.exp-title{font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;line-height:1.25;margin-bottom:6px;color:var(--text)}
+.exp-row{display:flex;align-items:center;justify-content:space-between}
+.exp-rating{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text2)}
+.exp-price{font-family:'DM Mono',monospace;font-size:12.5px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--text)}
+
+/* ── CHIPS ── */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:7px;
+  font-family:'Manrope',sans-serif;font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
+.chip-v{background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.3);color:#4ade80}
+.chip-ex{background:rgba(168,85,247,.18);border:1px solid rgba(168,85,247,.4);color:#a855f7}
+.chip-free{background:rgba(245,158,11,.16);border:1px solid rgba(245,158,11,.3);color:#f59e0b}
+.chip-pet{background:rgba(251,113,133,.13);border:1px solid rgba(251,113,133,.3);color:#fb7185}
+
+/* ── GRID CARDS (Explore, Category, Members) ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px}
+.grid-card{border-radius:16px;background:var(--surface);border:1px solid var(--border2);overflow:hidden;cursor:pointer;position:relative}
+.grid-img{height:110px;background-size:cover;background-position:center;position:relative}
+.grid-body{padding:9px 10px 11px}
+
+/* ── CATEGORY GRID ── */
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 16px}
+.cat-tile{border-radius:14px;overflow:hidden;cursor:pointer;position:relative;height:80px;
+  display:flex;align-items:flex-end;padding:8px}
+.cat-tile-name{font-family:'Manrope',sans-serif;font-size:11px;font-weight:800;color:#fff;
+  position:relative;z-index:1;line-height:1.2}
+
+/* ── CTA BUTTON ── */
+.btn-cta{width:100%;padding:16px;border-radius:14px;background:var(--cta);border:none;
+  font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer;letter-spacing:-.1px}
+.btn-ghost{width:100%;padding:15px;border-radius:14px;background:var(--surface2);
+  border:1px solid var(--border2);font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;color:var(--text);cursor:pointer}
+
+/* ── VIBE PILLS ── */
+.vibe-row{display:flex;gap:8px;padding:0 16px 4px;overflow-x:auto}
+.vibe-row::-webkit-scrollbar{display:none}
+.vibe-pill{flex-shrink:0;padding:7px 14px;border-radius:50px;border:1px solid var(--border2);
+  background:var(--surface);font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;white-space:nowrap;color:var(--text2)}
+.vibe-pill.on{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.45);color:var(--purple)}
+
+/* ── MEMBERS BANNER ── */
+.members-banner{margin:0 16px;border-radius:20px;overflow:hidden;position:relative;cursor:pointer;
+  height:150px;display:flex;align-items:flex-end;background:#0c0820}
+.members-bg{position:absolute;inset:0;background:linear-gradient(135deg,#2d1b69,#6d28d9,#a855f7);opacity:.55}
+.members-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.6),transparent)}
+.members-content{position:relative;z-index:2;padding:16px 18px;width:100%;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.members-eyebrow{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:50px;
+  background:rgba(168,85,247,.20);border:1px solid rgba(168,85,247,.45);
+  font-size:9px;font-weight:800;font-family:'Manrope',sans-serif;color:var(--amethyst);
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
+.members-title{font-family:'Instrument Serif',serif;font-style:italic;font-size:22px;color:#fff;line-height:1.2}
+.members-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:3px}
+.members-btn{padding:9px 16px;border-radius:50px;background:var(--cta);font-family:'Manrope',sans-serif;
+  font-size:11px;font-weight:800;color:#fff;cursor:pointer;border:none;flex-shrink:0}
+
+/* ── SURPRISE CARD ── */
+.surprise-card{margin:0 16px 4px;border-radius:18px;overflow:hidden;position:relative;cursor:pointer;
+  height:100px;background:linear-gradient(135deg,#0d0020,#1a0040,#0a1830)}
+.surprise-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0f0f1a,#1e1b4b,#312e81);opacity:.6}
+.surprise-content{position:relative;z-index:2;padding:14px 18px;height:100%;
+  display:flex;align-items:center;justify-content:space-between}
+.surprise-eyebrow{font-size:9px;font-weight:800;font-family:'Manrope',sans-serif;
+  text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.45)}
+.surprise-title{font-family:'Instrument Serif',serif;font-style:italic;font-size:20px;color:#fff;line-height:1.15}
+.surprise-btn{padding:9px 16px;border-radius:30px;background:var(--cta);font-family:'Manrope',sans-serif;
+  font-size:11px;font-weight:800;color:#fff;cursor:pointer;border:none;flex-shrink:0}
+
+/* ── COLLECTION CARDS ── */
+.col-card{flex-shrink:0;width:220px;border-radius:16px;background:var(--surface);
+  border:1px solid var(--border2);overflow:hidden;cursor:pointer;position:relative}
+.col-img{height:130px;background-size:cover;background-position:center}
+.col-body{padding:10px 11px 12px}
+.col-title{font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;color:var(--text);
+  line-height:1.25;margin-bottom:3px}
+.col-desc{font-size:11px;color:var(--text2);line-height:1.35}
+
+/* ── DETAIL SCREEN ── */
+.detail-hero{height:260px;position:relative;background-size:cover;background-position:center}
+.detail-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,16,1) 0%,transparent 50%)}
+.detail-hero-btns{position:absolute;top:max(14px,env(safe-area-inset-top));left:16px;right:16px;
+  display:flex;justify-content:space-between;align-items:center}
+.detail-hero-btn{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.6);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+.detail-hero-btn svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2}
+.detail-body{padding:0 16px 120px}
+.detail-cat{font-size:10px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;margin-bottom:5px;margin-top:16px}
+.detail-title{font-family:'Manrope',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;
+  margin-bottom:6px;line-height:1.2}
+.detail-host{font-size:13px;color:var(--text2);margin-bottom:12px}
+.detail-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.detail-rating{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:13px;color:var(--text2)}
+.detail-section{margin-bottom:20px}
+.detail-section-title{font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;
+  margin-bottom:10px;color:var(--text)}
+.detail-desc{font-size:13.5px;color:var(--text2);line-height:1.6}
+.include-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:13px;color:var(--text2)}
+.include-check{color:var(--green);font-weight:800;flex-shrink:0;margin-top:1px}
+.detail-sticky{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--base);border-top:1px solid var(--border);
+  padding:12px 16px max(16px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px}
+.detail-price-block{flex:1}
+.detail-from{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.detail-amount{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--text)}
+.detail-book-btn{flex:2;padding:15px;border-radius:14px;background:var(--cta);border:none;
+  font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer}
+.detail-plans-btn{flex:1;padding:15px;border-radius:14px;background:var(--surface2);
+  border:1px solid var(--border2);font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;
+  color:var(--text);cursor:pointer}
+
+/* ── BOOKING FLOW ── */
+.booking-wrap{padding:16px 16px 120px}
+.booking-step-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;
+  letter-spacing:.8px;margin-bottom:16px}
+.booking-step-dots{display:flex;gap:5px;margin-bottom:20px}
+.step-dot{height:4px;flex:1;border-radius:2px;background:var(--border2)}
+.step-dot.done{background:var(--emerald)}
+.step-dot.on{background:var(--purple)}
+.booking-mini{display:flex;gap:12px;padding:12px;border-radius:14px;background:var(--surface);
+  border:1px solid var(--border2);margin-bottom:20px;align-items:center}
+.booking-mini-img{width:50px;height:50px;border-radius:10px;flex-shrink:0}
+.booking-mini-title{font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;color:var(--text)}
+.booking-mini-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.booking-section-title{font-family:'Manrope',sans-serif;font-size:15px;font-weight:800;margin-bottom:12px}
+/* Calendar */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-month{font-family:'Manrope',sans-serif;font-size:14px;font-weight:800}
+.cal-nav{width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cal-nav svg{width:14px;height:14px;fill:none;stroke:var(--text);stroke-width:2}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:20px}
+.cal-day-label{text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:4px 0}
+.cal-day{text-align:center;padding:8px 2px;font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;color:var(--text2)}
+.cal-day.today{color:var(--purple);font-weight:800}
+.cal-day.sel{background:var(--cta);color:#fff;font-weight:800}
+.cal-day.past{color:var(--text3);cursor:default}
+.cal-day.sold{color:var(--text3);cursor:default;text-decoration:line-through}
+.cal-day.avail:hover{background:var(--surface2)}
+/* Time slots */
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+.time-slot{padding:10px 8px;border-radius:12px;background:var(--surface);border:1px solid var(--border2);
+  text-align:center;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:var(--text2)}
+.time-slot.sel{background:rgba(139,92,246,.15);border-color:var(--purple);color:var(--purple)}
+.time-slot.sold{color:var(--text3);cursor:default;text-decoration:line-through}
+/* Guests */
+.guest-counter{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;
+  border-radius:14px;background:var(--surface);border:1px solid var(--border2);margin-bottom:16px}
+.guest-info{font-family:'Manrope',sans-serif;font-size:14px;font-weight:700}
+.guest-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.counter-row{display:flex;align-items:center;gap:12px}
+.counter-btn{width:32px;height:32px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:800;color:var(--text)}
+.counter-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;min-width:24px;text-align:center}
+/* Add-ons */
+.addon-card{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;
+  border-radius:14px;background:var(--surface);border:1px solid var(--border2);margin-bottom:8px;cursor:pointer}
+.addon-info{flex:1}
+.addon-title{font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;color:var(--text)}
+.addon-desc{font-size:11px;color:var(--text2);margin-top:2px}
+.addon-price{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--text);margin:0 12px}
+.addon-toggle{width:22px;height:22px;border-radius:6px;border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.addon-toggle.on{background:var(--purple);border-color:var(--purple)}
+.addon-toggle.on::after{content:'✓';color:#fff;font-size:12px;font-weight:800}
+/* Special requests */
+.special-textarea{width:100%;padding:12px 14px;border-radius:14px;background:var(--surface);
+  border:1px solid var(--border2);color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;
+  resize:none;outline:none;line-height:1.5}
+/* Summary rows */
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;
+  border-bottom:1px solid var(--border)}
+.summary-label{font-size:13px;color:var(--text2)}
+.summary-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--text);font-variant-numeric:tabular-nums}
+.summary-total{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--text);font-variant-numeric:tabular-nums}
+/* Payment */
+.pay-tabs{display:flex;gap:6px;margin-bottom:16px}
+.pay-tab{flex:1;padding:10px 8px;border-radius:12px;background:var(--surface);border:1px solid var(--border2);
+  font-family:'Manrope',sans-serif;font-size:11px;font-weight:800;cursor:pointer;color:var(--text2);text-align:center}
+.pay-tab.on{background:rgba(139,92,246,.14);border-color:var(--purple);color:var(--purple)}
+.pay-input{width:100%;padding:13px 14px;border-radius:12px;background:var(--surface);
+  border:1px solid var(--border2);color:var(--text);font-family:'DM Mono',monospace;font-size:14px;
+  outline:none;margin-bottom:10px}
+.pay-input::placeholder{color:var(--text3);font-family:'Manrope',sans-serif;font-size:13px}
+.pay-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pay-alt-btn{width:100%;padding:15px;border-radius:14px;background:var(--surface);
+  border:1px solid var(--border2);font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;
+  color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px}
+/* Sticky booking bar */
+.booking-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--base);border-top:1px solid var(--border);
+  padding:12px 16px max(20px,env(safe-area-inset-bottom))}
+.booking-bar-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;color:var(--text2)}
+.booking-bar-amount{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--text)}
+
+/* ── CONFIRMATION ── */
+.confirm-wrap{display:flex;flex-direction:column;align-items:center;padding:40px 24px max(40px,env(safe-area-inset-bottom));min-height:100vh}
+.confirm-check{width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,.15);
+  border:2px solid rgba(34,197,94,.4);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.confirm-check svg{width:34px;height:34px;stroke:var(--green);fill:none;stroke-width:2.5}
+.confirm-title{font-family:'Manrope',sans-serif;font-size:26px;font-weight:800;text-align:center;margin-bottom:6px}
+.confirm-sub{font-size:14px;color:var(--text2);text-align:center;margin-bottom:24px}
+.confirm-card{width:100%;border-radius:20px;background:var(--surface);border:1px solid var(--border2);
+  overflow:hidden;margin-bottom:20px}
+.confirm-card-img{height:120px;background-size:cover;background-position:center}
+.confirm-card-body{padding:16px}
+.confirm-ref{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:4px}
+.confirm-exp-title{font-family:'Manrope',sans-serif;font-size:17px;font-weight:800;margin-bottom:4px}
+.confirm-detail-row{display:flex;gap:16px;font-size:12px;color:var(--text2);margin-top:8px;flex-wrap:wrap}
+.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:16px}
+.confirm-share-row{display:flex;gap:10px;justify-content:center;width:100%;flex-wrap:wrap}
+.confirm-share-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 16px;
+  border-radius:12px;background:var(--surface);border:1px solid var(--border2);cursor:pointer;
+  font-size:10px;font-weight:700;color:var(--text2)}
+.confirm-share-btn svg{width:20px;height:20px}
+
+/* ── MY PLANS ── */
+.plan-tabs{display:flex;padding:0 16px;gap:8px;margin-bottom:4px}
+.plan-tab{flex:1;padding:10px;border-radius:12px;background:var(--surface);border:1px solid var(--border2);
+  font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;cursor:pointer;color:var(--text2);text-align:center}
+.plan-tab.on{background:rgba(139,92,246,.14);border-color:var(--purple);color:var(--purple)}
+.plan-card{margin:0 16px 10px;border-radius:16px;background:var(--surface);border:1px solid var(--border2);
+  overflow:hidden;cursor:pointer;display:flex;gap:0}
+.plan-card-img{width:80px;height:80px;flex-shrink:0;background-size:cover;background-position:center}
+.plan-card-body{flex:1;padding:12px}
+.plan-card-title{font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px}
+.plan-card-meta{font-size:11px;color:var(--text2);margin-bottom:6px}
+.plan-card-status{display:inline-flex;padding:2px 8px;border-radius:5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.status-confirmed{background:rgba(34,197,94,.15);color:var(--green)}
+.status-pending{background:rgba(245,158,11,.15);color:var(--amber)}
+.status-past{background:var(--surface2);color:var(--text3)}
+
+/* ── PROFILE ── */
+.profile-hero{padding:24px 16px 20px;display:flex;flex-direction:column;align-items:center;
+  border-bottom:1px solid var(--border)}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#6d28d9,#ec4899);
+  border:3px solid rgba(16,185,129,.4);margin-bottom:12px}
+.profile-name{font-family:'Manrope',sans-serif;font-size:20px;font-weight:800;margin-bottom:2px}
+.profile-tier-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:50px;
+  background:var(--tier-bg);border:1px solid var(--tier-border);
+  font-family:'Manrope',sans-serif;font-size:11px;font-weight:800;color:var(--tier);margin-bottom:16px}
+.profile-stats{display:flex;gap:24px}
+.profile-stat{text-align:center}
+.profile-stat-n{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--text)}
+.profile-stat-label{font-size:10px;color:var(--text3);margin-top:1px}
+.profile-section{padding:16px;border-bottom:1px solid var(--border)}
+.profile-section-title{font-family:'Manrope',sans-serif;font-size:12px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:10px}
+.profile-row{display:flex;align-items:center;padding:11px 0;cursor:pointer;gap:12px}
+.profile-row-icon{width:32px;height:32px;border-radius:10px;background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.profile-row-icon svg{width:15px;height:15px;stroke:var(--text2);fill:none;stroke-width:2}
+.profile-row-label{flex:1;font-family:'Manrope',sans-serif;font-size:14px;font-weight:600;color:var(--text)}
+.profile-row-sub{font-size:11px;color:var(--text3)}
+.profile-row-arrow{color:var(--text3)}
+.profile-row-arrow svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ── REWARDS ── */
+.rewards-hero{margin:16px 16px 0;border-radius:20px;padding:20px;
+  background:var(--surface);border:1px solid var(--tier-border);
+  background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(139,92,246,.05));position:relative;overflow:hidden}
+.rewards-eyebrow{font-size:9.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--tier);margin-bottom:6px}
+.rewards-pts{font-family:'DM Mono',monospace;font-size:40px;font-weight:500;color:var(--text);line-height:1}
+.rewards-pts-label{font-size:12px;color:var(--text2);margin-top:4px}
+.rewards-progress{margin-top:14px}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:6px}
+.progress-bar{height:5px;border-radius:3px;background:var(--border2);overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--emerald),var(--teal));width:66%}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-top:10px}
+.stat-card{padding:14px 12px;border-radius:14px;background:var(--surface);border:1px solid var(--border2);cursor:pointer}
+.stat-num{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;margin-bottom:4px}
+.stat-num.emerald{color:var(--emerald)}.stat-num.amethyst{color:var(--amethyst)}.stat-num.ruby{color:var(--ruby)}
+.stat-label{font-size:9.5px;color:var(--text2);line-height:1.3}
+.redeem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:0 16px}
+.redeem-card{border-radius:13px;background:var(--surface);border:1px solid var(--border2);overflow:hidden;cursor:pointer}
+.redeem-img{height:78px;background-size:cover;background-position:center}
+.redeem-body{padding:9px}
+.redeem-title{font-family:'Manrope',sans-serif;font-size:11px;font-weight:800;line-height:1.3;margin-bottom:5px;min-height:28px}
+.redeem-pts{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--tier)}
+.tier-card{border-radius:16px;background:var(--surface);border:1px solid var(--border2);
+  margin:0 16px 8px;overflow:hidden}
+.tier-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer}
+.tier-info{flex:1}
+.tier-name{font-family:'Manrope',sans-serif;font-size:16px;font-weight:800}
+.tier-qe{font-size:11px;color:var(--text2);margin-top:2px}
+.tier-arrow{font-size:12px;color:var(--text3);transition:transform .2s}
+.tier-arrow.open{transform:rotate(180deg)}
+.tier-body{padding:0 16px 14px;display:none}
+.tier-body.open{display:block}
+.tier-benefit{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:12px;color:var(--text2)}
+.earn-row{display:flex;align-items:center;gap:12px;padding:13px;border-radius:14px;
+  background:var(--surface);border:1px solid var(--border);cursor:pointer;margin:0 16px 7px}
+.earn-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.earn-icon.purple{background:rgba(168,85,247,.15)}
+.earn-icon.emerald{background:rgba(16,185,129,.15)}
+.earn-icon.ruby{background:rgba(225,29,72,.15)}
+.earn-icon.amber{background:rgba(245,158,11,.15)}
+.earn-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.earn-icon.purple{color:var(--purple)}.earn-icon.emerald{color:var(--emerald)}
+.earn-icon.ruby{color:var(--ruby)}.earn-icon.amber{color:var(--amber)}
+.earn-title{font-family:'Manrope',sans-serif;font-size:13px;font-weight:800}
+.earn-desc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.35}
+.earn-mult{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--tier);flex-shrink:0}
+.ledger-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:12px;
+  background:var(--surface);border:1px solid var(--border);cursor:pointer;margin:0 16px 6px}
+.ledger-img{width:38px;height:38px;border-radius:10px;flex-shrink:0}
+.ledger-title{font-family:'Manrope',sans-serif;font-size:12.5px;font-weight:700}
+.ledger-date{font-size:10.5px;color:var(--text3);margin-top:1px}
+.ledger-status{font-size:9px;color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.ledger-amt{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--green);flex-shrink:0}
+.ledger-amt.minus{color:var(--text2)}
+.ledger-amt.pending{color:var(--amber)}
+.footer-note{padding:16px;font-size:11px;color:var(--text3);text-align:center;line-height:1.5}
+
+/* ── NOTIFICATIONS ── */
+.notif-row{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+.notif-icon{width:40px;height:40px;border-radius:50%;background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.notif-title{font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;color:var(--text);margin-bottom:2px}
+.notif-body{font-size:11.5px;color:var(--text2);line-height:1.4;margin-bottom:3px}
+.notif-time{font-size:10px;color:var(--text3)}
+.notif-unread .notif-title::after{content:'';display:inline-block;width:6px;height:6px;
+  border-radius:50%;background:var(--purple);margin-left:6px;vertical-align:middle}
+
+/* ── SETTINGS ── */
+.settings-section{padding:16px;border-bottom:1px solid var(--border)}
+.settings-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--text3);margin-bottom:10px}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer}
+.settings-row:last-child{border-bottom:none}
+.settings-row-left{flex:1}
+.settings-row-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:1px}
+.settings-row-sub{font-size:11px;color:var(--text3)}
+.toggle{width:42px;height:24px;border-radius:12px;background:var(--border2);position:relative;
+  cursor:pointer;flex-shrink:0;transition:background .2s}
+.toggle.on{background:var(--emerald)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;
+  border-radius:50%;background:#fff;transition:transform .2s}
+.toggle.on::after{transform:translateX(18px)}
+
+/* ── SEARCH / EXPLORE ── */
+.search-bar{margin:12px 16px;border-radius:14px;background:var(--surface);
+  border:1px solid var(--border2);display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:text}
+.search-bar svg{width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0}
+.search-bar input{flex:1;background:none;border:none;outline:none;font-family:'Manrope',sans-serif;
+  font-size:14px;color:var(--text)}
+.search-bar input::placeholder{color:var(--text3)}
+.filter-chips{display:flex;gap:7px;padding:4px 16px 8px;overflow-x:auto}
+.filter-chips::-webkit-scrollbar{display:none}
+.filter-chip{flex-shrink:0;padding:6px 13px;border-radius:50px;border:1px solid var(--border2);
+  background:var(--surface);font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;white-space:nowrap;color:var(--text2)}
+.filter-chip.on{background:rgba(139,92,246,.15);border-color:var(--purple);color:var(--purple)}
+
+/* ── EMPTY STATE ── */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 32px;text-align:center;gap:12px}
+.empty-state svg{width:48px;height:48px;stroke:var(--text3);fill:none;stroke-width:1.5}
+.empty-title{font-family:'Manrope',sans-serif;font-size:17px;font-weight:800;color:var(--text)}
+.empty-sub{font-size:13px;color:var(--text2);line-height:1.5}
+
+/* ── MISC ── */
+.pts-pill{display:flex;align-items:center;gap:5px;padding:7px 11px;border-radius:14px;
+  background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.30);cursor:pointer;flex-shrink:0}
+.pts-star{color:var(--emerald);font-size:11px}
+.pts-val{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--text)}
+.pts-tier{font-family:'Manrope',sans-serif;font-size:10px;font-weight:800;color:var(--tier)}
+.greeting-eyebrow{font-size:11px;color:var(--text3);margin-bottom:3px}
+.greeting{font-family:'Instrument Serif',serif;font-style:italic;font-size:24px;color:var(--text);
+  background:var(--brand);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+</style>
+
+<div id="wtm-app">
+  <div id="screen"></div>
+  <nav class="bottom-nav" id="bottom-nav"></nav>
+</div>
+
+<div id="toast" style="position:fixed;bottom:max(88px,calc(78px + env(safe-area-inset-bottom)));left:50%;transform:translateX(-50%) translateY(20px);background:rgba(15,15,26,.97);color:#fff;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;padding:10px 20px;border-radius:50px;border:1px solid rgba(255,255,255,.12);white-space:nowrap;z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;backdrop-filter:blur(24px);max-width:88vw;overflow:hidden;text-overflow:ellipsis;"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATA LAYER
+// ─────────────────────────────────────────────
+const CATS = {
+  dining:    {label:'Dining',        color:'#a855f7', grad:'linear-gradient(135deg,#3b0764,#6d28d9,#a855f7)', img:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=80'},
+  offshore:  {label:'Offshore',      color:'#14b8a6', grad:'linear-gradient(135deg,#042f2e,#0f766e,#14b8a6)', img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80'},
+  arts:      {label:'Arts & Music',  color:'#ec4899', grad:'linear-gradient(135deg,#500724,#be185d,#ec4899)', img:'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=600&q=80'},
+  adventure: {label:'Adventure',     color:'#f59e0b', grad:'linear-gradient(135deg,#451a03,#b45309,#f59e0b)', img:'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=600&q=80'},
+  wellness:  {label:'Wellness',      color:'#22c55e', grad:'linear-gradient(135deg,#052e16,#166534,#22c55e)', img:'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80'},
+  outside:   {label:'Outside',       color:'#6366f1', grad:'linear-gradient(135deg,#1e1b4b,#3730a3,#6366f1)', img:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=600&q=80'},
+  kids:      {label:'Kid-Friendly',  color:'#f59e0b', grad:'linear-gradient(135deg,#451a03,#92400e,#fbbf24)', img:'https://images.unsplash.com/photo-1569587112025-0d460e81a126?auto=format&fit=crop&w=600&q=80'},
+  pets:      {label:'Pet-Friendly',  color:'#14b8a6', grad:'linear-gradient(135deg,#042f2e,#0f766e,#14b8a6)', img:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=600&q=80'},
+};
+
+const EXP = [
+  {id:'e01',title:'Private Chef Tasting',category:'dining',city:'Los Angeles',host:'Chef Marcus Webb',
+   grad:'linear-gradient(135deg,#3b0764,#6d28d9,#a855f7)',price:185,rating:4.9,reviews:142,duration:180,
+   free:false,exclusive:false,sbiz:true,bipoc:true,women:false,pet:false,kid:false,
+   vibes:['date-night','celebration'],cancel:'flexible',verify:'none',img:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'An intimate 6-course tasting menu prepared in your home by Michelin-trained Chef Marcus Webb. Each course paired with a curated natural wine.',
+   includes:['6-course tasting menu','Natural wine pairings','Full kitchen cleanup','Printed recipe cards'],
+   addons:['wine','flowers','photo']},
+  {id:'e02',title:'Sunset Jet Ski Tour',category:'offshore',city:'Miami',host:'Captain Tanya Rhodes',
+   grad:'linear-gradient(160deg,#042f2e,#0f766e,#2dd4bf)',price:145,rating:4.8,reviews:98,duration:90,
+   free:false,exclusive:false,sbiz:true,bipoc:false,women:true,pet:false,kid:false,
+   vibes:['thrill','date-night','group'],cancel:'standard',verify:'identity',img:'https://images.unsplash.com/photo-1530053969600-caed2596d242?auto=format&fit=crop&w=800&q=80',
+   waiver:true,
+   desc:'Race across Biscayne Bay as the sun drops below the horizon. Captain Tanya leads a guided route past Star Island with breathtaking skyline views.',
+   includes:['Safety briefing and equipment','Guided 90-minute route','GoPro footage included','Post-tour drinks at the dock'],
+   addons:['gopro','champagne']},
+  {id:'e03',title:'Rooftop Glassblowing Class',category:'arts',city:'Chicago',host:'Studio 1871',
+   grad:'linear-gradient(120deg,#500724,#9d174d,#f472b6)',price:120,rating:4.9,reviews:211,duration:120,
+   free:false,exclusive:false,sbiz:true,bipoc:false,women:true,pet:false,kid:false,
+   vibes:['date-night','celebration','group'],cancel:'flexible',verify:'none',img:'https://images.unsplash.com/photo-1607344645866-009c320b63e0?auto=format&fit=crop&w=800&q=80',
+   waiver:true,
+   desc:'Shape molten glass into a custom piece you take home. Studio 1871 rooftop overlooks the Chicago skyline. No experience needed.',
+   includes:['All materials and tools','Instructor guidance throughout','Your finished glass piece','Photos during the session'],
+   addons:['photo','champagne']},
+  {id:'e04',title:'Cliffside Sunrise Hike',category:'adventure',city:'Los Angeles',host:'Wild Trails Co.',
+   grad:'linear-gradient(145deg,#451a03,#92400e,#fbbf24)',price:65,rating:4.8,reviews:334,duration:150,
+   free:false,exclusive:false,sbiz:true,bipoc:true,women:false,pet:true,kid:false,
+   vibes:['thrill','solo-reset','group'],cancel:'flexible',verify:'none',img:'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'A pre-dawn guided hike up to the Backbone Trail as the city wakes below. Small groups of 8 max. Coffee and breakfast tacos at the summit.',
+   includes:['Expert guide','Summit breakfast','Headlamps provided','Trail snacks'],
+   addons:['photo']},
+  {id:'e05',title:'Forest Bathing and Sound Bath',category:'wellness',city:'San Francisco',host:'Elemental Wellness',
+   grad:'linear-gradient(155deg,#052e16,#166534,#4ade80)',price:95,rating:4.7,reviews:87,duration:120,
+   free:false,exclusive:false,sbiz:true,bipoc:true,women:true,pet:false,kid:false,
+   vibes:['solo-reset','date-night'],cancel:'standard',verify:'none',img:'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'Two-hour immersive experience combining Japanese shinrin-yoku forest bathing with a live Tibetan singing bowl ceremony. Set in Muir Woods.',
+   includes:['Guided forest walk','30-min sound bath ceremony','Herbal tea and journaling prompt','Take-home botanicals'],
+   addons:['flowers']},
+  {id:'e06',title:'Supercar Track Day',category:'adventure',city:'Dallas',host:'Apex Motorsport',
+   grad:'linear-gradient(130deg,#3b0764,#7c3aed,#c084fc)',price:550,rating:4.9,reviews:67,duration:240,
+   free:false,exclusive:true,sbiz:false,bipoc:false,women:false,pet:false,kid:false,
+   vibes:['thrill','celebration'],cancel:'non_refundable',verify:'driver',img:'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80',
+   waiver:true,
+   desc:'Three hours of supervised hot laps in a Lamborghini Huracán or Ferrari F8 at the Circuit of the Americas. Professional instructor rides shotgun.',
+   includes:['2 cars to choose from','3 supervised track sessions','Pro instructor coaching','Helmet and gear','HD video of your laps'],
+   addons:['video','photo']},
+  {id:'e07',title:'Late Night Ramen Pop-Up',category:'dining',city:'New York',host:'Yuki Tanaka',
+   grad:'linear-gradient(140deg,#042f2e,#115e59,#14b8a6)',price:85,rating:4.8,reviews:173,duration:90,
+   free:false,exclusive:false,sbiz:true,bipoc:true,women:false,pet:false,kid:false,
+   vibes:['date-night','group','last-minute'],cancel:'flexible',verify:'none',img:'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'Chef Yuki underground ramen experience in a candlelit SoHo loft. The 48-hour tonkotsu broth has a cult following. Seating for 12.',
+   includes:['3-course ramen menu','Sake pairing','Fermented side selection','Dessert mochi'],
+   addons:['sake','dessert']},
+  {id:'e08',title:'Private Island Day Trip',category:'offshore',city:'Miami',host:'Blue Horizon Charters',
+   grad:'linear-gradient(165deg,#0c4a6e,#0369a1,#38bdf8)',price:420,rating:5.0,reviews:41,duration:480,
+   free:false,exclusive:true,sbiz:true,bipoc:false,women:false,pet:false,kid:false,
+   vibes:['celebration','date-night','group'],cancel:'non_refundable',verify:'none',img:'https://images.unsplash.com/photo-1559494007-9f5847c49d94?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'A full day charter to a private sandbar off the Florida Keys. Your group of up to 10 gets the island to yourselves, with catered lunch and open bar.',
+   includes:['Private yacht charter','Catered lunch and open bar','Snorkel gear','Paddleboards and kayaks','Sunset return cruise'],
+   addons:['photo','champagne']},
+  {id:'e09',title:'Morning Yoga in the Park',category:'wellness',city:'Los Angeles',host:'Luz Collective',
+   grad:'linear-gradient(130deg,#052e16,#166534,#86efac)',price:0,rating:4.6,reviews:512,duration:60,
+   free:true,exclusive:false,sbiz:true,bipoc:true,women:true,pet:true,kid:true,
+   vibes:['solo-reset','family'],cancel:'free',verify:'none',img:'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'A free community yoga flow in Griffith Park every Sunday morning. All levels welcome. Bring your mat and a reusable water bottle.',
+   includes:['Guided 60-min flow','Community cool-down','Optional post-class coffee walk'],
+   addons:[]},
+  {id:'e10',title:'Gallery Opening, Tanya Brooks',category:'arts',city:'Atlanta',host:'Spelman Arts',
+   grad:'linear-gradient(145deg,#500724,#be185d,#f9a8d4)',price:0,rating:4.7,reviews:89,duration:120,
+   free:true,exclusive:false,sbiz:true,bipoc:true,women:true,pet:false,kid:true,
+   vibes:['date-night','solo-reset','group'],cancel:'free',verify:'none',img:'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'Opening night for Tanya Brooks debut solo exhibition, "What the Light Carries." Complimentary wine and light bites. Artist talk at 7pm.',
+   includes:['Free entry','Complimentary wine and bites','Artist Q&A at 7pm'],
+   addons:[]},
+  {id:'e11',title:'Outdoor Jazz in the Courtyard',category:'arts',city:'New Orleans',host:'Frenchmen Arts Collective',
+   grad:'linear-gradient(120deg,#500724,#9d174d,#ec4899)',price:0,rating:4.8,reviews:203,duration:180,
+   free:true,exclusive:false,sbiz:true,bipoc:true,women:false,pet:true,kid:true,
+   vibes:['date-night','group','family'],cancel:'free',verify:'none',img:'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'Live jazz every Thursday evening in the open-air courtyard of the Frenchmen Arts Collective. Local food trucks on site. Bring a blanket.',
+   includes:['Free entry','Live jazz performance','Food truck access','Open to all ages'],
+   addons:[]},
+  {id:'e12',title:'Mushroom Foraging Tour',category:'outside',city:'Portland',host:'Pacific Forage',
+   grad:'linear-gradient(150deg,#1e3a1e,#2d6a2d,#4ade80)',price:75,rating:4.9,reviews:156,duration:180,
+   free:false,exclusive:false,sbiz:true,bipoc:false,women:true,pet:true,kid:false,
+   vibes:['solo-reset','group'],cancel:'flexible',verify:'none',img:'https://images.unsplash.com/photo-1553361371-9b09f4155b81?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'A three-hour guided forage through the Tualatin Mountains with mycologist Sara Chen. Learn to identify chanterelles, oysters, and porcini.',
+   includes:['Expert mycologist guide','Foraging basket provided','Plant and fungi ID handbook','Post-forage cooking demo'],
+   addons:['photo']},
+  {id:'e13',title:'Pottery Wheel Intensive',category:'arts',city:'Brooklyn',host:'Clay and Co.',
+   grad:'linear-gradient(135deg,#500724,#be185d,#fb7185)',price:110,rating:4.8,reviews:94,duration:150,
+   free:false,exclusive:false,sbiz:true,bipoc:true,women:true,pet:false,kid:false,
+   vibes:['date-night','solo-reset'],cancel:'flexible',verify:'none',img:'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'A 2.5-hour wheel-throwing session in a Williamsburg studio. Make two pieces to take home once fired. Taught by Brooklyn ceramicist Dara Obi.',
+   includes:['All clay and tools','Glazing session','Two fired pieces shipped to you','Studio playlist by Dara'],
+   addons:['photo','champagne']},
+  {id:'e14',title:'Taco Tour, East LA',category:'dining',city:'Los Angeles',host:'Eat the City',
+   grad:'linear-gradient(160deg,#3b0764,#7c3aed,#a78bfa)',price:55,rating:4.9,reviews:388,duration:120,
+   free:false,exclusive:false,sbiz:true,bipoc:true,women:false,pet:false,kid:true,
+   vibes:['group','family','last-minute'],cancel:'flexible',verify:'none',img:'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'Eight stops across East LA best taco stands, guided by third-generation Eastside native Carlos Vega. No menus, no choices, just the best thing they make that day.',
+   includes:['8 tasting stops','Local guide','Horchata and agua fresca','Tortilleria visit'],
+   addons:[]},
+  {id:'e15',title:'Rooftop Yoga, Sunset Flow',category:'wellness',city:'New York',host:'Sky Practice',
+   grad:'linear-gradient(140deg,#052e16,#166534,#22c55e)',price:40,rating:4.7,reviews:267,duration:75,
+   free:false,exclusive:false,sbiz:true,bipoc:false,women:true,pet:false,kid:false,
+   vibes:['solo-reset','date-night'],cancel:'flexible',verify:'none',img:'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'A 75-minute vinyasa flow on a Lower East Side rooftop as the city turns golden. Mats, blocks, and straps provided.',
+   includes:['Mat and props provided','75-min guided flow','Post-class tea service','Skyline views'],
+   addons:['champagne']},
+  {id:'e16',title:'Private Sommelier Wine Tasting',category:'dining',city:'Napa',host:'Cellar Social',
+   grad:'linear-gradient(120deg,#3b0764,#6d28d9,#c084fc)',price:130,rating:4.8,reviews:115,duration:120,
+   free:false,exclusive:false,sbiz:true,bipoc:false,women:true,pet:false,kid:false,
+   vibes:['date-night','celebration'],cancel:'standard',verify:'age_21',img:'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80',
+   waiver:false,
+   desc:'A private sit-down tasting of six Napa Valley wines guided by sommelier Priya Agarwal. Learn to read a label, identify varietals, and pair like a pro.',
+   includes:['6 curated pours','Cheese and charcuterie board','Tasting notes to keep','Bottle recommendation list'],
+   addons:['flowers','photo']},
+  {id:'e17',title:'Axe Throwing League Night',category:'adventure',city:'Chicago',host:'Hatchet Club',
+   grad:'linear-gradient(150deg,#451a03,#b45309,#fcd34d)',price:50,rating:4.6,reviews:441,duration:90,
+   free:false,exclusive:false,sbiz:true,bipoc:false,women:false,pet:false,kid:false,
+   vibes:['group','thrill','last-minute'],cancel:'flexible',verify:'none',img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80',
+   waiver:true,
+   desc:'Coached axe throwing followed by a 3-round tournament with a prize for the winner. Private lane for your group. Bar on site.',
+   includes:['Certified coach','90 min of throwing','Tournament bracket','Trophy for winner'],
+   addons:['drinks']},
+  {id:'e18',title:'Stand-Up Paddleboard Sunrise',category:'offshore',city:'San Diego',host:'Harbor Surf Co.',
+   grad:'linear-gradient(135deg,#042f2e,#0f766e,#5eead4)',price:70,rating:4.7,reviews:178,duration:90,
+   free:false,exclusive:false,sbiz:true,bipoc:true,women:false,pet:false,kid:true,
+   vibes:['solo-reset','date-night','family'],cancel:'flexible',verify:'none',img:'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=800&q=80',
+   waiver:true,
+   desc:'An early-morning guided SUP tour of San Diego Bay as the harbor comes alive. Dolphins frequent this route. All skill levels welcome.',
+   includes:['Board and paddle rental','Wetsuit if needed','Guide and safety briefing','Post-session smoothie'],
+   addons:['gopro']},
+];
+
+const ADDONS_DB = {
+  wine:     {id:'wine',    title:'Wine Pairing',             price:45,  desc:'Sommelier-selected bottles'},
+  flowers:  {id:'flowers', title:'Floral Arrangement',       price:65,  desc:'Fresh seasonal arrangement'},
+  photo:    {id:'photo',   title:'Professional Photography', price:150, desc:'1 hour, 30 edited photos'},
+  champagne:{id:'champagne',title:'Champagne on Arrival',    price:40,  desc:'Two bottles, chilled'},
+  gopro:    {id:'gopro',   title:'GoPro Footage Package',    price:35,  desc:'Full session recorded'},
+  sake:     {id:'sake',    title:'Sake Flight',              price:30,  desc:'4 curated pours'},
+  dessert:  {id:'dessert', title:'Dessert Course',           price:25,  desc:'House-made mochi selection'},
+  drinks:   {id:'drinks',  title:'Drinks Package',           price:35,  desc:'Craft beers and cocktails'},
+  video:    {id:'video',   title:'HD Video Package',         price:120, desc:'Edited highlight reel'},
+};
+
+const COLLECTIONS = [
+  {id:'members-only',            title:'Members Only',            desc:'Reserved for The Regulars and The Locals.',grad:'linear-gradient(135deg,#2d1b69,#6d28d9,#a855f7)',img:'https://images.unsplash.com/photo-1478359844494-1092259d93e4?auto=format&fit=crop&w=600&q=80'},
+  {id:'free-this-week',          title:'Free This Week',          desc:'No cost, no catch. Just show up.',         grad:'linear-gradient(135deg,#052e16,#166534,#22c55e)',img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80'},
+  {id:'small-business-spotlight',title:'Local Business Spotlight',desc:'BIPOC-owned and women-owned businesses.',  grad:'linear-gradient(135deg,#500724,#be185d,#ec4899)',img:'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=600&q=80'},
+  {id:'date-night',              title:'Date Night',              desc:'Curated for two. Every time.',             grad:'linear-gradient(135deg,#3b0764,#7c3aed,#c084fc)',img:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=80'},
+  {id:'thrill-seekers',          title:'Thrill Seekers',          desc:'For the ones who need a little more.',     grad:'linear-gradient(135deg,#451a03,#b45309,#f59e0b)',img:'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=600&q=80'},
+  {id:'pet-welcome',             title:'Bring Your Pet',          desc:'20 experiences that welcome your dog.',   grad:'linear-gradient(135deg,#042f2e,#0f766e,#14b8a6)',img:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=600&q=80'},
+];
+
+const CANCEL_POLICIES = {
+  free:          {label:'Free Cancellation',    info:'Cancel anytime, full refund.'},
+  flexible:      {label:'Flexible',             info:'Cancel up to 24 hours before for a full refund.'},
+  standard:      {label:'Standard',             info:'Cancel up to 48 hours before for a full refund.'},
+  non_refundable:{label:'Non-Refundable',       info:'All sales are final. No refunds or changes.'},
+};
+
+const GREETINGS = ['Less Planning. More Living.','Good Things Are Happening Right Now.','Your Next Favorite Memory Starts Here.','Unforgettable Moments, Made Simple.','Every Moment, Thoughtfully Curated.','The Moments That Matter, Made Easy.','More Memories, Seamless Planning.'];
+
+let MY_PLANS_DATA = [
+  {id:'b001',expId:'e01',date:'May 15, 2026',time:'7:00 PM',guests:2,total:185,status:'confirmed',ref:'WTM-2845'},
+  {id:'b002',expId:'e15',date:'May 22, 2026',time:'6:30 PM',guests:1,total:40, status:'confirmed',ref:'WTM-2901'},
+  {id:'b003',expId:'e04',date:'Jun 8, 2026', time:'5:30 AM',guests:2,total:130,status:'pending',  ref:'WTM-3012'},
+  {id:'b004',expId:'e13',date:'Apr 5, 2026', time:'2:00 PM',guests:2,total:220,status:'past',     ref:'WTM-2644'},
+  {id:'b005',expId:'e09',date:'Mar 28, 2026',time:'9:00 AM',guests:1,total:0,  status:'past',     ref:'WTM-2510'},
+];
+
+// ─────────────────────────────────────────────
+// APP STATE
+// ─────────────────────────────────────────────
+const S = {
+  theme: localStorage.getItem('wtm-theme') || 'dark',
+  favs:  JSON.parse(localStorage.getItem('wtm-favs') || '[]'),
+  greeting: GREETINGS[Math.floor(Math.random()*GREETINGS.length)],
+  notifCount: 3,
+  booking: { expId:null, date:null, time:null, guests:2, addons:[], requests:'', payment:'card', calYear:2026, calMonth:4 },
+  explore: { query:'', cat:'all', vibe:'all' },
+  plans: { tab:'upcoming' },
+  rewards: { period:'month', tiers:{rookie:false,regular:true,local:false} },
+  settings: { push:true, email:true, sms:false, dnd:false },
+};
+function saveFavs(){ localStorage.setItem('wtm-favs',JSON.stringify(S.favs)); }
+function isFav(id){ return S.favs.includes(id); }
+function toggleFav(id){ const i=S.favs.indexOf(id); if(i>-1)S.favs.splice(i,1); else S.favs.push(id); saveFavs(); R.refresh(); }
+function toggleTheme(){ S.theme=S.theme==='dark'?'light':'dark'; localStorage.setItem('wtm-theme',S.theme); document.documentElement.setAttribute('data-theme',S.theme); updateBottomNav(); }
+document.documentElement.setAttribute('data-theme', S.theme);
+
+// ─────────────────────────────────────────────
+// ROUTER
+// ─────────────────────────────────────────────
+const R = {
+  stack: [],
+  route: 'home',
+  params: {},
+
+  go(route, params={}) {
+    this.stack.push({route:this.route, params:this.params});
+    this.route = route;
+    this.params = params;
+    this.render();
+    document.getElementById('screen').scrollTo(0,0);
+  },
+
+  back() {
+    if(this.stack.length > 0) {
+      const prev = this.stack.pop();
+      this.route = prev.route;
+      this.params = prev.params;
+      this.render();
+      document.getElementById('screen').scrollTo(0,0);
+    }
+  },
+
+  refresh() {
+    this.render(true);
+  },
+
+  render(soft=false) {
+    const hide = ['book-1','book-2','book-3','confirmed','detail'];
+    const nav = document.getElementById('bottom-nav');
+    if(hide.includes(this.route)) { nav.style.display='none'; }
+    else { nav.style.display='flex'; updateBottomNav(); }
+
+    const screen = document.getElementById('screen');
+    const builders = {
+      'home':         screenHome,
+      'explore':      screenExplore,
+      'detail':       screenDetail,
+      'book-1':       screenBook1,
+      'book-2':       screenBook2,
+      'book-3':       screenBook3,
+      'confirmed':    screenConfirmed,
+      'my-plans':     screenMyPlans,
+      'profile':      screenProfile,
+      'rewards':      screenRewards,
+      'notifications':screenNotifications,
+      'settings':     screenSettings,
+      'category':     screenCategory,
+      'collection':   screenCollection,
+      'members-only': screenMembersOnly,
+      'search':       screenSearch,
+      'saved':        screenSaved,
+      'payment-methods': screenPaymentMethods,
+      'privacy':          screenPrivacy,
+      'terms':            screenTerms,
+      'security':         screenSecurity,
+      'help':             screenHelp,
+      'contact':          screenContact,
+    };
+    const builder = builders[this.route] || screenHome;
+    screen.innerHTML = builder(this.params);
+  }
+};
+
+function updateBottomNav() {
+  const nav = document.getElementById('bottom-nav');
+  const items = [
+    {r:'home',     label:'Home',    icon:'<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'},
+    {r:'explore',  label:'Explore', icon:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'},
+    {r:'my-plans', label:'My Plans',icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'},
+    {r:'profile',  label:'Profile', icon:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>'},
+  ];
+  const on = ['detail','book-1','book-2','book-3','confirmed','notifications','settings','category','collection','members-only','search','saved','payment-methods'];
+  const activeRoot = on.includes(R.route) ? (R.stack.find(s=>['home','explore','my-plans','profile'].includes(s.route))?.route || 'home') : R.route;
+  nav.innerHTML = items.map(it=>`
+    <button class="nav-btn ${activeRoot===it.r?'on':''}" data-go="${it.r}">
+      <svg viewBox="0 0 24 24">${it.icon}</svg>
+      <span>${it.label}</span>
+    </button>`).join('');
+}
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function chip(cls,text){ return `<span class="chip ${cls}">${text}</span>`; }
+function expChips(e){
+  return [
+    chip('chip-v','✓ Verified'),
+    e.exclusive ? chip('chip-ex','Members Only') : '',
+    e.free ? chip('chip-free','Free') : '',
+    e.pet ? chip('chip-pet','Pet OK') : '',
+  ].join('');
+}
+function favBtn(e,pos=''){
+  return `<button class="exp-fav${isFav(e.id)?' on':''}" data-fav="${e.id}" style="${pos}">${favSVG()}</button>`;
+}
+function favSVG(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="${'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>`; }
+function starSVG(){ return `<svg width="11" height="11" viewBox="0 0 24 24" fill="#f59e0b"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`; }
+function moonSVG(){ return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`; }
+function sunSVG(){ return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`; }
+function backBtn(label=''){
+  return `<button class="top-back" data-back><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>${label?`<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800;flex:1">${label}</span>`:''}`;
+}
+function topBar(left, right=''){
+  return `<div class="top-bar">${left}<div style="display:flex;gap:8px;align-items:center;margin-left:auto">${right}</div></div>`;
+}
+function formatDuration(min){ const h=Math.floor(min/60),m=min%60; return h>0?(m>0?`${h}h ${m}m`:`${h}h`):m+'m'; }
+function gradStyle(grad){ return `background:${grad}`; }
+
+function expCard(e, wide=false){
+  const w = wide ? 'width:300px' : '';
+  const bg = e.img ? 'background:url('+e.img+') center/cover,'+e.grad : 'background:'+e.grad;
+  return `<div class="exp-card" style="${w}" data-go="detail" data-expid="${e.id}">
+    <div class="exp-img" style="${bg}">
+      <div class="exp-chips">${expChips(e)}</div>
+      ${favBtn(e)}
+    </div>
+    <div class="exp-body">
+      <div class="exp-cat" style="color:${CATS[e.category].color}">${CATS[e.category].label}</div>
+      <div class="exp-title">${e.title}</div>
+      <div class="exp-row">
+        <div class="exp-rating">${starSVG()} ${e.rating} (${e.reviews})</div>
+        <div class="exp-price">${e.free?'<span style="color:var(--amber);font-weight:800">FREE</span>':'From <span style="font-variant-numeric:tabular-nums">$'+e.price+'</span>'}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function gridCard(e){
+  const gbg = e.img ? 'background:url('+e.img+') center/cover,'+e.grad : 'background:'+e.grad;
+  return `<div class="grid-card" data-go="detail" data-expid="${e.id}">
+    <div class="grid-img" style="${gbg}">
+      <div style="position:absolute;top:7px;left:7px;display:flex;gap:4px">${expChips(e)}</div>
+      ${favBtn(e)}
+    </div>
+    <div class="grid-body">
+      <div class="exp-cat" style="color:${CATS[e.category].color};font-size:9px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;margin-bottom:3px">${CATS[e.category].label}</div>
+      <div style="font-family:Manrope,sans-serif;font-size:12.5px;font-weight:800;line-height:1.25;margin-bottom:4px;color:var(--text)">${e.title}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text2)">${starSVG()} ${e.rating}</div>
+        <div style="font-family:DM Mono,monospace;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--text)">${e.free?'<span style="color:var(--amber);font-weight:800">FREE</span>':'$'+e.price}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toast(msg, dur=1800){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, dur);
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: HOME
+// ─────────────────────────────────────────────
+function screenHome() {
+  const featured = [...EXP].filter(e=>!e.free).sort((a,b)=>(b.rating*Math.log(b.reviews+1))-(a.rating*Math.log(a.reviews+1))).slice(0,8);
+  const free = EXP.filter(e=>e.free);
+  const local = EXP.filter(e=>e.sbiz&&(e.bipoc||e.women)).sort((a,b)=>b.rating-a.rating).slice(0,8);
+  const timeOfDay = new Date().getHours(); const tod = timeOfDay<12?'morning':timeOfDay<17?'afternoon':'evening';
+
+  return `
+  <div class="top-bar" style="padding-top:max(14px,env(safe-area-inset-top))">
+    <div style="flex:1">
+      <div class="greeting-eyebrow">${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()]} ${tod}</div>
+      <div class="greeting">${S.greeting}</div>
+    </div>
+    <div class="pts-pill" data-go="rewards">
+      <span class="pts-star">★</span>
+      <span class="pts-val">3,820</span>
+      <span style="color:var(--text3);font-size:10px;margin:0 2px">·</span>
+      <span class="pts-tier">The Regular</span>
+    </div>
+    <button class="icon-btn" data-theme-toggle>${S.theme==='dark'?moonSVG():sunSVG()}</button>
+    <button class="icon-btn" data-go="notifications">${`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>`}${S.notifCount>0?'<div class="notif-dot"></div>':''}</button>
+    <div class="avatar" data-go="profile"></div>
+  </div>
+
+  <div class="vibe-row" style="padding-top:14px">
+    ${['All','Date Night','Celebration','Group','Solo Reset','Last Minute','Family','Thrill'].map((v,i)=>
+      `<button class="vibe-pill${i===0?' on':''}" data-vibe="${v.toLowerCase().replace(' ','-')}">${v}</button>`
+    ).join('')}
+  </div>
+
+  <div class="sec" style="padding-top:22px"><span class="sec-title">Featured Tonight</span><span class="sec-link" data-go="explore">See All →</span></div>
+  <div class="scroll-row">${featured.map(e=>expCard(e)).join('')}</div>
+
+  <div class="sec" style="padding-top:24px"><span class="sec-title">Browse by Category</span></div>
+  <div class="cat-grid">
+    ${Object.entries(CATS).map(([k,v])=>{
+      const catBg = v.img ? 'background:url('+v.img+') center/cover,'+v.grad : 'background:'+v.grad;
+      return '<div class="cat-tile" style="'+catBg+'" data-go="category" data-cat="'+k+'">'
+        +'<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,rgba(0,0,0,.05) 100%)"></div>'
+        +'<span class="cat-tile-name">'+v.label+'</span>'
+        +'</div>';
+    }).join('')}
+    <div class="cat-tile" style="background:var(--surface);border:1px solid var(--border2)" data-go="explore">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <span style="font-family:Manrope,sans-serif;font-size:11px;font-weight:800;color:var(--text2)">See All</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" style="padding-top:24px"><span class="sec-title">Free This Week</span><span class="sec-link" data-go="collection" data-params='{"id":"free-this-week"}'>See All →</span></div>
+  <div class="scroll-row">${free.map(e=>expCard(e)).join('')}</div>
+
+  <div class="sec" style="padding-top:24px"><span class="sec-title">Local Business Spotlight</span><span class="sec-link" data-go="collection" data-params='{"id":"small-business-spotlight"}'>See All →</span></div>
+  <div class="scroll-row">${local.map(e=>expCard(e)).join('')}</div>
+
+  <div class="sec" style="padding-top:24px"><span class="sec-title">Curated Collections</span></div>
+  <div class="scroll-row">${COLLECTIONS.map(col=>{
+    const cbg = col.img ? 'background:url('+col.img+') center/cover,'+col.grad : 'background:'+col.grad;
+    return '<div class="col-card" data-go="collection" data-colid="'+col.id+'">'
+      +'<div class="col-img" style="'+cbg+'"></div>'
+      +'<div class="col-body">'
+      +'<div class="col-title">'+col.title+'</div>'
+      +'<div class="col-desc">'+col.desc+'</div>'
+      +'</div></div>';
+  }).join('')}</div>
+
+  <div class="sec" style="padding-top:24px"><span class="sec-title">Members Only</span><span class="sec-link" data-go="members-only">See All →</span></div>
+  <div class="members-banner" data-go="members-only">
+    <div class="members-bg"></div><div class="members-overlay"></div>
+    <div class="members-content">
+      <div>
+        <div class="members-eyebrow">★ Members Only</div>
+        <div class="members-title">Reserved for<br>The Regulars and The Locals.</div>
+        <div class="members-sub">12 experiences your status unlocks.</div>
+      </div>
+      <button class="members-btn" data-go="members-only">Explore →</button>
+    </div>
+  </div>
+
+  <div class="sec" style="padding-top:22px"><span class="sec-title">Can't Decide?</span></div>
+  <div class="surprise-card" data-action="surprise">
+    <div class="surprise-bg"></div>
+    <div class="surprise-content">
+      <div><div class="surprise-eyebrow">Surprise Me</div>
+        <div class="surprise-title">We'll pick<br>your next move.</div></div>
+      <button class="surprise-btn" data-action="surprise">Let's Go →</button>
+    </div>
+  </div>
+  <div style="height:20px"></div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: EXPLORE
+// ─────────────────────────────────────────────
+function screenExplore(p={}) {
+  const q = S.explore.query.toLowerCase();
+  const cat = S.explore.cat;
+  const vibe = S.explore.vibe;
+  let results = EXP.filter(e=>{
+    if(cat!=='all' && e.category!==cat) return false;
+    if(vibe!=='all' && !e.vibes.includes(vibe)) return false;
+    if(q && !e.title.toLowerCase().includes(q) && !e.desc.toLowerCase().includes(q) && !CATS[e.category].label.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  return `
+  <div class="top-bar">
+    <span style="font-family:Manrope,sans-serif;font-size:17px;font-weight:800;flex:1">Explore</span>
+    <button class="icon-btn" data-theme-toggle>${S.theme==='dark'?moonSVG():sunSVG()}</button>
+  </div>
+  <div class="search-bar" style="margin-top:8px">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="explore-search" placeholder="Search experiences, cities, vibes..." value="${S.explore.query}" data-action="search-input">
+  </div>
+  <div class="filter-chips">
+    ${[['all','All'],...Object.entries(CATS).map(([k,v])=>[k,v.label])].map(([k,label])=>
+      `<button class="filter-chip${S.explore.cat===k?' on':''}" data-cat="${k}">${label}</button>`
+    ).join('')}
+  </div>
+  <div style="padding:4px 16px 12px;display:flex;gap:7px;overflow-x:auto">
+    ${['All Vibes','Date Night','Group','Solo Reset','Thrill','Celebration','Family','Last Minute'].map((v,i)=>{
+      const val = i===0?'all':v.toLowerCase().replace(' ','-');
+      return `<button class="filter-chip${S.explore.vibe===val?' on':''}" style="flex-shrink:0" data-explore-vibe="${val}">${v}</button>`;
+    }).join('')}
+  </div>
+  ${results.length>0
+    ? `<div class="grid-2" style="padding-bottom:24px">${results.map(e=>gridCard(e)).join('')}</div>`
+    : `<div class="empty-state"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="empty-title">No results found</div><div class="empty-sub">Try a different category or search term.</div></div>`
+  }`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: DETAIL
+// ─────────────────────────────────────────────
+function screenDetail(p={}) {
+  const e = EXP.find(x=>x.id===p.id) || EXP[0];
+  const policy = CANCEL_POLICIES[e.cancel] || CANCEL_POLICIES.flexible;
+  const verifyLabel = {none:'',age_21:'21+ verification required',identity:'Identity verification required',driver:'Driver verification required',medical:'Medical disclosure required'};
+
+  return `
+  <div style="height:260px;position:relative;${e.img?'background:url('+e.img+') center/cover,'+e.grad:'background:'+e.grad}">
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,var(--base) 0%,transparent 50%)"></div>
+    <div style="position:absolute;top:max(14px,env(safe-area-inset-top));left:16px;right:16px;display:flex;justify-content:space-between">
+      <button class="detail-hero-btn" data-back><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="detail-hero-btn exp-fav${isFav(e.id)?' on':''}" data-fav="${e.id}">${favSVG()}</button>
+    </div>
+  </div>
+  <div class="detail-body">
+    <div class="detail-cat" style="color:${CATS[e.category].color}">${CATS[e.category].label} · ${e.city} · ${formatDuration(e.duration)}</div>
+    <div class="detail-title">${e.title}</div>
+    <div class="detail-host">by ${e.host}</div>
+    <div class="detail-chips">
+      ${chip('chip-v','✓ Verified')}
+      ${e.exclusive?chip('chip-ex','Members Only'):''}
+      ${e.free?chip('chip-free','Free'):''}
+      ${e.pet?chip('chip-pet','Pet OK'):''}
+      ${e.waiver?`<span class="chip" style="background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.3);color:#f59e0b">Waiver Required</span>`:''}
+      ${e.verify&&e.verify!=='none'?`<span class="chip" style="background:rgba(99,102,241,.14);border:1px solid rgba(99,102,241,.3);color:#a5b4fc">ID Required</span>`:''}
+    </div>
+    <div class="detail-rating">
+      <span>${starSVG()} ${e.rating} · ${e.reviews} reviews</span>
+      <span style="color:var(--text3)">·</span>
+      <span>${e.sbiz?'<span style="color:var(--emerald);font-weight:700">Local Business</span>':''}</span>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">About This Experience</div>
+      <div class="detail-desc">${e.desc}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">What's Included</div>
+      ${e.includes.map(i=>`<div class="include-item"><span class="include-check">✓</span><span>${i}</span></div>`).join('')}
+    </div>
+    ${e.addons.length>0?`
+    <div class="detail-section">
+      <div class="detail-section-title">Optional Add-Ons</div>
+      ${e.addons.map(aid=>{ const a=ADDONS_DB[aid]; return a?`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text)">${a.title} <span style="color:var(--text3)">— ${a.desc}</span></span><span style="font-family:DM Mono,monospace;color:var(--text2)">+$${a.price}</span></div>`:''}).join('')}
+    </div>`:''}
+    <div class="detail-section">
+      <div class="detail-section-title">Cancellation Policy</div>
+      <div style="font-size:13px;color:var(--text2)">${policy.label} — ${policy.info}</div>
+    </div>
+    ${e.verify&&e.verify!=='none'?`<div style="padding:12px 14px;border-radius:12px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);font-size:12.5px;color:rgba(165,180,252,.9);margin-bottom:16px">ID Verification Required: ${verifyLabel[e.verify]}</div>`:''}
+    ${e.waiver?`<div style="padding:12px 14px;border-radius:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);font-size:12.5px;color:rgba(252,211,77,.9);margin-bottom:16px">You will sign a waiver at checkout before this booking is confirmed.</div>`:''}
+  </div>
+  <div class="detail-sticky">
+    <div class="detail-price-block">
+      <div class="detail-from">From</div>
+      <div class="detail-amount">${e.free?'Free':'$'+e.price}</div>
+    </div>
+    <button class="detail-plans-btn" data-action="add-plans" data-id="${e.id}">Add to Plans</button>
+    <button class="detail-book-btn" data-go="book-1" data-expid="${e.id}">${e.free?'Reserve Free Spot':'Book Now'}</button>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: BOOKING STEP 1 (Date + Time)
+// ─────────────────────────────────────────────
+function screenBook1(p={}) {
+  const e = EXP.find(x=>x.id===p.id) || EXP.find(x=>x.id===S.booking.expId) || EXP[0];
+  // Reset state when starting a booking for a new experience
+  if(p.id && p.id !== S.booking.expId) {
+    S.booking.expId = p.id;
+    S.booking.date = null;
+    S.booking.time = null;
+    S.booking.addons = [];
+    S.booking.requests = '';
+    const now = new Date();
+    S.booking.calYear  = now.getMonth()===11 ? now.getFullYear()+1 : now.getFullYear();
+    S.booking.calMonth = (now.getMonth()+1) % 12;
+  } else {
+    if(!S.booking.expId) S.booking.expId = e.id;
+    if(!S.booking.calYear) {
+      const now = new Date();
+      S.booking.calYear  = now.getMonth()===11 ? now.getFullYear()+1 : now.getFullYear();
+      S.booking.calMonth = (now.getMonth()+1) % 12;
+    }
+  }
+
+  const y = S.booking.calYear, m = S.booking.calMonth;
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const firstDay = new Date(y,m,1).getDay();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const sold = [3,8,15,22];
+
+  let cells = '';
+  for(let i=0;i<firstDay;i++) cells += '<div></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const dt = new Date(y,m,d);
+    const isPast = dt < today;
+    const isSold = sold.includes(d);
+    const dStr = y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const isSel = S.booking.date === dStr;
+    let cls = 'cal-day';
+    let attr = '';
+    if(isPast)      cls += ' past';
+    else if(isSold) cls += ' sold';
+    else if(isSel)  cls += ' sel';
+    else { cls += ' avail'; attr = ' data-action="pick-date" data-date="'+dStr+'"'; }
+    cells += '<div class="'+cls+'"'+attr+'>'+d+'</div>';
+  }
+
+  const TIME_BY_CAT = {
+    dining:    ['6:00 PM','6:30 PM','7:00 PM','7:30 PM','8:00 PM','8:30 PM'],
+    wellness:  ['7:00 AM','8:00 AM','9:00 AM','10:00 AM','11:00 AM','3:00 PM'],
+    outside:   ['7:00 AM','8:00 AM','9:00 AM','10:00 AM','11:00 AM','3:00 PM'],
+    offshore:  ['8:00 AM','9:00 AM','10:00 AM','1:00 PM','3:00 PM','4:00 PM'],
+    adventure: ['8:00 AM','9:00 AM','10:00 AM','1:00 PM','3:00 PM','4:00 PM'],
+  };
+  const slots = TIME_BY_CAT[e.category] || ['11:00 AM','12:00 PM','1:00 PM','2:00 PM','4:00 PM','6:00 PM'];
+  const soldSlots = [slots[1], slots[4]];
+
+  let timeGrid = '';
+  for(let i=0;i<slots.length;i++){
+    const t = slots[i];
+    const isSold = soldSlots.includes(t);
+    const isSel  = S.booking.time === t;
+    let cls = 'time-slot';
+    if(isSold)     cls += ' sold';
+    else if(isSel) cls += ' sel';
+    if(isSold) timeGrid += '<button class="'+cls+'" disabled>'+t+'</button>';
+    else       timeGrid += '<button class="'+cls+'" data-action="pick-time" data-time="'+t+'">'+t+'</button>';
+  }
+
+  const canContinue = !!(S.booking.date && S.booking.time);
+  const selLabel = S.booking.date
+    ? new Date(S.booking.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})
+    : '';
+  const barLabel = canContinue ? selLabel+' at '+S.booking.time : 'Select a date and time';
+
+  return '<div class="top-bar">'
+    +'<button class="top-back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    +'<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800;flex:1">Date and Time</span>'
+    +'</div>'
+    +'<div class="booking-wrap">'
+    +'<div class="booking-step-dots"><div class="step-dot on"></div><div class="step-dot"></div><div class="step-dot"></div></div>'
+    +'<div class="booking-mini"><div class="booking-mini-img" style="'+gradStyle(e.grad)+'"></div>'
+    +'<div><div class="booking-mini-title">'+e.title+'</div><div class="booking-mini-sub">'+e.city+' · '+formatDuration(e.duration)+'</div></div></div>'
+    +'<div class="booking-section-title">Select a Date</div>'
+    +'<div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:14px;margin-bottom:20px">'
+    +'<div class="cal-header">'
+    +'<button class="cal-nav" data-action="cal-prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    +'<div class="cal-month">'+MONTHS[m]+' '+y+'</div>'
+    +'<button class="cal-nav" data-action="cal-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>'
+    +'</div>'
+    +'<div class="cal-grid">'
+    +'<div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div>'
+    +'<div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div>'
+    +cells
+    +'</div></div>'
+    +'<div class="booking-section-title">Select a Time'+(selLabel?' — '+selLabel:'')+'</div>'
+    +'<div class="time-grid">'+timeGrid+'</div>'
+    +'</div>'
+    +'<div class="booking-bar">'
+    +'<div class="booking-bar-total"><span>'+barLabel+'</span>'
+    +'<span class="booking-bar-amount">'+(e.free?'Free':'$'+e.price)+'</span></div>'
+    +'<button class="btn-cta" data-action="book-next-1" '+(canContinue?'':'style="opacity:.42;cursor:not-allowed"')+'>Continue →</button>'
+    +'</div>';
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: BOOKING STEP 2 (Guests + Add-ons)
+// ─────────────────────────────────────────────
+function screenBook2(p={}) {
+  const e = EXP.find(x=>x.id===S.booking.expId) || EXP[0];
+  const selAddons = S.booking.addons;
+  const addonTotal = selAddons.reduce(function(sum,aid){ return sum+(ADDONS_DB[aid]?ADDONS_DB[aid].price:0); }, 0);
+  const extraGuests = Math.max(0, S.booking.guests-2);
+  const guestFee = extraGuests * 75;
+  const total = (e.free ? 0 : e.price) + guestFee + addonTotal;
+  const dateLabel = S.booking.date
+    ? new Date(S.booking.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})
+    : '';
+
+  let addonsHTML = '';
+  if(e.addons && e.addons.length > 0) {
+    addonsHTML = '<div class="booking-section-title" style="margin-top:8px">Optional Add-Ons</div>';
+    for(let i=0;i<e.addons.length;i++){
+      const aid = e.addons[i];
+      const a = ADDONS_DB[aid];
+      if(!a) continue;
+      const on = selAddons.includes(aid);
+      addonsHTML += '<div class="addon-card" data-action="toggle-addon" data-addon="'+aid+'">'
+        +'<div class="addon-info"><div class="addon-title">'+a.title+'</div><div class="addon-desc">'+a.desc+'</div></div>'
+        +'<div class="addon-price">+$'+a.price+'</div>'
+        +'<div class="addon-toggle'+(on?' on':'')+'"></div>'
+        +'</div>';
+    }
+  }
+
+  let guestNote = '';
+  if(guestFee > 0) {
+    guestNote = '<div style="padding:10px 14px;border-radius:10px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);font-size:12px;color:var(--text2);margin-bottom:16px">'
+      +'Additional guest fee: <span style="font-family:DM Mono,monospace;color:var(--text)">+$'+guestFee+'</span></div>';
+  }
+
+  return '<div class="top-bar">'
+    +'<button class="top-back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    +'<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800;flex:1">Guests and Add-Ons</span>'
+    +'</div>'
+    +'<div class="booking-wrap">'
+    +'<div class="booking-step-dots"><div class="step-dot done"></div><div class="step-dot on"></div><div class="step-dot"></div></div>'
+    +'<div class="booking-mini"><div class="booking-mini-img" style="'+gradStyle(e.grad)+'"></div>'
+    +'<div><div class="booking-mini-title">'+e.title+'</div>'
+    +'<div class="booking-mini-sub">'+dateLabel+(S.booking.time?' at '+S.booking.time:'')+'</div></div></div>'
+    +'<div class="booking-section-title">Number of Guests</div>'
+    +'<div class="guest-counter">'
+    +'<div><div class="guest-info">Guests</div><div class="guest-sub">Base price covers up to 2 guests</div></div>'
+    +'<div class="counter-row">'
+    +'<button class="counter-btn" data-action="guests-dec">−</button>'
+    +'<span class="counter-val">'+S.booking.guests+'</span>'
+    +'<button class="counter-btn" data-action="guests-inc">+</button>'
+    +'</div></div>'
+    +guestNote
+    +addonsHTML
+    +'<div class="booking-section-title" style="margin-top:8px">Special Requests</div>'
+    +'<textarea class="special-textarea" rows="3" id="special-req" placeholder="Dietary restrictions, occasions, accessibility needs, or anything your host should know...">'+S.booking.requests+'</textarea>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:5px">Your host will confirm accommodations before the experience.</div>'
+    +'</div>'
+    +'<div class="booking-bar">'
+    +'<div class="booking-bar-total"><span>Running total</span>'
+    +'<span class="booking-bar-amount">'+(e.free?'Free':'$'+total)+'</span></div>'
+    +'<button class="btn-cta" data-action="book-next-2">Continue →</button>'
+    +'</div>';
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: BOOKING STEP 3 (Summary + Payment)
+// ─────────────────────────────────────────────
+function screenBook3(p={}) {
+  const e = EXP.find(x=>x.id===S.booking.expId) || EXP[0];
+  const addonTotal = S.booking.addons.reduce(function(sum,aid){ return sum+(ADDONS_DB[aid]?ADDONS_DB[aid].price:0); }, 0);
+  const guestFee = Math.max(0,(S.booking.guests-2)*75);
+  const total = (e.free ? 0 : e.price) + guestFee + addonTotal;
+  const pt = S.booking.payment;
+  const dateLabel = S.booking.date
+    ? new Date(S.booking.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})
+    : '';
+
+  let summaryRows = '<div class="summary-row"><span class="summary-label">'+e.title+'</span><span class="summary-val">$'+e.price+'</span></div>';
+  if(S.booking.guests > 2)
+    summaryRows += '<div class="summary-row"><span class="summary-label">Guest fee ('+(S.booking.guests-2)+' extra)</span><span class="summary-val">$'+guestFee+'</span></div>';
+  for(let i=0;i<S.booking.addons.length;i++){
+    const a = ADDONS_DB[S.booking.addons[i]];
+    if(a) summaryRows += '<div class="summary-row"><span class="summary-label">'+a.title+'</span><span class="summary-val">+$'+a.price+'</span></div>';
+  }
+  summaryRows += '<div class="summary-row" style="border-bottom:none;padding-top:12px;margin-top:4px">'
+    +'<span style="font-family:Manrope,sans-serif;font-size:15px;font-weight:800">Total</span>'
+    +'<span class="summary-total">'+(e.free?'Free':'$'+total)+'</span></div>';
+  if(dateLabel)
+    summaryRows += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text2)">'+dateLabel+' at '+S.booking.time+' · '+S.booking.guests+' guest'+(S.booking.guests>1?'s':'')+'</div>';
+
+  let installNote = '';
+  if(total >= 500)
+    installNote = '<div style="padding:10px 14px;border-radius:10px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);font-size:12px;color:var(--text2);margin-bottom:16px">Pay over time with <span style="font-weight:800;color:var(--text)">Affirm, Afterpay, or Klarna</span> available at checkout.</div>';
+
+  let payTabs = '';
+  const tabs = [['card','Card'],['apple','Apple Pay'],['google','Google Pay'],['paypal','PayPal']];
+  for(let i=0;i<tabs.length;i++){
+    const k=tabs[i][0], l=tabs[i][1];
+    payTabs += '<button class="pay-tab'+(pt===k?' on':'')+'" data-action="pay-tab" data-tab="'+k+'">'+l+'</button>';
+  }
+
+  let payForm = '';
+  if(pt==='card') {
+    payForm = '<input class="pay-input" placeholder="Card number" id="card-num" maxlength="19">'
+      +'<input class="pay-input" placeholder="Name on card" id="card-name">'
+      +'<div class="pay-row">'
+      +'<input class="pay-input" placeholder="MM / YY" maxlength="7" id="card-exp">'
+      +'<input class="pay-input" placeholder="CVV" maxlength="4" id="card-cvv" type="password">'
+      +'</div>';
+  } else if(pt==='apple') {
+    payForm = '<button class="pay-alt-btn" data-action="pay-alt">  Pay with Apple Pay</button>';
+  } else if(pt==='google') {
+    payForm = '<button class="pay-alt-btn" data-action="pay-alt">  Pay with Google Pay</button>';
+  } else {
+    payForm = '<button class="pay-alt-btn" data-action="pay-alt">  Pay with PayPal</button>';
+  }
+
+  return '<div class="top-bar">'
+    +'<button class="top-back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    +'<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800;flex:1">Review and Pay</span>'
+    +'</div>'
+    +'<div class="booking-wrap">'
+    +'<div class="booking-step-dots"><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot on"></div></div>'
+    +'<div class="booking-section-title">Order Summary</div>'
+    +'<div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:14px 16px;margin-bottom:20px">'+summaryRows+'</div>'
+    +installNote
+    +'<div class="booking-section-title">Payment Method</div>'
+    +'<div class="pay-tabs">'+payTabs+'</div>'
+    +payForm
+    +'</div>'
+    +'<div class="booking-bar">'
+    +'<div class="booking-bar-total"><span>Total</span>'
+    +'<span class="booking-bar-amount">'+(e.free?'Free':'$'+total)+'</span></div>'
+    +'<button class="btn-cta" data-action="confirm-pay">Confirm and Pay</button>'
+    +'</div>';
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: CONFIRMED
+// ─────────────────────────────────────────────
+function screenConfirmed(p={}) {
+  const e = EXP.find(x=>x.id===S.booking.expId) || EXP[0];
+  const addonTotal = S.booking.addons.reduce(function(sum,aid){ return sum+(ADDONS_DB[aid]?ADDONS_DB[aid].price:0); }, 0);
+  const guestFee = Math.max(0,(S.booking.guests-2)*75);
+  const total = (e.free ? 0 : e.price) + guestFee + addonTotal;
+  const ref = 'WTM-'+Math.floor(3000+Math.random()*2000);
+  const dateLabel = S.booking.date
+    ? new Date(S.booking.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})
+    : '';
+
+  const shareItems = [['Text','💬'],['Instagram','📸'],['Snapchat','👻'],['X','𝕏'],['Copy Link','🔗']];
+  let shareHTML = '';
+  for(let i=0;i<shareItems.length;i++){
+    shareHTML += '<button class="confirm-share-btn" data-action="share" data-platform="'+shareItems[i][0]+'">'
+      +'<span style="font-size:20px">'+shareItems[i][1]+'</span>'
+      +'<span>'+shareItems[i][0]+'</span></button>';
+  }
+
+  // Add booking to plans
+  MY_PLANS_DATA.unshift({id:'b'+Date.now(),expId:e.id,date:S.booking.date?new Date(S.booking.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):dateLabel,time:S.booking.time||'',guests:S.booking.guests,total:total,status:'confirmed',ref:ref});
+
+  return '<div class="confirm-wrap" style="padding-top:max(40px,env(safe-area-inset-top))">'
+    +'<div class="confirm-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>'
+    +'<div class="confirm-title">You\'re booked!</div>'
+    +'<div class="confirm-sub">'+e.city+' · '+dateLabel+' at '+(S.booking.time||'TBD')+'</div>'
+    +'<div class="confirm-card">'
+    +'<div class="confirm-card-img" style="'+(e.img?'background:url('+e.img+') center/cover,'+e.grad:'background:'+e.grad)+'"></div>'
+    +'<div class="confirm-card-body">'
+    +'<div class="confirm-ref">Booking Reference · '+ref+'</div>'
+    +'<div class="confirm-exp-title">'+e.title+'</div>'
+    +'<div style="font-size:12px;color:var(--text2)">Hosted by '+e.host+'</div>'
+    +'<div class="confirm-detail-row">'
+    +'<span>📅 '+dateLabel+'</span>'
+    +'<span>🕐 '+(S.booking.time||'')+'</span>'
+    +'<span>👥 '+S.booking.guests+' guest'+(S.booking.guests>1?'s':'')+'</span>'
+    +'<span>💰 '+(e.free?'Free':'$'+total)+'</span>'
+    +'</div></div></div>'
+    +'<div class="confirm-actions">'
+    +'<button class="btn-ghost" data-action="add-to-cal">+ Apple Calendar</button>'
+    +'<button class="btn-ghost" data-action="add-to-cal">+ Google Calendar</button>'
+    +'</div>'
+    +'<div style="font-family:Manrope,sans-serif;font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px">Share</div>'
+    +'<div class="confirm-share-row">'+shareHTML+'</div>'
+    +'<button class="btn-cta" style="margin-top:20px;width:100%" data-go="my-plans">View in My Plans</button>'
+    +'<button class="btn-ghost" style="margin-top:10px;width:100%" data-go="home">Back to Home</button>'
+    +'</div>';
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: MY PLANS
+// ─────────────────────────────────────────────
+function screenMyPlans() {
+  const tab = S.plans.tab;
+  const plans = MY_PLANS_DATA.filter(p=>tab==='upcoming'?(p.status==='confirmed'||p.status==='pending'):p.status==='past');
+
+  return `
+  ${topBar(`<span style="font-family:Manrope,sans-serif;font-size:17px;font-weight:800;flex:1">My Plans</span>`,
+    `<button class="icon-btn" data-theme-toggle>${S.theme==='dark'?moonSVG():sunSVG()}</button>`)}
+  <div style="height:14px"></div>
+  <div class="plan-tabs">
+    <button class="plan-tab${tab==='upcoming'?' on':''}" data-action="plans-tab" data-tab="upcoming">Upcoming</button>
+    <button class="plan-tab${tab==='past'?' on':''}" data-action="plans-tab" data-tab="past">Past</button>
+  </div>
+  <div style="height:12px"></div>
+  ${plans.length>0 ? plans.map(plan=>{
+    const e = EXP.find(x=>x.id===plan.expId);
+    if(!e) return '';
+    return `<div class="plan-card" data-go="detail" data-expid="${e.id}">
+      <div class="plan-card-img" style="${e.img?'background:url('+e.img+') center/cover,'+e.grad:'background:'+e.grad}"></div>
+      <div class="plan-card-body">
+        <div class="plan-card-title">${e.title}</div>
+        <div class="plan-card-meta">${plan.date} at ${plan.time} · ${plan.guests} guest${plan.guests>1?'s':''}</div>
+        <div class="plan-card-meta" style="margin-bottom:6px">${e.city} · ${plan.ref}</div>
+        <span class="plan-card-status status-${plan.status}">${plan.status}</span>
+      </div>
+    </div>`;
+  }).join('')
+  : `<div class="empty-state">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div class="empty-title">${tab==='upcoming'?'No upcoming plans':'No past experiences'}</div>
+      <div class="empty-sub">${tab==='upcoming'?'Book your next experience to see it here.':'Completed experiences will appear here.'}</div>
+      ${tab==='upcoming'?`<button class="btn-cta" style="margin-top:12px;width:auto;padding:12px 24px" data-go="explore">Explore Experiences</button>`:''}
+    </div>`}
+  <div style="height:20px"></div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: PROFILE
+// ─────────────────────────────────────────────
+function screenProfile() {
+  return `
+  ${topBar(`<span style="font-family:Manrope,sans-serif;font-size:17px;font-weight:800;flex:1">Profile</span>`,
+    `<button class="icon-btn" data-go="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>`)}
+  <div class="profile-hero">
+    <div class="profile-avatar"></div>
+    <div class="profile-name">Jordan</div>
+    <div class="profile-tier-badge">★ The Regular</div>
+    <div class="profile-stats">
+      <div class="profile-stat"><div class="profile-stat-n">12</div><div class="profile-stat-label">Experiences</div></div>
+      <div class="profile-stat"><div class="profile-stat-n">6</div><div class="profile-stat-label">Cities</div></div>
+      <div class="profile-stat"><div class="profile-stat-n">6</div><div class="profile-stat-label">Categories</div></div>
+    </div>
+  </div>
+
+  <div onclick="openConcierge()" style="margin:16px;padding:16px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(16,185,129,.07));border:1px solid rgba(139,92,246,.28);border-radius:16px;cursor:pointer">
+    <div style="font-size:9.5px;font-weight:800;letter-spacing:1.8px;color:var(--emerald);text-transform:uppercase;margin-bottom:4px">The Regular Member Benefit</div>
+    <div style="font-family:Manrope,sans-serif;font-size:15px;font-weight:800;margin-bottom:4px">AI Concierge</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px">Describe what you have in mind. We will plan it, find it, and book it.</div>
+    <button style="display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:50px;background:linear-gradient(135deg,#8b5cf6,#10b981);font-family:Manrope,sans-serif;font-size:11.5px;font-weight:800;color:#fff;cursor:pointer;border:none">Start a Request</button>
+  </div>
+
+  <div class="profile-section">
+    <div class="profile-section-title">My Account</div>
+    ${[
+      ['saved',      'Saved Experiences', 'Your favorites and wishlist', '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>'],
+      ['my-plans',   'My Plans',          'Upcoming and past bookings',  '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'],
+      ['rewards',    'Rewards',           '3,820 points · The Regular',  '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'],
+      ['payment-methods','Payment Methods','Manage cards and billing',   '<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>'],
+    ].map(([route,title,sub,icon])=>`
+      <div class="profile-row" data-go="${route}">
+        <div class="profile-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${icon}</svg></div>
+        <div style="flex:1"><div class="profile-row-label">${title}</div><div class="profile-row-sub">${sub}</div></div>
+        <div class="profile-row-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>`).join('')}
+  </div>
+
+  <div class="profile-section">
+    <div class="profile-section-title">Preferences</div>
+    ${[
+      ['settings','Notifications','Push, email, and SMS'],
+      ['privacy','Privacy','Data and account visibility'],
+    ].map(([route,title,sub])=>`
+      <div class="profile-row" data-go="${route}">
+        <div style="flex:1"><div class="profile-row-label">${title}</div><div class="profile-row-sub">${sub}</div></div>
+        <div class="profile-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>`).join('')}
+  </div>
+
+  <div class="profile-section">
+    <div class="profile-row" data-action="invite-friend">
+      <div style="flex:1"><div class="profile-row-label" style="color:var(--purple)">Invite a Friend</div><div class="profile-row-sub">Both of you get 500 points</div></div>
+      <div class="profile-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>
+    <div class="profile-row" data-action="sign-out">
+      <div style="flex:1"><div class="profile-row-label" style="color:var(--ruby)">Sign Out</div></div>
+    </div>
+  </div>
+  <div style="height:20px"></div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: REWARDS
+// ─────────────────────────────────────────────
+function screenRewards() {
+  const p = S.rewards.period;
+  const STATS = {
+    month:   [{n:'3',  label:'Experiences\nThis Month',   cls:'emerald'},{n:'889',  label:'Points\nEarned',    cls:'amethyst'},{n:'3',label:'Categories\nExplored',cls:'ruby'}],
+    quarter: [{n:'9',  label:'Experiences\nThis Quarter', cls:'emerald'},{n:'2,640',label:'Points\nEarned',    cls:'amethyst'},{n:'5',label:'Categories\nExplored',cls:'ruby'}],
+    year:    [{n:'12', label:'Experiences\nThis Year',    cls:'emerald'},{n:'3,820',label:'Points\nEarned',    cls:'amethyst'},{n:'6',label:'of 7 Categories',   cls:'ruby'}],
+  };
+  const LEDGER = [
+    {title:'Private Chef Tasting',date:'Apr 19, Booking',amt:'+299',cls:'pending',status:'Pending, credits Apr 21-22',img:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=100&q=80',grad:'linear-gradient(135deg,#3b0764,#6d28d9,#a855f7)'},
+    {title:'Pottery Wheel Class', date:'Apr 12, Booking', amt:'+89', cls:'',img:'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=100&q=80',grad:'linear-gradient(135deg,#500724,#be185d,#ec4899)'},
+    {title:'Rooftop Yoga Review', date:'Apr 9, Review Bonus',amt:'+100',cls:'',img:'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?auto=format&fit=crop&w=100&q=80',grad:'linear-gradient(135deg,#052e16,#166534,#22c55e)'},
+    {title:'Referral Bonus, Maya',date:'Apr 4, Referral Bonus',amt:'+500',cls:'',img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=100&q=80',grad:'linear-gradient(135deg,#1e1b4b,#3730a3,#6366f1)'},
+    {title:'$25 Booking Credit', date:'Mar 28, Redeemed',   amt:'−2,500',cls:'minus',img:'https://images.unsplash.com/photo-1556742400-b5b7c512f1d3?auto=format&fit=crop&w=100&q=80',grad:'linear-gradient(135deg,#3b0764,#6d28d9,#c084fc)'},
+    {title:'Mushroom Foraging Tour',date:'Mar 22, Booking', amt:'+229',cls:'',img:'https://images.unsplash.com/photo-1553361371-9b09f4155b81?auto=format&fit=crop&w=100&q=80',grad:'linear-gradient(135deg,#1e3a1e,#2d6a2d,#4ade80)'},
+  ];
+  const REDEEMS = [
+    {title:'$25 Booking Credit',         pts:'2,500',img:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=400&q=80',grad:'linear-gradient(135deg,#3b0764,#6d28d9)'},
+    {title:'$50 Booking Credit',         pts:'5,000',img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=400&q=80',grad:'linear-gradient(135deg,#042f2e,#0f766e)'},
+    {title:"Friend's First Drink",      pts:'1,500',img:'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=400&q=80',grad:'linear-gradient(135deg,#500724,#be185d)'},
+    {title:'Free Pottery Class for Two', pts:'7,500',img:'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=400&q=80',grad:'linear-gradient(135deg,#451a03,#b45309)'},
+    {title:'$50 Off Any Outside Exp',    pts:'4,000',img:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=400&q=80',grad:'linear-gradient(135deg,#052e16,#166534)'},
+    {title:'Free Farmers Market Tour',   pts:'3,500',img:'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=400&q=80',grad:'linear-gradient(135deg,#1e1b4b,#3730a3)'},
+  ];
+
+  const tiers = S.rewards.tiers;
+
+  return `
+  ${topBar(`${backBtn()}<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800">Rewards</span>`,
+    `<button class="icon-btn" data-theme-toggle>${S.theme==='dark'?moonSVG():sunSVG()}</button>`)}
+  <div class="rewards-hero">
+    <div class="rewards-eyebrow">The Regular · 3,820 Points</div>
+    <div class="rewards-pts">3,820</div>
+    <div class="rewards-pts-label">points available to redeem</div>
+    <div class="rewards-progress">
+      <div class="progress-label"><span>The Regular</span><span>6 more experiences to The Local</span></div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:7px;padding:14px 16px 4px">
+    ${['month','quarter','year'].map(t=>`<button style="flex:1;padding:8px;border-radius:10px;background:${p===t?'rgba(139,92,246,.14)':'var(--surface)'};border:1px solid ${p===t?'var(--purple)':'var(--border2)'};font-family:Manrope,sans-serif;font-size:11px;font-weight:800;cursor:pointer;color:${p===t?'var(--purple)':'var(--text2)'}" data-action="rewards-period" data-period="${t}">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}
+  </div>
+  <div class="stats-grid">
+    ${STATS[p].map((s,i)=>{
+      const types=['experiences','points','categories'];
+      return `<div class="stat-card" data-action="stat-detail" data-type="${types[i]}" data-period="${p}">
+        <div class="stat-num ${s.cls}">${s.n}</div>
+        <div class="stat-label">${s.label.replace('\n','<br>')}</div>
+      </div>`;
+    }).join('')}
+  </div>
+
+  <div class="sec" style="padding-top:22px"><span class="sec-title">Recent Activity</span></div>
+  ${LEDGER.map(l=>{
+    const lbg = l.img ? 'background:url('+l.img+') center/cover,'+l.grad : 'background:'+l.grad;
+    return '<div class="ledger-row" data-action="ledger-tap" data-title="'+l.title+'">'
+      +'<div class="ledger-img" style="'+lbg+'"></div>'
+      +'<div style="flex:1"><div class="ledger-title">'+l.title+'</div><div class="ledger-date">'+l.date+'</div>'+(l.status?'<div class="ledger-status">'+l.status+'</div>':'')+'</div>'
+      +'<div class="ledger-amt '+l.cls+'">'+l.amt+'</div>'
+      +'</div>';
+  }).join('')}
+
+  <div class="sec" style="padding-top:22px"><span class="sec-title">Redeem Points</span></div>
+  <div class="redeem-grid">
+    ${REDEEMS.map(r=>{
+      const rbg = r.img ? 'background:url('+r.img+') center/cover,'+r.grad : 'background:'+r.grad;
+      return '<div class="redeem-card" data-action="redeem" data-title="'+r.title+'" data-pts="'+r.pts+'">'
+        +'<div class="redeem-img" style="'+rbg+'"></div>'
+        +'<div class="redeem-body">'
+        +'<div class="redeem-title">'+r.title+'</div>'
+        +'<div class="redeem-pts">★ '+r.pts+' pts</div>'
+        +'</div></div>';
+    }).join('')}
+  </div>
+
+  <div class="sec" style="padding-top:22px"><span class="sec-title">How to Earn</span></div>
+  ${[
+    ['purple','<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>','Every Experience','1 point per dollar. Credits 48-72h after completion.','1×'],
+    ['emerald','<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>','Members-Only Experiences','Exclusive bookings count double toward status.','2×'],
+    ['ruby','<path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/>','Refer a Friend','500 points when they complete their 2nd paid booking.','+500'],
+    ['amber','<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>','Leave a Review','100 points for a written review with photos.','+100'],
+    ['emerald','<path d="M3 21v-7a2 2 0 012-2h14a2 2 0 012 2v7"/>','Local Business Support','1.5× points on bookings with new local business hosts.','1.5×'],
+    ['ruby','<path d="M20 12V8H6a2 2 0 01-2-2c0-1.1.9-2 2-2h12v4"/>','Birthday Week Bonus','1.5× points on every booking during your birthday week.','1.5×'],
+  ].map(([cls,icon,title,desc,mult])=>`
+    <div class="earn-row" data-action="earn-info" data-title="${title}">
+      <div class="earn-icon ${cls}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${icon}</svg></div>
+      <div style="flex:1"><div class="earn-title">${title}</div><div class="earn-desc">${desc}</div></div>
+      <div class="earn-mult">${mult}</div>
+    </div>`).join('')}
+
+  <div class="sec" style="padding-top:22px"><span class="sec-title">Status Ladder</span></div>
+  ${[
+    ['rookie', 'The Rookie', '0 to 6 Experiences', ['Full catalog access','Save favorites','Birthday week 1.5× points','Preview 3 Regular experiences'], 'amethyst', false],
+    ['regular','The Regular','7 to 17 Experiences',['Members-only unlocked','5% off all experiences','24h early access','1.05× points multiplier','AI Concierge','Preview 3 Local experiences'],'emerald',true],
+    ['local',  'The Local',  '18+ Experiences',    ['Everything in The Regular','10% off all experiences','48h early access','Priority on sold-out','1.10× points multiplier','AI and human concierge'],'ruby',false],
+  ].map(([id,name,qe,benefits,color,current])=>`
+    <div class="tier-card ${current?'':''}">
+      <div class="tier-header" data-action="toggle-tier" data-tier="${id}">
+        <div class="tier-info">
+          <div class="tier-name" style="color:var(--${color})">${name}</div>
+          <div class="tier-qe">${qe}</div>
+        </div>
+        <span class="tier-arrow${tiers[id]?' open':''}">▾</span>
+      </div>
+      <div class="tier-body${tiers[id]?' open':''}">
+        ${benefits.map(b=>`<div class="tier-benefit"><span style="color:var(--${color});margin-right:4px">✓</span>${b}</div>`).join('')}
+      </div>
+    </div>`).join('')}
+  <div class="sec" style="padding-top:22px"><span class="sec-title">Refer a Friend</span></div>
+  <div style="margin:0 16px 20px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(16,185,129,.07));border:1px solid rgba(139,92,246,.28);border-radius:18px;padding:20px">
+    <div style="font-size:9.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--amethyst);margin-bottom:6px">Referral Bonus</div>
+    <div style="font-family:Manrope,sans-serif;font-size:18px;font-weight:800;margin-bottom:4px">Give 500 points.<br>Get 500 points.</div>
+    <div style="font-size:12.5px;color:var(--text2);margin-bottom:16px;line-height:1.5">When your friend completes their second paid booking, you both earn 500 points.</div>
+    <div style="background:rgba(255,255,255,.06);border:1px dashed rgba(139,92,246,.4);border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);margin-bottom:4px">Your Code</div>
+        <div style="font-family:DM Mono,monospace;font-size:20px;font-weight:500;letter-spacing:3px;color:var(--text)" id="promo-code">WTM-J4K91</div>
+      </div>
+      <button style="padding:9px 14px;border-radius:10px;background:rgba(139,92,246,.2);border:1px solid rgba(139,92,246,.4);font-family:Manrope,sans-serif;font-size:11px;font-weight:800;color:var(--amethyst);cursor:pointer" data-action="copy-code">Copy</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${[['Text','💬'],['Instagram','📱'],['Snapchat','👻'],['X','𝕏'],['WhatsApp','💚'],['Copy Link','🔗']].map(([l,i])=>
+        '<button style="flex:1;min-width:80px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--border2);font-family:Manrope,sans-serif;font-size:10.5px;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px" data-action="share-referral" data-platform="'+l+'">'
+        +i+' <span>'+l+'</span></button>'
+      ).join('')}
+    </div>
+  </div>
+  <div class="footer-note">Points never expire. Status year resets December 31. Free experiences count toward up to 25% of your annual total.</div>
+  <div style="height:20px"></div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: NOTIFICATIONS
+// ─────────────────────────────────────────────
+function screenNotifications() {
+  const notifs = [
+    {icon:'🎉',title:'New Experience in Los Angeles',body:'Sunset Hike and Private Chef Dinner just went live. Book before it fills up.',time:'2 min ago',unread:true},
+    {icon:'⭐',title:'Your Review Earned You 100 Points',body:'Thanks for reviewing Pottery Wheel Class. Points will be credited within 72 hours.',time:'1 hr ago',unread:true},
+    {icon:'🔓',title:'New Members-Only Experience Unlocked',body:'Private Island Day Trip is now available to The Regular members.',time:'3 hr ago',unread:true},
+    {icon:'👥',title:'Maya Just Booked Through Your Referral',body:'500 points will be added when she completes her 2nd booking.',time:'Yesterday',unread:false},
+    {icon:'📅',title:'Reminder: Pottery Wheel Class Tomorrow',body:'Your session at Clay and Co. starts at 2:00 PM. You have 2 guests.',time:'Yesterday',unread:false},
+    {icon:'💰',title:'Points Credited',body:'229 points from Mushroom Foraging Tour have been added to your balance.',time:'Mar 22',unread:false},
+  ];
+  return `
+  ${topBar(`${backBtn()}<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800">Notifications</span>`,
+    `<button style="background:none;border:none;font-family:Manrope,sans-serif;font-size:12px;font-weight:700;color:var(--purple);cursor:pointer" data-action="mark-all-read">Mark All Read</button>`)}
+  ${notifs.map(n=>`
+    <div class="notif-row${n.unread?' notif-unread':''}" data-action="notif-tap">
+      <div class="notif-icon">${n.icon}</div>
+      <div style="flex:1">
+        <div class="notif-title">${n.title}</div>
+        <div class="notif-body">${n.body}</div>
+        <div class="notif-time">${n.time}</div>
+      </div>
+    </div>`).join('')}
+  <div style="height:20px"></div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: SETTINGS
+// ─────────────────────────────────────────────
+function screenSettings() {
+  return `
+  ${topBar(`${backBtn()}<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800">Settings</span>`)}
+  <div class="settings-section">
+    <div class="settings-label">Account</div>
+    ${[['Name','Jordan'],['Email','jordan@example.com'],['City','Los Angeles'],['Birthday','Set for bonus points']].map(([l,v])=>`
+      <div class="settings-row" data-action="edit-field" data-field="${l}">
+        <div class="settings-row-left"><div class="settings-row-title">${l}</div><div class="settings-row-sub">${v}</div></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`).join('')}
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Notifications</div>
+    ${[['push','Push Notifications','Bookings, reminders, and offers'],['email','Email Updates','Receipts and weekly picks'],['sms','Text Messages','Booking confirmations only'],['dnd','Do Not Disturb','Pause all notifications']].map(([k,t,s])=>`
+      <div class="settings-row">
+        <div class="settings-row-left"><div class="settings-row-title">${t}</div><div class="settings-row-sub">${s}</div></div>
+        <div class="toggle${S.settings[k]?' on':''}" data-action="toggle-setting" data-key="${k}"></div>
+      </div>`).join('')}
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Experience Preferences</div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;padding-top:6px">
+      ${['Dining','Arts','Wellness','Adventure','Offshore','Outside','Date Night','Group Events','Kid-Friendly','Pet-Friendly'].map(tag=>
+        `<button style="padding:6px 13px;border-radius:50px;background:var(--surface2);border:1px solid var(--border2);font-family:Manrope,sans-serif;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer" data-action="toggle-pref">${tag}</button>`
+      ).join('')}
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">App</div>
+    <div class="settings-row" data-action="toggle-theme-setting">
+      <div class="settings-row-left"><div class="settings-row-title">Dark Mode</div><div class="settings-row-sub">Switch between light and dark</div></div>
+      <div class="toggle${S.theme==='dark'?' on':''}" data-theme-toggle></div>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Legal</div>
+    ${[['Privacy Policy','privacy'],['Terms of Service','terms'],['Security and Trust','security'],['Help Center','help'],['Contact Support','contact']].map(([t,r])=>`
+      <div class="settings-row" data-go="${r}">
+        <div class="settings-row-title">${t}</div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`).join('')}
+  </div>
+  <div class="settings-section">
+    <div class="settings-row" data-action="sign-out">
+      <div class="settings-row-title" style="color:var(--ruby)">Sign Out</div>
+    </div>
+  </div>
+  <div style="height:20px"></div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: CATEGORY
+// ─────────────────────────────────────────────
+function screenCategory(p={}) {
+  const cat = p.cat || 'dining';
+  const info = CATS[cat] || CATS.dining;
+  const results = EXP.filter(e=>e.category===cat);
+  return `
+  <div style="height:140px;position:relative;${gradStyle(info.grad)}">
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,var(--base),transparent 60%)"></div>
+    <div style="position:absolute;top:max(14px,env(safe-area-inset-top));left:16px">
+      <button class="detail-hero-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+    </div>
+    <div style="position:absolute;bottom:16px;left:16px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:4px">Category</div>
+      <div style="font-family:Manrope,sans-serif;font-size:24px;font-weight:800;color:#fff">${info.label}</div>
+    </div>
+  </div>
+  <div style="padding:16px 16px 8px;display:flex;gap:7px;overflow-x:auto">
+    ${['All','Free','Local Business'].map((f,i)=>
+      `<button class="filter-chip${i===0?' on':''}" style="flex-shrink:0" data-action="cat-filter" data-filter="${f}">${f}</button>`
+    ).join('')}
+  </div>
+  <div class="grid-2" style="padding-bottom:24px">${results.map(e=>gridCard(e)).join('')}</div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: COLLECTION
+// ─────────────────────────────────────────────
+function screenCollection(p={}) {
+  const cid = p.id || 'date-night';
+  const col = COLLECTIONS.find(c=>c.id===cid) || COLLECTIONS[0];
+  let results;
+  if(cid==='members-only')     results = EXP.filter(e=>e.exclusive);
+  else if(cid==='free-this-week') results = EXP.filter(e=>e.free);
+  else if(cid==='small-business-spotlight') results = EXP.filter(e=>e.sbiz&&(e.bipoc||e.women));
+  else if(cid==='date-night')   results = EXP.filter(e=>e.vibes.includes('date-night'));
+  else if(cid==='thrill-seekers') results = EXP.filter(e=>e.vibes.includes('thrill'));
+  else if(cid==='pet-welcome')  results = EXP.filter(e=>e.pet);
+  else results = EXP;
+
+  return `
+  <div style="height:140px;position:relative;${col.img?'background:url('+col.img+') center/cover,'+col.grad:'background:'+col.grad}">
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,var(--base),transparent 60%)"></div>
+    <div style="position:absolute;top:max(14px,env(safe-area-inset-top));left:16px">
+      <button class="detail-hero-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+    </div>
+    <div style="position:absolute;bottom:16px;left:16px">
+      <div style="font-family:Manrope,sans-serif;font-size:22px;font-weight:800;color:#fff">${col.title}</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:2px">${col.desc}</div>
+    </div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="grid-2" style="padding-bottom:24px">${results.length>0?results.map(e=>gridCard(e)).join(''):`<div class="empty-state" style="grid-column:span 2"><div class="empty-title">Nothing here yet</div><div class="empty-sub">Check back soon.</div></div>`}</div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: MEMBERS ONLY
+// ─────────────────────────────────────────────
+function screenMembersOnly() {
+  const exclusives = EXP.filter(e=>e.exclusive);
+  return `
+  <div style="height:160px;position:relative;background:url('https://images.unsplash.com/photo-1478359844494-1092259d93e4?auto=format&fit=crop&w=800&q=80') center/cover,linear-gradient(135deg,#2d1b69,#6d28d9,#a855f7)">
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,var(--base),transparent 60%)"></div>
+    <div style="position:absolute;top:max(14px,env(safe-area-inset-top));left:16px">
+      <button class="detail-hero-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+    </div>
+    <div style="position:absolute;bottom:16px;left:16px">
+      <div class="members-eyebrow" style="margin-bottom:6px">★ Members Only</div>
+      <div style="font-family:Manrope,sans-serif;font-size:22px;font-weight:800;color:#fff">Reserved for<br>The Regulars and The Locals.</div>
+    </div>
+  </div>
+  <div style="padding:12px 16px 8px;font-size:13px;color:var(--text2)">${exclusives.length} exclusive experiences available with your status.</div>
+  <div class="grid-2" style="padding-bottom:24px">${exclusives.map(e=>gridCard(e)).join('')}</div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: SEARCH
+// ─────────────────────────────────────────────
+function screenSearch(p={}) {
+  S.explore.query = p.q || '';
+  R.route = 'explore';
+  return screenExplore();
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: SAVED
+// ─────────────────────────────────────────────
+function screenSaved() {
+  const saved = EXP.filter(e=>isFav(e.id));
+  return `
+  ${topBar(`${backBtn()}<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800">Saved Experiences</span>`)}
+  <div style="height:12px"></div>
+  ${saved.length>0
+    ? `<div class="grid-2" style="padding-bottom:24px">${saved.map(e=>gridCard(e)).join('')}</div>`
+    : `<div class="empty-state">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        <div class="empty-title">No saved experiences yet</div>
+        <div class="empty-sub">Tap the heart on any experience to save it here.</div>
+        <button class="btn-cta" style="margin-top:12px;width:auto;padding:12px 24px" data-go="explore">Explore Experiences</button>
+      </div>`}`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: PAYMENT METHODS
+// ─────────────────────────────────────────────
+function screenPaymentMethods() {
+  return `
+  ${topBar(`${backBtn()}<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800">Payment Methods</span>`)}
+  <div style="padding:16px">
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:26px;background:linear-gradient(135deg,#1a56db,#0ea5e9);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff">VISA</div>
+        <div><div style="font-family:Manrope,sans-serif;font-size:13px;font-weight:700">Visa ending in 4242</div><div style="font-size:11px;color:var(--text3)">Expires 08 / 27</div></div>
+      </div>
+      <div style="font-size:10px;font-weight:800;background:rgba(16,185,129,.12);color:var(--emerald);padding:3px 8px;border-radius:5px">Default</div>
+    </div>
+    <button style="width:100%;padding:14px;border-radius:14px;background:var(--surface);border:1px dashed var(--border2);font-family:Manrope,sans-serif;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px" data-action="add-card">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Payment Method
+    </button>
+    <div style="font-family:Manrope,sans-serif;font-size:13px;font-weight:800;margin-bottom:12px">Installment Options</div>
+    <div style="font-size:12.5px;color:var(--text2);line-height:1.55">Affirm, Afterpay, and Klarna are available for bookings of $500 and above. Select at checkout.</div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: PRIVACY POLICY
+// ─────────────────────────────────────────────
+function screenPrivacy() {
+  const sections = [
+    {title:'What We Collect',body:'We collect information you provide directly: your name, email address, phone number, and payment details when you create an account or make a booking. We also collect usage data such as experiences viewed, bookings made, and features used within the app. Location data is collected only when you grant permission and only to surface experiences near you.'},
+    {title:'How We Use Your Data',body:'Your data is used to process bookings and payments, personalize experience recommendations, send booking confirmations and reminders, operate the rewards program, and improve the product. We do not sell your personal information to third parties. We do not use your data to serve you third-party ads.'},
+    {title:'Sharing with Third Parties',body:'We share limited data with: payment processors (Stripe) to complete transactions; identity verification services (ID.me) when an experience requires age or credential verification; and calendar integrations (Apple, Google) only when you choose to add a booking to your calendar. All third-party partners are contractually bound to handle your data per our standards.'},
+    {title:'Data Retention',body:'We retain your account data for as long as your account is active. Booking records are retained for seven years for tax and legal compliance. You may request deletion of your account at any time. Upon deletion, personal data is removed within 30 days, except where retention is required by law.'},
+    {title:'Your Rights',body:'You have the right to access, correct, or delete your personal data at any time. You may request a portable copy of your data via Settings. For California residents: under CCPA, you have the right to know what data we collect and to opt out of the sale of personal information (we do not sell your data). For EU/UK residents: GDPR rights apply, including the right to erasure and to restrict processing.'},
+    {title:'Cookies and Tracking',body:'We use essential cookies to keep you signed in and maintain app function. We use analytics tools to understand how the app is used in aggregate. We do not use cross-site tracking cookies or fingerprinting. You may disable non-essential cookies in Settings without affecting core functionality.'},
+    {title:'Children\'s Privacy',body:'What\'s the Move is intended for users 18 and older. We do not knowingly collect data from anyone under 18. If you believe a minor has created an account, contact us at privacy@whatsthemove.com.'},
+    {title:'Changes to This Policy',body:'We will notify you of material changes to this policy via email and in-app notification at least 14 days before they take effect. Continued use of the app after that date constitutes acceptance.'},
+    {title:'Contact',body:'Privacy questions: privacy@whatsthemove.com\nData deletion requests: privacy@whatsthemove.com\nMailing address: What\'s the Move, Inc., 1234 Main Street, Los Angeles, CA 90012'},
+  ];
+  return '<div class="top-bar"><button class="top-back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    +'<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800;flex:1">Privacy Policy</span></div>'
+    +'<div style="padding:16px 16px 40px">'
+    +'<div style="font-size:11px;color:var(--text3);margin-bottom:20px">Last updated: April 1, 2026</div>'
+    +sections.map(sec=>
+      '<div style="margin-bottom:22px">'
+      +'<div style="font-family:Manrope,sans-serif;font-size:14px;font-weight:800;margin-bottom:7px;color:var(--text)">'+sec.title+'</div>'
+      +'<div style="font-size:13px;color:var(--text2);line-height:1.65;white-space:pre-line">'+sec.body+'</div>'
+      +'</div>'
+    ).join('')
+    +'</div>';
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: TERMS OF SERVICE
+// ─────────────────────────────────────────────
+function screenTerms() {
+  const sections = [
+    {title:'Eligibility',body:'You must be at least 18 years old to create an account and book experiences. Some experiences have additional age or credential requirements disclosed on the listing. By creating an account you confirm that you meet these requirements.'},
+    {title:'Account Responsibility',body:'You are responsible for maintaining the confidentiality of your account credentials. Any activity that occurs under your account is your responsibility. You agree to notify us immediately of any unauthorized use at support@whatsthemove.com.'},
+    {title:'Booking Terms',body:'A booking is confirmed when you receive a booking confirmation email and reference number. Prices shown are all-inclusive. The price you see is the price you pay — no taxes, service fees, or hidden charges are added at checkout. Experiences require a verified status flag before going live; we reserve the right to cancel bookings if an experience is found non-compliant.'},
+    {title:'Cancellations and Refunds',body:'Cancellation policies vary by experience and are disclosed on each listing before booking. Policies range from free cancellation to non-refundable. Cancellation requests must be submitted through the app via My Plans. Refunds are issued to the original payment method within 5-10 business days.'},
+    {title:'Waivers and Liability',body:'Some experiences require you to sign an electronic waiver before your booking is confirmed. These waivers are presented at checkout and govern the specific risks of the activity. By signing, you acknowledge the inherent risks. What\'s the Move is a platform connecting guests and experience hosts and is not liable for personal injury, property loss, or other damages arising from participation in experiences.'},
+    {title:'Code of Conduct',body:'You agree not to engage in discriminatory, harassing, or abusive behavior toward hosts or other guests. Misuse of the platform, including creating fraudulent reviews, filing false reports, or attempting to circumvent the booking system, may result in account suspension.'},
+    {title:'Intellectual Property',body:'All content in this app including design, copy, and the What\'s the Move brand is owned by What\'s the Move, Inc. You may not reproduce, distribute, or create derivative works without written permission.'},
+    {title:'Governing Law',body:'These terms are governed by the laws of the State of California. Any disputes shall be resolved by binding arbitration in Los Angeles County, California, except where prohibited by law.'},
+    {title:'Contact',body:'Legal inquiries: legal@whatsthemove.com'},
+  ];
+  return '<div class="top-bar"><button class="top-back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    +'<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800;flex:1">Terms of Service</span></div>'
+    +'<div style="padding:16px 16px 40px">'
+    +'<div style="font-size:11px;color:var(--text3);margin-bottom:20px">Last updated: April 1, 2026</div>'
+    +sections.map(sec=>
+      '<div style="margin-bottom:22px">'
+      +'<div style="font-family:Manrope,sans-serif;font-size:14px;font-weight:800;margin-bottom:7px;color:var(--text)">'+sec.title+'</div>'
+      +'<div style="font-size:13px;color:var(--text2);line-height:1.65;white-space:pre-line">'+sec.body+'</div>'
+      +'</div>'
+    ).join('')
+    +'</div>';
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: SECURITY
+// ─────────────────────────────────────────────
+function screenSecurity() {
+  const items = [
+    {icon:'🔐',title:'End-to-End Encrypted Messaging',body:'All in-app messages between guests and hosts are protected using the Signal Protocol — the same encryption standard used by Signal and WhatsApp. Messages are encrypted on your device before transmission and can only be decrypted by the intended recipient. We cannot read your messages.'},
+    {icon:'🪪',title:'Identity Verification via ID.me',body:'Experiences that require age verification, driver credentials, or other identity checks use ID.me, a government-trusted identity verification service. Your verified status is cryptographically confirmed and we store only the verification result — never a copy of your ID.'},
+    {icon:'💳',title:'Payment Security',body:'Payments are processed by Stripe, a PCI-DSS Level 1 certified payment processor. Your full card number is never stored on our servers. Transactions use 3D Secure authentication where supported. Apple Pay, Google Pay, and PayPal are fully integrated and process payments through their own secure environments.'},
+    {icon:'🔒',title:'Data Encryption at Rest',body:'All personal data stored in our databases is encrypted using AES-256 — the same standard used by banks and government agencies. Encryption keys are managed in AWS KMS and rotated quarterly. Database backups are encrypted and stored in geographically distributed locations.'},
+    {icon:'📋',title:'Electronic Waivers',body:'Experiences that require participant waivers use a DocuSign-integrated signing flow. Your signature and waiver agreement are stored securely and associated with your booking record. You will always receive a signed copy at your registered email address.'},
+    {icon:'🛡️',title:'Fraud Detection and Monitoring',body:'We use real-time transaction monitoring to detect unusual booking patterns, payment anomalies, and account takeover attempts. Suspicious activity triggers automatic review. Our security team monitors alerts 24/7.'},
+    {icon:'🔑',title:'Account Security',body:'We recommend enabling biometric authentication (Face ID, fingerprint) for app access, using a unique password or passkey for your account, and reviewing your booking history regularly for any unrecognized activity. If you suspect your account has been compromised, contact security@whatsthemove.com immediately.'},
+    {icon:'⚠️',title:'Report a Security Issue',body:'If you discover a security vulnerability or believe your data has been exposed, please contact our security team immediately at security@whatsthemove.com. We follow responsible disclosure principles and respond to valid reports within 24 hours.'},
+  ];
+  return '<div class="top-bar"><button class="top-back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    +'<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800;flex:1">Security and Trust</span></div>'
+    +'<div style="padding:12px 16px 40px">'
+    +'<div style="padding:12px 14px;border-radius:12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);font-size:12.5px;color:rgba(74,222,128,.9);margin-bottom:20px;line-height:1.5">'
+    +'✓ Your data, messages, and payments are protected end-to-end. This page explains how.'
+    +'</div>'
+    +items.map(item=>
+      '<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)">'
+      +'<div style="font-size:22px;flex-shrink:0;padding-top:2px">'+item.icon+'</div>'
+      +'<div style="flex:1">'
+      +'<div style="font-family:Manrope,sans-serif;font-size:14px;font-weight:800;margin-bottom:5px;color:var(--text)">'+item.title+'</div>'
+      +'<div style="font-size:12.5px;color:var(--text2);line-height:1.65">'+item.body+'</div>'
+      +'</div></div>'
+    ).join('')
+    +'</div>';
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: HELP CENTER
+// ─────────────────────────────────────────────
+function screenHelp() {
+  const faqs = [
+    {q:'How do bookings work?',a:'Browse experiences, pick a date and time, choose your guests and any add-ons, and pay. You\'ll receive a confirmation email with your booking reference. Your host confirms the booking within 24 hours. Some experiences require a waiver, which you sign at checkout.'},
+    {q:'How do I cancel a booking?',a:'Go to My Plans, tap the booking, and select Cancel. Cancellation policies vary by experience and are shown before you book. Refunds for eligible cancellations are returned to your original payment method within 5-10 business days.'},
+    {q:'What does the price include?',a:'Everything. The price shown is the price you pay. There are no taxes, service fees, or hidden charges added at checkout. Guest fees apply when your party exceeds 2 guests, and these are clearly shown as a line item in your booking summary.'},
+    {q:'How do points work?',a:'You earn points on every paid booking. Points are credited to your account 48 to 72 hours after your host marks the experience complete. Points never expire. Redeem them in the Rewards section for booking credits and exclusive perks.'},
+    {q:'What is The Regular and The Local?',a:'These are membership tiers earned through experiences, not spending. The Rookie is 0 to 6 experiences per year. The Regular is 7 to 17 and unlocks members-only experiences, early access, and the AI Concierge. The Local is 18 or more and unlocks priority access and a dedicated human concierge.'},
+    {q:'How does identity verification work?',a:'Some experiences require age or credential verification. When required, you\'ll be prompted to verify through ID.me, a government-trusted service. The process takes under 2 minutes. We store only the verification result, never a copy of your documents.'},
+    {q:'Can I bring my pet?',a:'Yes, for experiences marked Pet-Friendly. Look for the "Pet OK" chip on experience cards. The Bring Your Pet collection in Explore shows all pet-welcome experiences.'},
+    {q:'How do I refer a friend?',a:'Go to Rewards, scroll to Refer a Friend. Share your unique code. When your friend completes their second paid booking, you both receive 500 points.'},
+    {q:'What payment methods are accepted?',a:'Visa, Mastercard, American Express, Apple Pay, Google Pay, and PayPal. Installment options via Affirm, Afterpay, and Klarna are available for bookings of $500 or more.'},
+    {q:'How do I contact my host?',a:'Once a booking is confirmed, a secure in-app message thread opens between you and your host. Messages are end-to-end encrypted. You can access this thread from My Plans.'},
+  ];
+  return '<div class="top-bar"><button class="top-back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    +'<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800;flex:1">Help Center</span></div>'
+    +'<div style="padding:12px 16px 40px">'
+    +'<div style="background:var(--surface);border:1px solid var(--border2);border-radius:14px;display:flex;align-items:center;gap:10px;padding:12px 14px;margin-bottom:20px">'
+    +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
+    +'<input style="flex:1;background:none;border:none;outline:none;font-family:Manrope,sans-serif;font-size:13.5px;color:var(--text)" placeholder="Search help articles...">'
+    +'</div>'
+    +'<div style="font-family:Manrope,sans-serif;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:12px">Frequently Asked Questions</div>'
+    +faqs.map((f,i)=>{
+      const id='faq'+i;
+      return '<div style="border:1px solid var(--border2);border-radius:14px;margin-bottom:8px;overflow:hidden" id="'+id+'">'
+        +'<div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:Manrope,sans-serif;font-size:13.5px;font-weight:700;color:var(--text)" data-action="toggle-faq" data-faq="'+id+'">'
+        +f.q
+        +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" style="flex-shrink:0;margin-left:8px"><polyline points="6 9 12 15 18 9"/></svg>'
+        +'</div>'
+        +'<div class="faq-body" id="'+id+'-body" style="display:none;padding:0 16px 14px;font-size:12.5px;color:var(--text2);line-height:1.65">'+f.a+'</div>'
+        +'</div>';
+    }).join('')
+    +'<div style="margin-top:24px;padding:16px;background:var(--surface);border:1px solid var(--border2);border-radius:16px">'
+    +'<div style="font-family:Manrope,sans-serif;font-size:14px;font-weight:800;margin-bottom:4px">Still need help?</div>'
+    +'<div style="font-size:12.5px;color:var(--text2);margin-bottom:14px">Our team typically responds within 2 hours.</div>'
+    +'<button class="btn-cta" data-go="contact" style="width:auto;padding:11px 24px;font-size:13px">Contact Support</button>'
+    +'</div>'
+    +'</div>';
+}
+
+// ─────────────────────────────────────────────
+// SCREEN: CONTACT SUPPORT
+// ─────────────────────────────────────────────
+function screenContact() {
+  return '<div class="top-bar"><button class="top-back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    +'<span style="font-family:Manrope,sans-serif;font-size:16px;font-weight:800;flex:1">Contact Support</span></div>'
+    +'<div style="padding:16px 16px 40px">'
+    // Contact channels
+    +'<div style="margin-bottom:20px">'
+    +[
+      {icon:'💬',title:'In-App Chat',sub:'Fastest. Connect with a live agent.', action:'start-chat',cta:'Start Chat'},
+      {icon:'📧',title:'Email',sub:'support@whatsthemove.com\nResponse within 2 hours.',action:'',cta:''},
+      {icon:'📞',title:'Phone',sub:'1-800-WTM-MOVE\nMon–Fri, 9am–9pm PT\nSat–Sun, 10am–6pm PT',action:'',cta:''},
+    ].map(ch=>
+      '<div style="display:flex;align-items:flex-start;gap:14px;padding:14px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;margin-bottom:8px">'
+      +'<div style="font-size:22px">'+ch.icon+'</div>'
+      +'<div style="flex:1"><div style="font-family:Manrope,sans-serif;font-size:14px;font-weight:800;margin-bottom:3px">'+ch.title+'</div>'
+      +'<div style="font-size:12px;color:var(--text2);line-height:1.5;white-space:pre-line">'+ch.sub+'</div></div>'
+      +(ch.cta?'<button style="padding:8px 14px;border-radius:10px;background:var(--cta);font-family:Manrope,sans-serif;font-size:11px;font-weight:800;color:#fff;border:none;cursor:pointer;flex-shrink:0;margin-top:2px" data-action="'+ch.action+'">'+ch.cta+'</button>':'')
+      +'</div>'
+    ).join('')
+    +'</div>'
+    // Submit a request form
+    +'<div style="font-family:Manrope,sans-serif;font-size:14px;font-weight:800;margin-bottom:12px">Submit a Request</div>'
+    +'<div style="margin-bottom:10px">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Topic</div>'
+    +'<select style="width:100%;padding:12px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--border2);color:var(--text);font-family:Manrope,sans-serif;font-size:13px;outline:none;-webkit-appearance:none">'
+    +'<option>Booking issue</option><option>Cancellation or refund</option><option>Points and rewards</option><option>Account access</option><option>Payment problem</option><option>Experience feedback</option><option>Safety concern</option><option>Other</option>'
+    +'</select>'
+    +'</div>'
+    +'<div style="margin-bottom:10px">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Booking Reference (optional)</div>'
+    +'<input style="width:100%;padding:12px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--border2);color:var(--text);font-family:DM Mono,monospace;font-size:13px;outline:none" placeholder="WTM-XXXXX">'
+    +'</div>'
+    +'<div style="margin-bottom:16px">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Describe the issue</div>'
+    +'<textarea style="width:100%;padding:12px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--border2);color:var(--text);font-family:Manrope,sans-serif;font-size:13px;resize:none;outline:none;line-height:1.5" rows="4" placeholder="Tell us what happened. Include dates and details."></textarea>'
+    +'</div>'
+    +'<button class="btn-cta" data-action="submit-support">Send Request</button>'
+    +'</div>';
+}
+
+// ─────────────────────────────────────────────
+// EVENT DELEGATION
+// ─────────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  // Favorite — must be checked BEFORE data-go (hearts live inside cards that also have data-go)
+  const favEl = e.target.closest('[data-fav]');
+  if(favEl) {
+    e.stopPropagation();
+    const id = favEl.dataset.fav;
+    toggleFav(id);
+    favEl.classList.toggle('on', isFav(id));
+    const svg = favEl.querySelector('svg');
+    if(svg){ svg.setAttribute('fill', isFav(id)?'#e11d48':'none'); svg.setAttribute('stroke', isFav(id)?'#e11d48':'white'); }
+    toast(isFav(id)?'Saved':'Removed from Saved');
+    return;
+  }
+  // Back
+  if(e.target.closest('[data-back]')) { R.back(); return; }
+  // Theme toggle
+  if(e.target.closest('[data-theme-toggle]')) { toggleTheme(); R.refresh(); return; }
+  // Navigate
+  const goEl = e.target.closest('[data-go]');
+  if(goEl) {
+    const route = goEl.dataset.go;
+    let params = {};
+    try { params = goEl.dataset.params ? JSON.parse(goEl.dataset.params) : {}; } catch(_){}
+    if(goEl.dataset.expid)  params.id  = goEl.dataset.expid;
+    if(goEl.dataset.colid)  params.id  = goEl.dataset.colid;
+    if(goEl.dataset.cat && !goEl.dataset.go.includes('explore')) params.cat = goEl.dataset.cat;
+    R.go(route, params);
+    return;
+  }
+  // Vibe filter on home
+  const vibeEl = e.target.closest('[data-vibe]');
+  if(vibeEl) {
+    document.querySelectorAll('[data-vibe]').forEach(b=>b.classList.remove('on'));
+    vibeEl.classList.add('on');
+    const v = vibeEl.dataset.vibe;
+    S.explore.vibe = v==='all'?'all':v;
+    return;
+  }
+  // Category filter in explore
+  const catEl = e.target.closest('[data-cat]');
+  if(catEl) {
+    S.explore.cat = catEl.dataset.cat;
+    R.refresh();
+    return;
+  }
+  // Explore vibe filter
+  const evEl = e.target.closest('[data-explore-vibe]');
+  if(evEl) {
+    S.explore.vibe = evEl.dataset.exploreVibe;
+    R.refresh();
+    return;
+  }
+  // Actions
+  const actionEl = e.target.closest('[data-action]');
+  if(actionEl) {
+    handleAction(actionEl.dataset.action, actionEl.dataset, e);
+    return;
+  }
+});
+
+// Input event for search
+document.addEventListener('input', function(e) {
+  if(e.target.id==='explore-search') {
+    S.explore.query = e.target.value;
+    R.refresh();
+  }
+  if(e.target.id==='special-req') {
+    S.booking.requests = e.target.value;
+  }
+  if(e.target.id==='card-num') {
+    let v = e.target.value.replace(/\D/g,'').slice(0,16);
+    e.target.value = v.replace(/(.{4})/g,'$1 ').trim();
+  }
+  if(e.target.id==='card-exp') {
+    let v = e.target.value.replace(/\D/g,'');
+    if(v.length>=2) v = v.slice(0,2)+' / '+v.slice(2,4);
+    e.target.value = v;
+  }
+});
+
+function handleAction(action, data, e) {
+  switch(action) {
+    case 'surprise': {
+      const pool = EXP.filter(e=>!e.free);
+      const pick = pool[Math.floor(Math.random()*pool.length)];
+      toast('Tonight: '+pick.title);
+      setTimeout(()=>R.go('detail',{id:pick.id}), 400);
+      break;
+    }
+    case 'pick-date':
+      S.booking.date = data.date;
+      R.refresh();
+      break;
+    case 'pick-time':
+      S.booking.time = data.time;
+      R.refresh();
+      break;
+    case 'cal-prev':
+      if(S.booking.calMonth===0){ S.booking.calMonth=11; S.booking.calYear--; }
+      else S.booking.calMonth--;
+      R.refresh();
+      break;
+    case 'cal-next':
+      if(S.booking.calMonth===11){ S.booking.calMonth=0; S.booking.calYear++; }
+      else S.booking.calMonth++;
+      R.refresh();
+      break;
+    case 'book-next-1':
+      if(!S.booking.date || !S.booking.time) { toast('Please select a date and time to continue.'); return; }
+      R.go('book-2');
+      break;
+    case 'guests-dec':
+      if(S.booking.guests>1){ S.booking.guests--; R.refresh(); }
+      break;
+    case 'guests-inc':
+      if(S.booking.guests<10){ S.booking.guests++; R.refresh(); }
+      break;
+    case 'toggle-addon': {
+      const aid = data.addon;
+      const i = S.booking.addons.indexOf(aid);
+      if(i>-1) S.booking.addons.splice(i,1); else S.booking.addons.push(aid);
+      R.refresh();
+      break;
+    }
+    case 'book-next-2':
+      S.booking.requests = document.getElementById('special-req')?.value || '';
+      R.go('book-3');
+      break;
+    case 'pay-tab':
+      S.booking.payment = data.tab;
+      R.refresh();
+      break;
+    case 'pay-alt':
+      toast('Opening '+S.booking.payment.charAt(0).toUpperCase()+S.booking.payment.slice(1)+' Pay...');
+      setTimeout(()=>R.go('confirmed'),1200);
+      break;
+    case 'confirm-pay':
+      toast('Processing payment...');
+      setTimeout(()=>R.go('confirmed'),1200);
+      break;
+    case 'add-plans': {
+      const exp = EXP.find(x=>x.id===data.id);
+      if(exp) toast('"'+exp.title+'" added to My Plans');
+      break;
+    }
+    case 'add-to-cal':
+      toast('Added to Calendar');
+      break;
+    case 'share': {
+      const msgs = {Text:'Opening Messages...',Instagram:'Opening Instagram...',Snapchat:'Opening Snapchat...',X:'Opening X...'};
+      if(data.platform==='Copy Link'){ toast('Link copied!'); }
+      else toast(msgs[data.platform]||'Sharing...');
+      break;
+    }
+    case 'plans-tab':
+      S.plans.tab = data.tab;
+      R.refresh();
+      break;
+    case 'rewards-period':
+      S.rewards.period = data.period;
+      R.refresh();
+      break;
+    case 'toggle-tier': {
+      const tid = data.tier;
+      S.rewards.tiers[tid] = !S.rewards.tiers[tid];
+      R.refresh();
+      break;
+    }
+    case 'stat-detail': {
+      const msgs = {
+        experiences:{month:'3 experiences completed this month.',quarter:'9 experiences this quarter.',year:'12 experiences this year.'},
+        points:{month:'889 points earned this month.',quarter:'2,640 points earned this quarter.',year:'3,820 points earned this year. Points never expire.'},
+        categories:{month:'Dining, Offshore, and Arts explored this month.',quarter:'5 categories explored this quarter.',year:'6 of 7 categories this year. Missing: Kid-Friendly.'},
+      };
+      toast((msgs[data.type]||{})[data.period]||'', 3000);
+      break;
+    }
+    case 'redeem':
+      toast('Redeeming: '+data.title+' for '+data.pts+' pts', 2000);
+      setTimeout(()=>toast('Redemption confirmed.'),2200);
+      break;
+    case 'earn-info':
+      toast(data.title, 2000);
+      break;
+    case 'ledger-tap':
+      toast(data.title, 2000);
+      break;
+    case 'mark-all-read':
+      S.notifCount = 0;
+      toast('All notifications marked as read');
+      R.refresh();
+      break;
+    case 'notif-tap':
+      break;
+    case 'edit-field':
+      const val = prompt('Update '+data.field+':');
+      if(val) toast(data.field+' updated');
+      break;
+    case 'toggle-setting':
+      S.settings[data.key] = !S.settings[data.key];
+      R.refresh();
+      break;
+    case 'toggle-pref':
+      if(e) e.target.style.background = e.target.style.background==='var(--surface2)'?'rgba(139,92,246,.15)':'var(--surface2)';
+      break;
+    case 'cat-filter':
+      toast(data.filter+' filter applied');
+      break;
+    case 'invite-friend':
+    case 'copy-code':
+      toast('Code WTM-J4K91 copied to clipboard.');
+      if(navigator.clipboard) navigator.clipboard.writeText('WTM-J4K91').catch(()=>{});
+      break;
+    case 'share-referral': {
+      const msgs2 = {Text:'Opening Messages...',Instagram:'Opening Instagram...',Snapchat:'Opening Snapchat...',X:'Opening X...',WhatsApp:'Opening WhatsApp...'};
+      if(data.platform==='Copy Link'){ toast('Referral link copied.'); }
+      else toast(msgs2[data.platform]||'Sharing...');
+      break;
+    }
+    case 'sign-out':
+      toast('Signed out');
+      setTimeout(()=>R.go('home'),1000);
+      break;
+    case 'legal':
+      toast('Opening '+data.page+'...');
+      break;
+    case 'add-card':
+      toast('Add payment method coming soon.');
+      break;
+    case 'toggle-faq': {
+      const el = document.getElementById(data.faq+'-body');
+      if(el) { el.style.display = el.style.display==='none'?'block':'none'; }
+      break;
+    }
+    case 'submit-support':
+      toast('Request submitted. We\'ll respond within 2 hours.');
+      setTimeout(()=>R.back(), 1800);
+      break;
+    case 'start-chat':
+      toast('Connecting to live support...');
+      break;
+    case 'search-input':
+      break;
+  }
+}
+
+function openConcierge() {
+  const input = prompt('AI Concierge\n\nDescribe what you have in mind:\n\nExample: "Rooftop dinner for two, private chef, somewhere with a city view."');
+  if(input && input.trim()) toast('Request received. We will plan your experience.', 2500);
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+R.render();
+</script>
+</html>
