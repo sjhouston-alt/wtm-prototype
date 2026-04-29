@@ -1,0 +1,3276 @@
+<!DOCTYPE html>
+<!-- saved from url=(0055)file:///Users/jordanhouston/Downloads/wtm_app_v2_2.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>What's the Move</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./wtmm app v2_files/css2" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080810;
+    --surface: #0f0f1a;
+    --surface2: #161625;
+    --surface3: #1e1e30;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.12);
+    --text: #ffffff;
+    --text2: rgba(255,255,255,0.70);
+    --text3: rgba(255,255,255,0.40);
+    --purple: #c084fc;
+    --pink: #f472b6;
+    --orange: #fb923c;
+    --teal: #2dd4bf;
+    --amber: #fbbf24;
+    --blue: #60a5fa;
+    --green: #4ade80;
+    --indigo: #818cf8;
+    --grad: linear-gradient(90deg, #c084fc, #f472b6, #fb923c);
+    --cta: linear-gradient(135deg, #8b5cf6, #ec4899);
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 20px;
+    --radius-sm: 12px;
+    --radius-lg: 28px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* ── PHONE SHELL ── */
+  .phone {
+    width: 390px;
+    height: 844px;
+    background: var(--bg);
+    border-radius: 52px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 40px 80px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+  }
+  .screen.active { display: flex; }
+
+  /* ── AMBIENT GLOWS ── */
+  .glow-tl {
+    position: absolute;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 70%);
+    top: -80px; left: -80px;
+    pointer-events: none; z-index: 0;
+  }
+  .glow-tr {
+    position: absolute;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(236,72,153,0.28) 0%, transparent 70%);
+    top: -80px; right: -80px;
+    pointer-events: none; z-index: 0;
+  }
+  .glow-bc {
+    position: absolute;
+    width: 400px; height: 300px;
+    background: radial-gradient(circle, rgba(45,212,191,0.18) 0%, transparent 70%);
+    bottom: -100px; left: 50%; transform: translateX(-50%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 28px 0;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    position: relative; z-index: 10;
+    flex-shrink: 0;
+  }
+  .status-bar .time { font-size: 15px; font-weight: 700; }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    display: flex;
+    background: rgba(15,15,26,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 12px 0 28px;
+    position: relative; z-index: 100;
+    flex-shrink: 0;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-item svg { width: 22px; height: 22px; transition: all 0.2s; }
+  .nav-item span { font-size: 10px; font-weight: 600; color: var(--text3); transition: all 0.2s; }
+  .nav-item.active svg { filter: drop-shadow(0 0 6px rgba(192,132,252,0.6)); }
+  .nav-item.active span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .nav-icon-fill { fill: var(--text3); }
+  .nav-item.active .nav-icon-fill { fill: url(#navGrad); }
+
+  /* ── SCROLL CONTENT ── */
+  .scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* ══════════════════════════════════════
+     SPLASH SCREEN
+  ══════════════════════════════════════ */
+  #splash {
+    background: var(--bg);
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+  }
+  .splash-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 24px;
+    position: relative; z-index: 2;
+  }
+  .splash-logo {
+    width: 88px; height: 88px;
+    background: var(--cta);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 60px rgba(139,92,246,0.5), 0 0 120px rgba(236,72,153,0.3);
+    animation: splashPulse 2s ease-in-out infinite;
+  }
+  @keyframes splashPulse {
+    0%,100% { box-shadow: 0 0 60px rgba(139,92,246,0.5), 0 0 120px rgba(236,72,153,0.3); }
+    50% { box-shadow: 0 0 80px rgba(139,92,246,0.7), 0 0 160px rgba(236,72,153,0.5); }
+  }
+  .splash-logo svg { width: 48px; height: 48px; }
+  .splash-wordmark {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    text-align: center;
+  }
+  .splash-wordmark span {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .splash-tagline {
+    font-size: 14px;
+    color: var(--text3);
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+  .splash-loader {
+    width: 40px;
+    height: 3px;
+    background: var(--surface3);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+  .splash-loader-bar {
+    height: 100%;
+    background: var(--grad);
+    border-radius: 2px;
+    animation: loadBar 2s ease-in-out forwards;
+  }
+  @keyframes loadBar { from { width: 0%; } to { width: 100%; } }
+
+  /* ══════════════════════════════════════
+     ONBOARDING SCREENS
+  ══════════════════════════════════════ */
+  .onboard-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .onboard-hero {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .onboard-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .onboard-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(8,8,16,0.1) 0%, rgba(8,8,16,0.7) 60%, var(--bg) 100%);
+  }
+  .onboard-hero-badge {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15,15,26,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+  .onboard-content {
+    padding: 20px 32px 32px;
+    flex-shrink: 0;
+  }
+  .onboard-headline {
+    font-family: var(--font-display);
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+  .onboard-headline .grad-text {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .onboard-subtext {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.5;
+    margin-bottom: 28px;
+  }
+  .dots-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--surface3);
+    transition: all 0.3s;
+  }
+  .dot.active {
+    width: 24px;
+    border-radius: 4px;
+    background: var(--grad);
+  }
+  .btn-primary {
+    width: 100%;
+    padding: 17px;
+    background: var(--cta);
+    border: none;
+    border-radius: var(--radius);
+    color: white;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+    box-shadow: 0 8px 30px rgba(139,92,246,0.35);
+  }
+  .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+  .btn-ghost {
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    border: 1.5px solid var(--border2);
+    border-radius: var(--radius);
+    color: var(--text2);
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+  }
+  .btn-ghost:active { opacity: 0.7; }
+
+  /* ══════════════════════════════════════
+     ACCOUNT CREATION
+  ══════════════════════════════════════ */
+  #account-create .scroll-content {
+    padding: 0 24px 40px;
+  }
+  .auth-header {
+    padding: 20px 24px 0;
+    flex-shrink: 0;
+  }
+  .back-btn {
+    width: 40px; height: 40px;
+    background: var(--surface2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .back-btn svg { width: 18px; height: 18px; stroke: var(--text2); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .auth-title {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .auth-subtitle { font-size: 14px; color: var(--text3); margin-bottom: 28px; }
+
+  .social-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border2);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+  }
+  .social-btn:active { opacity: 0.8; transform: scale(0.98); }
+  .social-btn img, .social-btn svg { width: 20px; height: 20px; }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider span { font-size: 12px; color: var(--text3); font-weight: 500; }
+
+  .input-group { margin-bottom: 14px; }
+  .input-label { font-size: 12px; font-weight: 600; color: var(--text3); margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .input-field {
+    width: 100%;
+    padding: 15px 16px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-field:focus { border-color: var(--purple); }
+  .input-field::placeholder { color: var(--text3); }
+
+  .terms-text {
+    font-size: 12px;
+    color: var(--text3);
+    text-align: center;
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+  .terms-text a { color: var(--purple); text-decoration: none; }
+
+  .signin-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--text3);
+  }
+  .signin-link a { color: var(--purple); font-weight: 600; text-decoration: none; cursor: pointer; }
+
+  /* ══════════════════════════════════════
+     PROFILE SETUP
+  ══════════════════════════════════════ */
+  #profile-setup .scroll-content {
+    padding: 0 24px 40px;
+  }
+  .avatar-picker {
+    width: 96px; height: 96px;
+    border-radius: 50%;
+    background: var(--cta);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .avatar-picker img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .avatar-picker-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  .avatar-picker-overlay svg { width: 22px; height: 22px; fill: white; }
+  .avatar-label { font-size: 12px; color: var(--purple); font-weight: 600; text-align: center; margin-bottom: 24px; cursor: pointer; }
+
+  .pref-section-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text2);
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  .tag-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .tag-pill {
+    padding: 8px 14px;
+    border-radius: 100px;
+    border: 1.5px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+    white-space: nowrap;
+  }
+  .tag-pill.selected {
+    background: rgba(192,132,252,0.15);
+    border-color: var(--purple);
+    color: var(--purple);
+  }
+  .tag-pill:active { transform: scale(0.95); }
+
+  /* ══════════════════════════════════════
+     HOME SCREEN
+  ══════════════════════════════════════ */
+  #home .scroll-content { padding: 0; }
+
+  .home-header {
+    padding: 16px 20px 0;
+    position: relative; z-index: 2;
+    flex-shrink: 0;
+  }
+  .home-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .home-greeting-small { font-size: 13px; color: var(--text3); font-weight: 400; margin-bottom: 2px; }
+  .home-user-name { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+  .home-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--purple);
+    cursor: pointer;
+  }
+  .home-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .home-greeting-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .home-greeting-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(236,72,153,0.05) 100%);
+  }
+  .home-greeting-text {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+    position: relative;
+    z-index: 1;
+  }
+  .home-greeting-text .grad { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .section-see-all {
+    font-size: 13px;
+    color: var(--purple);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Surprise Me card */
+  .surprise-card {
+    margin: 0 20px 24px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+  }
+  .surprise-card-inner {
+    background: linear-gradient(135deg, #6d28d9, #be185d, #c2410c);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+  }
+  .surprise-emoji { font-size: 36px; flex-shrink: 0; }
+  .surprise-text-col { flex: 1; }
+  .surprise-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+  .surprise-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; line-height: 1.2; margin-bottom: 4px; }
+  .surprise-sub { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 10px; }
+  .surprise-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(74,222,128,0.4);
+    border-radius: 100px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4ade80;
+  }
+  .surprise-arrow {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .surprise-arrow svg { width: 16px; height: 16px; stroke: white; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Featured Tonight horizontal scroll */
+  .featured-scroll {
+    display: flex;
+    gap: 14px;
+    padding: 0 20px 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .featured-scroll::-webkit-scrollbar { display: none; }
+
+  .featured-card {
+    width: 220px;
+    flex-shrink: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;
+  }
+  .featured-card:active { transform: scale(0.97); }
+  .featured-card-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+  }
+  .featured-card-body {
+    background: var(--surface2);
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+  .featured-card-cat {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .featured-card-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .featured-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .featured-card-price { font-size: 13px; font-weight: 700; color: var(--purple); }
+  .verified-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 100px;
+    padding: 2px 7px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #4ade80;
+  }
+
+  /* Category grid */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 0 20px;
+    margin-bottom: 24px;
+  }
+  .cat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .cat-item:active { transform: scale(0.93); }
+  .cat-icon {
+    width: 60px; height: 60px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cat-icon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.2;
+    border-radius: 18px;
+  }
+  .cat-label { font-size: 11px; font-weight: 600; color: var(--text2); text-align: center; }
+
+  /* ══════════════════════════════════════
+     EXPLORE SCREEN
+  ══════════════════════════════════════ */
+  #explore .scroll-content { padding: 0 0 24px; }
+
+  .explore-header {
+    padding: 16px 20px 14px;
+    position: relative; z-index: 2;
+    flex-shrink: 0;
+    background: var(--bg);
+  }
+  .explore-title { font-family: var(--font-display); font-size: 26px; font-weight: 800; margin-bottom: 14px; }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    cursor: text;
+    transition: border-color 0.2s;
+    margin-bottom: 14px;
+  }
+  .search-bar:focus-within { border-color: var(--purple); }
+  .search-bar svg { width: 17px; height: 17px; stroke: var(--text3); fill: none; stroke-width: 2; flex-shrink: 0; }
+  .search-bar input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--font-body);
+    flex: 1;
+    width: 100%;
+  }
+  .search-bar input::placeholder { color: var(--text3); }
+
+  .filter-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .filter-scroll::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    padding: 7px 14px;
+    border-radius: 100px;
+    border: 1.5px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: var(--font-body);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .filter-chip.active {
+    background: var(--cta);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 15px rgba(139,92,246,0.4);
+  }
+
+  .vibe-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 14px 20px 0;
+  }
+  .vibe-scroll::-webkit-scrollbar { display: none; }
+  .vibe-pill {
+    padding: 8px 16px;
+    border-radius: 100px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    color: var(--text2);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: var(--font-body);
+  }
+  .vibe-pill .pill-emoji { font-size: 14px; }
+  .vibe-pill.active {
+    background: rgba(192,132,252,0.12);
+    border-color: var(--purple);
+    color: var(--purple);
+  }
+
+  /* Experience cards in explore */
+  .exp-list { padding: 16px 20px 0; display: flex; flex-direction: column; gap: 14px; }
+  .exp-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .exp-card:active { transform: scale(0.98); }
+  .exp-card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+  }
+  .exp-card-body { padding: 14px; }
+  .exp-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  }
+  .exp-card-info { flex: 1; }
+  .exp-card-cat { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
+  .exp-card-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; line-height: 1.2; }
+  .exp-card-host {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .exp-card-price-col { text-align: right; flex-shrink: 0; margin-left: 10px; }
+  .exp-card-price { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--purple); }
+  .exp-card-price-sub { font-size: 10px; color: var(--text3); }
+  .exp-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+  .exp-card-tags { display: flex; gap: 6px; }
+  .exp-tag {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    background: var(--surface3);
+    color: var(--text3);
+    font-weight: 600;
+  }
+  .heart-btn {
+    width: 32px; height: 32px;
+    background: var(--surface3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .heart-btn svg { width: 15px; height: 15px; stroke: var(--text3); fill: none; stroke-width: 2; }
+  .heart-btn.liked svg { stroke: #f472b6; fill: #f472b6; }
+
+  /* ══════════════════════════════════════
+     EXPERIENCE DETAIL
+  ══════════════════════════════════════ */
+  #exp-detail { background: var(--bg); }
+  .detail-back {
+    position: absolute;
+    top: 56px;
+    left: 16px;
+    z-index: 50;
+    width: 38px; height: 38px;
+    background: rgba(8,8,16,0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+  }
+  .detail-back svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .detail-share {
+    position: absolute;
+    top: 56px;
+    right: 16px;
+    z-index: 50;
+    width: 38px; height: 38px;
+    background: rgba(8,8,16,0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+  }
+  .detail-share svg { width: 17px; height: 17px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .detail-hero {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+  }
+  .detail-content { padding: 20px 20px 120px; }
+  .detail-cat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .detail-cat-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+  .detail-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    line-height: 1.15;
+    margin-bottom: 4px;
+  }
+  .detail-host-line {
+    font-size: 13px;
+    color: var(--text3);
+    margin-bottom: 14px;
+    font-weight: 400;
+  }
+  .detail-meta-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .detail-meta-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+  }
+  .detail-meta-chip svg { width: 13px; height: 13px; stroke: var(--text3); fill: none; stroke-width: 2; }
+  .detail-section-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+  .detail-desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
+  .detail-photo-tiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .detail-photo-tile {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .detail-photo-tile img { width: 100%; height: 100px; object-fit: cover; display: block; }
+  .detail-tile-label { padding: 8px 10px; background: var(--surface2); border: 1px solid var(--border); border-top: none; }
+  .detail-tile-name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+  .detail-tile-desc { font-size: 10px; color: var(--text3); line-height: 1.4; }
+
+  .included-list { display: flex; flex-direction: column; gap: 8px; }
+  .included-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .check-icon { width: 18px; height: 18px; background: rgba(74,222,128,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .check-icon svg { width: 10px; height: 10px; stroke: #4ade80; fill: none; stroke-width: 2.5; }
+
+  .bio-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-top: 14px;
+  }
+  .bio-avatar { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  .bio-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+  .bio-text { font-size: 12px; color: var(--text3); line-height: 1.5; }
+
+  .avail-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .avail-chip {
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .avail-chip.selected { background: rgba(192,132,252,0.12); border-color: var(--purple); color: var(--purple); }
+
+  .guest-counter {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .counter-btn {
+    width: 36px; height: 36px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text);
+    transition: all 0.2s;
+    font-weight: 300;
+  }
+  .counter-btn:active { transform: scale(0.9); }
+  .counter-num { font-family: var(--font-display); font-size: 22px; font-weight: 700; min-width: 30px; text-align: center; }
+
+  .detail-cta-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 14px 20px 32px;
+    background: linear-gradient(to top, var(--bg) 70%, transparent);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+  }
+  .btn-add-plans {
+    flex: 1;
+    padding: 15px;
+    background: var(--surface2);
+    border: 1.5px solid var(--purple);
+    border-radius: var(--radius);
+    color: var(--purple);
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-book-now {
+    flex: 2;
+    padding: 15px;
+    background: var(--cta);
+    border: none;
+    border-radius: var(--radius);
+    color: white;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(139,92,246,0.35);
+    transition: all 0.2s;
+  }
+  .btn-book-now:active { transform: scale(0.97); }
+
+  /* ══════════════════════════════════════
+     BOOKING FLOW
+  ══════════════════════════════════════ */
+  #booking-step1, #booking-step2, #booking-step3 {
+    background: var(--bg);
+  }
+  .booking-header {
+    padding: 16px 20px 14px;
+    flex-shrink: 0;
+  }
+  .booking-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .booking-sub { font-size: 13px; color: var(--text3); }
+  .step-indicators {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .step-dot {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface3);
+    transition: background 0.3s;
+  }
+  .step-dot.done { background: var(--cta); }
+  .step-dot.active { background: var(--purple); }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 10px;
+  }
+  .cal-day-label { font-size: 10px; color: var(--text3); font-weight: 600; text-align: center; padding: 4px 0; }
+  .cal-day {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text2);
+  }
+  .cal-day:empty { cursor: default; }
+  .cal-day.today { color: var(--purple); font-weight: 700; }
+  .cal-day.selected { background: var(--cta); color: white; font-weight: 700; }
+  .cal-day.past { color: var(--text3); opacity: 0.4; cursor: default; }
+  .cal-day:not(.past):not(:empty):hover { background: var(--surface3); }
+
+  .time-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .time-chip {
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .time-chip.selected { background: rgba(192,132,252,0.12); border-color: var(--purple); color: var(--purple); }
+  .time-chip.unavailable { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
+
+  .addon-card {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .addon-card.selected { border-color: var(--purple); background: rgba(192,132,252,0.06); }
+  .addon-emoji { font-size: 28px; flex-shrink: 0; }
+  .addon-info { flex: 1; }
+  .addon-name { font-size: 14px; font-weight: 700; font-family: var(--font-display); margin-bottom: 2px; }
+  .addon-desc { font-size: 12px; color: var(--text3); }
+  .addon-price { font-size: 14px; font-weight: 700; color: var(--purple); flex-shrink: 0; }
+  .addon-check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .addon-card.selected .addon-check { background: var(--cta); border-color: transparent; }
+  .addon-check svg { width: 11px; height: 11px; stroke: white; fill: none; stroke-width: 2.5; display: none; }
+  .addon-card.selected .addon-check svg { display: block; }
+
+  .special-req-textarea {
+    width: 100%;
+    padding: 13px 15px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+  }
+  .special-req-textarea:focus { border-color: var(--purple); }
+  .special-req-textarea::placeholder { color: var(--text3); }
+
+  .running-total {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-top: 16px;
+  }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .total-row.divider-row { border-top: 1px solid var(--border); margin-top: 6px; padding-top: 10px; }
+  .total-row.grand { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text); }
+  .total-row.grand .amt { color: var(--purple); }
+
+  /* Payment */
+  .payment-options { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .payment-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .payment-opt.selected { border-color: var(--purple); background: rgba(192,132,252,0.06); }
+  .payment-opt-icon {
+    width: 38px; height: 28px;
+    background: var(--surface3);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .payment-opt-label { flex: 1; font-size: 14px; font-weight: 600; }
+  .payment-radio {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .payment-opt.selected .payment-radio { border-color: var(--purple); background: rgba(192,132,252,0.2); }
+  .payment-radio-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--purple);
+    display: none;
+  }
+  .payment-opt.selected .payment-radio-dot { display: block; }
+
+  .installment-section {
+    margin-top: 14px;
+    padding: 12px;
+    background: rgba(192,132,252,0.06);
+    border: 1px solid rgba(192,132,252,0.2);
+    border-radius: var(--radius-sm);
+  }
+  .installment-label { font-size: 11px; font-weight: 700; color: var(--purple); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .installment-options { display: flex; gap: 8px; }
+  .installment-opt {
+    flex: 1;
+    padding: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .installment-opt.selected { border-color: var(--purple); color: var(--purple); }
+
+  .summary-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .summary-exp-row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .summary-exp-img { width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius-sm); flex-shrink: 0; }
+  .summary-exp-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+  .summary-exp-date { font-size: 12px; color: var(--text3); }
+
+  /* ══════════════════════════════════════
+     BOOKING CONFIRMATION
+  ══════════════════════════════════════ */
+  #booking-confirm { background: var(--bg); }
+  .confirm-content { padding: 20px 20px 100px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .confirm-icon {
+    width: 80px; height: 80px;
+    background: var(--cta);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 0 60px rgba(139,92,246,0.4);
+    animation: confirmPop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes confirmPop {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .confirm-icon svg { width: 36px; height: 36px; stroke: white; fill: none; stroke-width: 2.5; }
+  .confirm-title { font-family: var(--font-display); font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+  .confirm-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.5; }
+  .share-card {
+    width: 100%;
+    background: linear-gradient(135deg, #1a0533, #200a30, #0d1535);
+    border: 1px solid rgba(192,132,252,0.3);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .share-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(192,132,252,0.3), transparent 70%);
+  }
+  .share-card-booking { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--purple); text-transform: uppercase; margin-bottom: 8px; }
+  .share-card-title { font-family: var(--font-display); font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .share-card-date { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
+  .share-card-brand { font-family: var(--font-display); font-size: 12px; font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .cal-btns { display: flex; gap: 10px; width: 100%; margin-bottom: 16px; }
+  .cal-btn {
+    flex: 1;
+    padding: 12px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--font-body);
+    transition: all 0.2s;
+  }
+  .cal-btn:active { opacity: 0.8; }
+  .share-row { display: flex; gap: 10px; flex-wrap: wrap; width: 100%; justify-content: center; }
+  .share-dest {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .share-dest:active { transform: scale(0.9); }
+  .share-dest-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+  .share-dest span { font-size: 10px; color: var(--text3); font-weight: 500; }
+
+  /* ══════════════════════════════════════
+     MY PLANS
+  ══════════════════════════════════════ */
+  #my-plans { background: var(--bg); }
+  #my-plans .scroll-content { padding: 0 20px 24px; }
+
+  .plans-tabs {
+    display: flex;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+  }
+  .plans-tab {
+    flex: 1;
+    padding: 9px;
+    border-radius: 9px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text3);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .plans-tab.active {
+    background: var(--surface3);
+    color: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .plan-group { margin-bottom: 24px; }
+  .plan-group-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .plan-group-name::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .plan-exp-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .plan-exp-card:active { opacity: 0.8; }
+  .plan-exp-img { width: 70px; height: 70px; object-fit: cover; border-radius: var(--radius-sm); flex-shrink: 0; }
+  .plan-exp-info { flex: 1; }
+  .plan-exp-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+  .plan-exp-date { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .plan-status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .status-confirmed { background: rgba(74,222,128,0.12); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
+  .status-upcoming { background: rgba(192,132,252,0.12); color: var(--purple); border: 1px solid rgba(192,132,252,0.3); }
+  .status-past { background: var(--surface3); color: var(--text3); border: 1px solid var(--border); }
+
+  .named-plan-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .named-plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .named-plan-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; }
+  .named-plan-count { font-size: 11px; color: var(--text3); }
+  .timeline-item { display: flex; gap: 10px; margin-bottom: 8px; }
+  .timeline-dot-col { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+  .timeline-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--purple); flex-shrink: 0; margin-top: 4px; }
+  .timeline-line { flex: 1; width: 1px; background: var(--border); margin-top: 4px; }
+  .timeline-info { flex: 1; padding-bottom: 8px; }
+  .timeline-time { font-size: 11px; color: var(--text3); margin-bottom: 2px; }
+  .timeline-name { font-size: 13px; font-weight: 600; }
+  .timeline-loc { font-size: 11px; color: var(--text3); }
+
+  /* ══════════════════════════════════════
+     PROFILE
+  ══════════════════════════════════════ */
+  #profile-screen { background: var(--bg); }
+  #profile-screen .scroll-content { padding: 0 20px 100px; }
+
+  .profile-hero { padding: 20px 20px 0; text-align: center; margin-bottom: 20px; }
+  .profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 12px; }
+  .profile-avatar { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 3px solid transparent; background: var(--cta); background-clip: padding-box; }
+  .profile-avatar-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: var(--grad);
+    z-index: -1;
+  }
+  .profile-name { font-family: var(--font-display); font-size: 22px; font-weight: 800; margin-bottom: 2px; }
+  .profile-city { font-size: 13px; color: var(--text3); margin-bottom: 12px; }
+  .profile-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .profile-tag {
+    padding: 5px 12px;
+    border-radius: 100px;
+    background: rgba(192,132,252,0.12);
+    border: 1px solid rgba(192,132,252,0.25);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--purple);
+  }
+
+  .profile-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-num { font-family: var(--font-display); font-size: 22px; font-weight: 800; margin-bottom: 2px; }
+  .stat-label { font-size: 10px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .review-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .review-exp-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .stars-row { display: flex; gap: 2px; margin-bottom: 6px; }
+  .star { font-size: 13px; }
+  .review-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* ══════════════════════════════════════
+     SURPRISE ME FLOW
+  ══════════════════════════════════════ */
+  #surprise-flow { background: var(--bg); }
+  .surprise-flow-content { padding: 20px 20px 100px; }
+  .surprise-vibe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .surprise-vibe-card {
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;
+    height: 100px;
+  }
+  .surprise-vibe-card:active { transform: scale(0.96); }
+  .surprise-vibe-card img { width: 100%; height: 100%; object-fit: cover; }
+  .surprise-vibe-card-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7)); }
+  .surprise-vibe-card-label { position: absolute; bottom: 10px; left: 12px; font-family: var(--font-display); font-size: 14px; font-weight: 700; }
+  .surprise-vibe-card.selected::after { content: ''; position: absolute; inset: 0; border: 3px solid var(--purple); border-radius: var(--radius); }
+
+  /* ══════════════════════════════════════
+     CATEGORY PAGE
+  ══════════════════════════════════════ */
+  #category-page { background: var(--bg); }
+  .category-hero {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .category-hero img { width: 100%; height: 100%; object-fit: cover; }
+  .category-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(8,8,16,0.3), rgba(8,8,16,0.8)); }
+  .category-hero-title {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  /* ══════════════════════════════════════
+     ANIMATIONS & TRANSITIONS
+  ══════════════════════════════════════ */
+  .screen { animation: screenIn 0.3s ease forwards; }
+  @keyframes screenIn {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Toast */
+  .toast {
+    position: absolute;
+    bottom: 100px;
+    left: 20px; right: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 13px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
+    pointer-events: none;
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes toastOut { to { opacity: 0; transform: translateY(10px); } }
+  .toast-icon { font-size: 18px; }
+
+  /* Modal overlay */
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 150;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-sheet {
+    width: 100%;
+    background: var(--surface);
+    border-radius: 24px 24px 0 0;
+    padding: 20px 24px 40px;
+    border-top: 1px solid var(--border2);
+    animation: sheetIn 0.35s cubic-bezier(0.34,1.1,0.64,1);
+  }
+  @keyframes sheetIn { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle { width: 40px; height: 4px; background: var(--surface3); border-radius: 2px; margin: 0 auto 16px; }
+  .modal-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; margin-bottom: 16px; }
+
+  /* SVG gradient defs (hidden) */
+  .svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+</style>
+</head>
+<body>
+
+<svg class="svg-defs" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <lineargradient id="navGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#c084fc"></stop>
+      <stop offset="50%" style="stop-color:#f472b6"></stop>
+      <stop offset="100%" style="stop-color:#fb923c"></stop>
+    </lineargradient>
+  </defs>
+</svg>
+
+<div class="phone" id="phone">
+
+  <!-- ══ SPLASH ══ -->
+  <div class="screen active" id="splash">
+    <div class="glow-tl"></div>
+    <div class="glow-tr"></div>
+    <div class="glow-bc"></div>
+    <div class="splash-inner">
+      <div>
+        <div class="splash-wordmark">What's the <span>Move</span></div>
+        <div class="splash-tagline">Unforgettable moments, made simple.</div>
+      </div>
+      <button class="btn-primary" onclick="goTo(&#39;onboard1&#39;)" style="width:220px;margin-top:12px;">Let's Go</button>
+    </div>
+  </div>
+
+  <!-- ══ ONBOARD 1 ══ -->
+  <div class="screen" id="onboard1">
+    <div class="onboard-screen">
+      <div class="onboard-hero">
+        <img src="./wtmm app v2_files/photo-1414235077428-338989a2e8c0" alt="Fine dining experience">
+        <div class="onboard-hero-overlay"></div>
+        <div class="onboard-hero-badge">What's the Move</div>
+      </div>
+      <div class="onboard-content">
+        <div class="onboard-headline">Unforgettable moments,<br><span class="grad-text">made simple.</span></div>
+        <div class="onboard-subtext">Discover and book the best experiences in your city without the hassle.</div>
+        <div class="dots-row"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+        <button class="btn-primary" onclick="goTo(&#39;onboard2&#39;)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ONBOARD 2 ══ -->
+  <div class="screen" id="onboard2">
+    <div class="onboard-screen">
+      <div class="onboard-hero">
+        <img src="./wtmm app v2_files/photo-1511795409834-ef04bbd61622" alt="Every category curated">
+        <div class="onboard-hero-overlay"></div>
+        <div class="onboard-hero-badge">What's the Move</div>
+      </div>
+      <div class="onboard-content">
+        <div class="onboard-headline">Every category,<br><span class="grad-text">thoughtfully curated.</span></div>
+        <div class="onboard-subtext">Dining, water, arts, adventure, travel, wellness, nightlife. Handpicked in every city.</div>
+        <div class="dots-row"><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+        <button class="btn-primary" onclick="goTo(&#39;onboard3&#39;)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ONBOARD 3 ══ -->
+  <div class="screen" id="onboard3">
+    <div class="onboard-screen">
+      <div class="onboard-hero">
+        <img src="./wtmm app v2_files/photo-1540575467063-178a50c2df87" alt="Plan and book experiences">
+        <div class="onboard-hero-overlay"></div>
+        <div class="onboard-hero-badge">What's the Move</div>
+      </div>
+      <div class="onboard-content">
+        <div class="onboard-headline">Your plans,<br><span class="grad-text">perfectly organized.</span></div>
+        <div class="onboard-subtext">Build itineraries, book experiences, and share the memories all in one place.</div>
+        <div class="dots-row"><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+        <button class="btn-primary" onclick="goTo(&#39;account-create&#39;)">Create Account</button>
+        <button class="btn-ghost" onclick="goTo(&#39;account-login&#39;)">Sign In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ACCOUNT CREATE ══ -->
+  <div class="screen" id="account-create">
+    <div class="glow-tl"></div>
+    <div class="auth-header">
+      <div class="back-btn" onclick="goTo(&#39;onboard3&#39;)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </div>
+      <div class="auth-title">Create Account</div>
+      <div class="auth-subtitle">Join to start booking unforgettable experiences.</div>
+    </div>
+    <div class="scroll-content" style="padding:0 24px 40px;">
+      <button class="social-btn" onclick="goTo(&#39;profile-setup&#39;)">
+        <svg viewBox="0 0 814 1000" width="18" height="18" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-43.4-150.3-109.2C74 417.2 55 279 55 198.8 55 81.5 120.6 17 181.5 17c59.9 0 97 39.5 147.3 39.5 48.7 0 94.3-42.2 155.5-42.2 59.8 0 100.9 18 137.2 47.8zm-160.1-55.9c-28.4 35.1-76.8 62.2-116.5 62.2-4.5 0-9-.6-13.2-1.3-1.3-4.5-1.9-9-1.9-14.5 0-35.7 16.3-73.5 44.7-101.9 25.8-25.8 74.2-46.5 112.6-48.4 1.3 5.1 1.9 10.3 1.9 15.5 0 34.4-14.2 70.3-27.6 88.4z"></path></svg>
+        Continue With Apple
+      </button>
+      <button class="social-btn" onclick="goTo(&#39;profile-setup&#39;)">
+        <svg viewBox="0 0 48 48" width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"></path><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"></path><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"></path><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C40.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"></path></svg>
+        Continue With Google
+      </button>
+      <div class="divider"><div class="divider-line"></div><span>or sign up with email</span><div class="divider-line"></div></div>
+      <div class="input-group"><div class="input-label">Full Name</div><input class="input-field" type="text" placeholder="Jordan Williams"></div>
+      <div class="input-group"><div class="input-label">Email</div><input class="input-field" type="email" placeholder="jordan@email.com"></div>
+      <div class="input-group"><div class="input-label">Password</div><input class="input-field" type="password" placeholder="Create a password"></div>
+      <button class="btn-primary" onclick="goTo(&#39;profile-setup&#39;)" style="margin-top:8px;">Create Account</button>
+      <p class="terms-text">By creating an account, you agree to our <a>Terms of Service</a> and <a>Privacy Policy</a>.</p>
+      <p class="signin-link">Already have an account? <a onclick="goTo(&#39;account-login&#39;)">Sign In</a></p>
+    </div>
+  </div>
+
+  <!-- ══ SIGN IN ══ -->
+  <div class="screen" id="account-login">
+    <div class="glow-tl"></div>
+    <div class="auth-header">
+      <div class="back-btn" onclick="goTo(&#39;onboard3&#39;)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </div>
+      <div class="auth-title">Welcome Back</div>
+      <div class="auth-subtitle">Sign in to your account.</div>
+    </div>
+    <div class="scroll-content" style="padding:0 24px 40px;">
+      <button class="social-btn" onclick="goTo(&#39;home&#39;)">
+        <svg viewBox="0 0 814 1000" width="18" height="18" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-43.4-150.3-109.2C74 417.2 55 279 55 198.8 55 81.5 120.6 17 181.5 17c59.9 0 97 39.5 147.3 39.5 48.7 0 94.3-42.2 155.5-42.2 59.8 0 100.9 18 137.2 47.8zm-160.1-55.9c-28.4 35.1-76.8 62.2-116.5 62.2-4.5 0-9-.6-13.2-1.3-1.3-4.5-1.9-9-1.9-14.5 0-35.7 16.3-73.5 44.7-101.9 25.8-25.8 74.2-46.5 112.6-48.4 1.3 5.1 1.9 10.3 1.9 15.5 0 34.4-14.2 70.3-27.6 88.4z"></path></svg>
+        Continue With Apple
+      </button>
+      <button class="social-btn" onclick="goTo(&#39;home&#39;)">
+        <svg viewBox="0 0 48 48" width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"></path><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"></path><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"></path><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C40.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"></path></svg>
+        Continue With Google
+      </button>
+      <div class="divider"><div class="divider-line"></div><span>or sign in with email</span><div class="divider-line"></div></div>
+      <div class="input-group"><div class="input-label">Email</div><input class="input-field" type="email" placeholder="jordan@email.com"></div>
+      <div class="input-group"><div class="input-label">Password</div><input class="input-field" type="password" placeholder="Your password"></div>
+      <button class="btn-primary" onclick="goTo(&#39;home&#39;)" style="margin-top:8px;">Sign In</button>
+      <p class="signin-link" style="margin-top:12px;"><a style="color:var(--purple);cursor:pointer;">Forgot Password?</a></p>
+    </div>
+  </div>
+
+  <!-- ══ PROFILE SETUP ══ -->
+  <div class="screen" id="profile-setup">
+    <div class="glow-tl"></div>
+    <div class="auth-header">
+      <div class="back-btn" onclick="goTo(&#39;account-create&#39;)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </div>
+      <div class="auth-title">Set Up Your Profile</div>
+      <div class="auth-subtitle">Tell us a bit about yourself.</div>
+    </div>
+    <div class="scroll-content" style="padding:0 24px 40px;">
+      <div class="avatar-picker" onclick="showToast(&#39;📸&#39;,&#39;Photo library opened&#39;)">
+        <img src="./wtmm app v2_files/photo-1507003211169-0a1dd7228f2d" alt="avatar">
+        <div class="avatar-picker-overlay">
+          <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+        </div>
+      </div>
+      <div class="avatar-label" onclick="showToast(&#39;📸&#39;,&#39;Photo library opened&#39;)">Change Photo</div>
+      <div class="input-group"><div class="input-label">Display Name</div><input class="input-field" type="text" placeholder="Your first name"></div>
+      <div class="input-group" style="margin-bottom:20px;">
+        <div class="input-label">Your City</div>
+        <div class="tag-grid" style="margin-top:8px;">
+          <div class="tag-pill" onclick="selectCity(this)">Los Angeles</div>
+          <div class="tag-pill" onclick="selectCity(this)">New York City</div>
+          <div class="tag-pill" onclick="selectCity(this)">Chicago</div>
+          <div class="tag-pill" onclick="selectCity(this)">San Francisco</div>
+          <div class="tag-pill" onclick="selectCity(this)">Houston</div>
+          <div class="tag-pill" onclick="selectCity(this)">Dallas</div>
+          <div class="tag-pill" onclick="selectCity(this)">Atlanta</div>
+          <div class="tag-pill" onclick="selectCity(this)">Phoenix</div>
+          <div class="tag-pill" onclick="selectCity(this)">Philadelphia</div>
+          <div class="tag-pill" onclick="selectCity(this)">Washington D.C.</div>
+        </div>
+      </div>
+      <div class="pref-section-title">What are you into? (Optional)</div>
+      <div class="tag-grid" id="prefTags">
+        <div class="tag-pill" onclick="toggleTag(this)">🍽️ Food</div>
+        <div class="tag-pill" onclick="toggleTag(this)">🌙 After Hours</div>
+        <div class="tag-pill" onclick="toggleTag(this)">🎨 Art</div>
+        <div class="tag-pill" onclick="toggleTag(this)">✈️ Travel</div>
+        <div class="tag-pill selected" onclick="toggleTag(this)">🌿 Touch Grass</div>
+        <div class="tag-pill" onclick="toggleTag(this)">🧘 Wellness</div>
+        <div class="tag-pill selected" onclick="toggleTag(this)">🎭 Entertainment</div>
+        <div class="tag-pill" onclick="toggleTag(this)">⚡ Thrill Seeking</div>
+        <div class="tag-pill" onclick="toggleTag(this)">🎁 Surprise Me</div>
+        <div class="tag-pill" onclick="toggleTag(this)">👶 Kid-Friendly</div>
+        <div class="tag-pill" onclick="toggleTag(this)">🐾 Pet-Friendly</div>
+      </div>
+      <button class="btn-primary" onclick="goTo(&#39;home&#39;)">Finish Setup</button>
+    </div>
+  </div>
+
+  <!-- ══ HOME ══ -->
+  <div class="screen" id="home">
+    <div class="glow-tl"></div>
+    <div class="glow-tr"></div>
+    <div class="status-bar">
+      <span class="time" id="statusTime">8:44</span>
+      <div class="status-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="white"><path d="M1 9h2v2H1zM4 6h2v5H4zM7 4h2v7H7zM10 1h2v10h-2zM13 3h2v8h-2z" opacity=".4"></path><path d="M1 9h2v2H1zM4 7h2v4H4zM7 5h2v6H7z"></path></svg>
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="white"><path d="M7.5 3C9.5 3 11.3 3.8 12.6 5.1L14 3.7C12.3 2 10 1 7.5 1S2.7 2 1 3.7l1.4 1.4C3.7 3.8 5.5 3 7.5 3z" opacity=".4"></path><path d="M7.5 5c1.3 0 2.5.5 3.4 1.4L12.3 5C11 3.8 9.3 3 7.5 3S4 3.8 2.7 5l1.4 1.4C5 5.5 6.2 5 7.5 5z"></path><path d="M7.5 7c.8 0 1.5.3 2 .8L11 6.4C10.2 5.5 8.9 5 7.5 5S4.8 5.5 4 6.4l1.5 1.4c.5-.5 1.2-.8 2-.8z"></path><circle cx="7.5" cy="10" r="1.5"></circle></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="22" height="10" rx="2" ry="2" stroke="white" stroke-width="1" fill="none"></rect><rect x="1" y="2" width="19" height="8" rx="1.5" ry="1.5" fill="white"></rect><rect x="22.5" y="4" width="2" height="4" rx="1" fill="white" opacity=".5"></rect></svg>
+      </div>
+    </div>
+    <div class="home-header">
+      <div class="home-top-row">
+        <div>
+          <div class="home-greeting-small" id="homeGreetingSmall">Good evening</div>
+          <div class="home-user-name">Jordan 👋</div>
+        </div>
+        <div class="home-avatar" onclick="goTo(&#39;profile-screen&#39;)">
+          <img src="./wtmm app v2_files/photo-1507003211169-0a1dd7228f2d(1)" alt="User">
+        </div>
+      </div>
+      <div class="home-greeting-card">
+        <div class="home-greeting-text" id="homeGreeting">Less planning. <span class="grad">More living.</span></div>
+      </div>
+    </div>
+    <div class="scroll-content">
+      <!-- Surprise Me -->
+      <div class="surprise-card" onclick="goTo(&#39;surprise-flow&#39;)">
+        <div class="surprise-card-inner">
+          <div class="surprise-emoji">🎁</div>
+          <div class="surprise-text-col">
+            <div class="surprise-label">Surprise Me</div>
+            <div class="surprise-title">Let us pick tonight's move.</div>
+            <div class="surprise-sub">Curated just for your vibe, ready to book.</div>
+            <div class="surprise-verified">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3"><path d="M20 6L9 17l-5-5"></path></svg>
+              Every Experience Verified
+            </div>
+          </div>
+          <div class="surprise-arrow">
+            <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Tonight -->
+      <div class="section-header">
+        <div class="section-title">Featured Tonight</div>
+        <div class="section-see-all" onclick="goTo(&#39;explore&#39;)">See All</div>
+      </div>
+      <div class="featured-scroll">
+        <div class="featured-card" onclick="openExperience(&#39;chef&#39;)">
+          <img class="featured-card-img" src="./wtmm app v2_files/photo-1556910103-1c02745aae4d" alt="Private Chef">
+          <div class="featured-card-body">
+            <div class="featured-card-cat" style="color:var(--purple)">🍽️ Dining</div>
+            <div class="featured-card-title">Private Chef Tasting Experience</div>
+            <div class="featured-card-meta">
+              <div class="featured-card-price">From $195</div>
+              <div class="verified-chip">✓ Verified Chef</div>
+            </div>
+          </div>
+        </div>
+        <div class="featured-card" onclick="openExperience(&#39;yacht&#39;)">
+          <img class="featured-card-img" src="./wtmm app v2_files/photo-1567899378494-47b22a2ae96a" alt="Sunset Yacht">
+          <div class="featured-card-body">
+            <div class="featured-card-cat" style="color:var(--teal)">⛵ Water</div>
+            <div class="featured-card-title">Sunset Yacht &amp; Cocktails</div>
+            <div class="featured-card-meta">
+              <div class="featured-card-price">From $275</div>
+              <div class="verified-chip">✓ Verified Captain</div>
+            </div>
+          </div>
+        </div>
+        <div class="featured-card" onclick="openExperience(&#39;jazz&#39;)">
+          <img class="featured-card-img" src="./wtmm app v2_files/photo-1415201364774-f6f0bb35f28f" alt="Jazz Night">
+          <div class="featured-card-body">
+            <div class="featured-card-cat" style="color:var(--pink)">🎶 Arts</div>
+            <div class="featured-card-title">Intimate Jazz Club Evening</div>
+            <div class="featured-card-meta">
+              <div class="featured-card-price">From $85</div>
+              <div class="verified-chip">✓ Verified Venue</div>
+            </div>
+          </div>
+        </div>
+        <div class="featured-card" onclick="openExperience(&#39;hike&#39;)">
+          <img class="featured-card-img" src="./wtmm app v2_files/photo-1551632811-561732d1e306" alt="Sunrise Hike">
+          <div class="featured-card-body">
+            <div class="featured-card-cat" style="color:var(--amber)">⛰️ Adventure</div>
+            <div class="featured-card-title">Sunrise Hike with Guide</div>
+            <div class="featured-card-meta">
+              <div class="featured-card-price">From $65</div>
+              <div class="verified-chip">✓ Verified Guide</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Browse by Category -->
+      <div class="section-header" style="margin-top:24px;">
+        <div class="section-title">Browse By Category</div>
+      </div>
+      <div class="category-grid">
+        <div class="cat-item" onclick="openCategory(&#39;Dining&#39;,&#39;purple&#39;)">
+          <div class="cat-icon" style="background:rgba(192,132,252,0.15);">
+            <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="10" cy="8" r="6" stroke="#c084fc" stroke-width="1.8"></circle>
+              <path d="M10 14v10M7 18h6" stroke="#c084fc" stroke-width="1.8" stroke-linecap="round"></path>
+              <path d="M20 4v8c0 2.2 1.8 4 4 4v10" stroke="#c084fc" stroke-width="1.8" stroke-linecap="round"></path>
+              <path d="M24 4v6" stroke="#c084fc" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <div class="cat-label">Dining</div>
+        </div>
+        <div class="cat-item" onclick="openCategory(&#39;Water&#39;,&#39;teal&#39;)">
+          <div class="cat-icon" style="background:rgba(45,212,191,0.15);">
+            <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 22c2.5-3 5-3 7.5 0s5 3 7.5 0 5-3 7.5 0" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"></path>
+              <path d="M16 20V8L8 14h16" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M16 8V5" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"></path>
+              <path d="M13 5h6" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <div class="cat-label">Water</div>
+        </div>
+        <div class="cat-item" onclick="openCategory(&#39;Arts&#39;,&#39;pink&#39;)">
+          <div class="cat-icon" style="background:rgba(244,114,182,0.15);">
+            <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="11" stroke="#f472b6" stroke-width="1.8"></circle>
+              <circle cx="11" cy="13" r="2.5" fill="#f472b6"></circle>
+              <circle cx="21" cy="13" r="2.5" fill="#f472b6"></circle>
+              <circle cx="16" cy="21" r="2.5" fill="#f472b6"></circle>
+              <path d="M11 13l5 8 5-8" stroke="#f472b6" stroke-width="1.2" opacity="0.4"></path>
+            </svg>
+          </div>
+          <div class="cat-label">Arts</div>
+        </div>
+        <div class="cat-item" onclick="openCategory(&#39;Adventure&#39;,&#39;amber&#39;)">
+          <div class="cat-icon" style="background:rgba(251,191,36,0.15);">
+            <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 26L13 8l5 10 4-6 6 14H4z" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+              <circle cx="22" cy="8" r="2" fill="#fbbf24"></circle>
+            </svg>
+          </div>
+          <div class="cat-label">Adventure</div>
+        </div>
+        <div class="cat-item" onclick="openCategory(&#39;Travel&#39;,&#39;blue&#39;)">
+          <div class="cat-icon" style="background:rgba(96,165,250,0.15);">
+            <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="5" width="16" height="22" rx="3" stroke="#60a5fa" stroke-width="1.8"></rect>
+              <path d="M12 10h8M12 14h8M12 18h5" stroke="#60a5fa" stroke-width="1.5" stroke-linecap="round"></path>
+              <circle cx="20" cy="19" r="4" fill="rgba(96,165,250,0.2)" stroke="#60a5fa" stroke-width="1.5"></circle>
+              <path d="M18.5 19h3M20 17.5v3" stroke="#60a5fa" stroke-width="1.2" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <div class="cat-label">Travel</div>
+        </div>
+        <div class="cat-item" onclick="openCategory(&#39;Wellness&#39;,&#39;green&#39;)">
+          <div class="cat-icon" style="background:rgba(74,222,128,0.15);">
+            <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 6c-3.5 0-6 2.5-6 5.5 0 4 6 12 6 12s6-8 6-12C22 8.5 19.5 6 16 6z" stroke="#4ade80" stroke-width="1.8"></path>
+              <path d="M11 20c-3 1-5 3-5 5h20c0-2-2-4-5-5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <div class="cat-label">Wellness</div>
+        </div>
+        <div class="cat-item" onclick="openCategory(&#39;Nightlife&#39;,&#39;indigo&#39;)">
+          <div class="cat-icon" style="background:rgba(129,140,248,0.15);">
+            <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 7a9 9 0 11-9 9 9 9 0 017-8.8" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round"></path>
+              <path d="M8 26h16M13 22v4M19 22v4" stroke="#818cf8" stroke-width="1.5" stroke-linecap="round"></path>
+              <circle cx="23" cy="9" r="2" fill="#818cf8"></circle>
+              <circle cx="27" cy="6" r="1" fill="#818cf8" opacity="0.6"></circle>
+              <circle cx="26" cy="13" r="1" fill="#818cf8" opacity="0.4"></circle>
+            </svg>
+          </div>
+          <div class="cat-label">Nightlife</div>
+        </div>
+        <div class="cat-item" onclick="goTo(&#39;surprise-flow&#39;)">
+          <div class="cat-icon" style="background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(236,72,153,0.2));">
+            <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="5" y="13" width="22" height="14" rx="2" stroke="url(#sg)" stroke-width="1.8"></rect>
+              <path d="M5 17h22" stroke="url(#sg)" stroke-width="1.5"></path>
+              <path d="M16 13V27" stroke="url(#sg)" stroke-width="1.5"></path>
+              <path d="M16 13c0 0-4-8 0-8s0 8 0 8" stroke="url(#sg)" stroke-width="1.5" stroke-linecap="round"></path>
+              <path d="M16 13c0 0 4-8 0-8" stroke="url(#sg)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"></path>
+              <defs><lineargradient id="sg" x1="0" y1="0" x2="32" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#c084fc"></stop><stop offset="1" stop-color="#f472b6"></stop></lineargradient></defs>
+            </svg>
+          </div>
+          <div class="cat-label">Surprise Me</div>
+        </div>
+      </div>
+
+      <!-- Trending Near You -->
+      <div class="section-header">
+        <div class="section-title">Trending Near You</div>
+        <div class="section-see-all" onclick="goTo(&#39;explore&#39;)">See All</div>
+      </div>
+      <div style="padding:0 20px 30px;">
+        <div class="exp-card" onclick="openExperience(&#39;spa&#39;)" style="margin-bottom:12px;">
+          <img class="exp-card-img" src="./wtmm app v2_files/photo-1600334089648-b0d9d3028eb2" alt="Spa">
+          <div class="exp-card-body">
+            <div class="exp-card-top">
+              <div class="exp-card-info">
+                <div class="exp-card-cat" style="color:var(--green)">🧘 Wellness</div>
+                <div class="exp-card-title">Luxury Couples Spa Retreat</div>
+                <div class="exp-card-host">with Serenity Wellness Spa</div>
+              </div>
+              <div class="exp-card-price-col">
+                <div class="exp-card-price">$180</div>
+                <div class="exp-card-price-sub">per person</div>
+              </div>
+            </div>
+            <div class="exp-card-footer">
+              <div style="display:flex;gap:6px;align-items:center;">
+                <div class="verified-chip">✓ Verified Experience</div>
+                <div class="exp-tag">Wellness</div>
+              </div>
+              <button class="heart-btn" onclick="toggleHeart(event,this)">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="goTo(&#39;home&#39;)">
+        <svg viewBox="0 0 24 24"><path class="nav-icon-fill" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22" fill="var(--bg)"></polyline></svg>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" onclick="goTo(&#39;explore&#39;)">
+        <svg viewBox="0 0 24 24"><circle class="nav-icon-fill" cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="var(--bg)" stroke-width="1.5" fill="none"></line></svg>
+        <span>Explore</span>
+      </div>
+      <div class="nav-item" onclick="goTo(&#39;my-plans&#39;)">
+        <svg viewBox="0 0 24 24"><path class="nav-icon-fill" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path><path d="M3 6h.01M3 12h.01M3 18h.01" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round" fill="none"></path></svg>
+        <span>My Plans</span>
+      </div>
+      <div class="nav-item" onclick="goTo(&#39;profile-screen&#39;)">
+        <svg viewBox="0 0 24 24"><path class="nav-icon-fill" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4" class="nav-icon-fill"></circle></svg>
+        <span>Profile</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ EXPLORE ══ -->
+  <div class="screen" id="explore">
+    <div class="glow-tl"></div>
+    <div class="status-bar">
+      <span class="time">8:44</span>
+      <div class="status-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="white"><path d="M1 9h2v2H1zM4 7h2v4H4zM7 5h2v6H7z"></path></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="22" height="10" rx="2" fill="none" stroke="white" stroke-width="1"></rect><rect x="1" y="2" width="19" height="8" rx="1.5" fill="white"></rect></svg>
+      </div>
+    </div>
+    <div class="explore-header">
+      <div class="explore-title">Explore</div>
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" placeholder="Search experiences, venues, vibes..." oninput="filterExplore(this.value)">
+        <svg viewBox="0 0 24 24" style="cursor:pointer;" onclick="showFilterModal()"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+      </div>
+      <div class="filter-scroll">
+        <div class="filter-chip active" onclick="setFilter(this,&#39;All&#39;)">All</div>
+        <div class="filter-chip" onclick="setFilter(this,&#39;Tonight&#39;)">Tonight</div>
+        <div class="filter-chip" onclick="setFilter(this,&#39;This Week&#39;)">This Week</div>
+        <div class="filter-chip" onclick="setFilter(this,&#39;Under $100&#39;)">Under $100</div>
+        <div class="filter-chip" onclick="setFilter(this,&#39;Date Night&#39;)">Date Night</div>
+        <div class="filter-chip" onclick="setFilter(this,&#39;Groups&#39;)">Groups</div>
+      </div>
+    </div>
+    <div class="vibe-scroll">
+      <div class="vibe-pill active" onclick="setVibe(this)"><span class="pill-emoji">✨</span>All Vibes</div>
+      <div class="vibe-pill" onclick="setVibe(this)"><span class="pill-emoji">💕</span>Date Night</div>
+      <div class="vibe-pill" onclick="setVibe(this)"><span class="pill-emoji">🎉</span>Celebration</div>
+      <div class="vibe-pill" onclick="setVibe(this)"><span class="pill-emoji">👥</span>Group</div>
+      <div class="vibe-pill" onclick="setVibe(this)"><span class="pill-emoji">🧘</span>Chill</div>
+      <div class="vibe-pill" onclick="setVibe(this)"><span class="pill-emoji">⚡</span>Thrill</div>
+      <div class="vibe-pill" onclick="setVibe(this)"><span class="pill-emoji">🎭</span>Artsy</div>
+    </div>
+    <div class="scroll-content">
+      <div class="exp-list" id="exploreList">
+        <div class="exp-card" onclick="openExperience(&#39;chef&#39;)">
+          <img class="exp-card-img" src="./wtmm app v2_files/photo-1556910103-1c02745aae4d(1)" alt="Private Chef">
+          <div class="exp-card-body">
+            <div class="exp-card-top">
+              <div class="exp-card-info">
+                <div class="exp-card-cat" style="color:var(--purple)">🍽️ Dining</div>
+                <div class="exp-card-title">Private Chef Tasting Experience</div>
+                <div class="exp-card-host">Chef Marcus Williams</div>
+              </div>
+              <div class="exp-card-price-col">
+                <div class="exp-card-price">$195</div>
+                <div class="exp-card-price-sub">per person</div>
+              </div>
+            </div>
+            <div class="exp-card-footer">
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                <div class="verified-chip">✓ Verified Chef</div>
+                <div class="exp-tag">Date Night</div>
+              </div>
+              <button class="heart-btn" onclick="toggleHeart(event,this)">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-card" onclick="openExperience(&#39;yacht&#39;)">
+          <img class="exp-card-img" src="./wtmm app v2_files/photo-1567899378494-47b22a2ae96a(1)" alt="Yacht">
+          <div class="exp-card-body">
+            <div class="exp-card-top">
+              <div class="exp-card-info">
+                <div class="exp-card-cat" style="color:var(--teal)">⛵ Water</div>
+                <div class="exp-card-title">Sunset Yacht &amp; Cocktails</div>
+                <div class="exp-card-host">Captain Diego Martinez</div>
+              </div>
+              <div class="exp-card-price-col">
+                <div class="exp-card-price">$275</div>
+                <div class="exp-card-price-sub">per person</div>
+              </div>
+            </div>
+            <div class="exp-card-footer">
+              <div style="display:flex;gap:6px;align-items:center;">
+                <div class="verified-chip">✓ Verified Captain</div>
+                <div class="exp-tag">Groups</div>
+              </div>
+              <button class="heart-btn liked" onclick="toggleHeart(event,this)">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-card" onclick="openExperience(&#39;jazz&#39;)">
+          <img class="exp-card-img" src="./wtmm app v2_files/photo-1415201364774-f6f0bb35f28f(1)" alt="Jazz">
+          <div class="exp-card-body">
+            <div class="exp-card-top">
+              <div class="exp-card-info">
+                <div class="exp-card-cat" style="color:var(--pink)">🎶 Arts &amp; Music</div>
+                <div class="exp-card-title">Intimate Jazz Club Evening</div>
+                <div class="exp-card-host">The Blue Note Lounge</div>
+              </div>
+              <div class="exp-card-price-col">
+                <div class="exp-card-price">$85</div>
+                <div class="exp-card-price-sub">per person</div>
+              </div>
+            </div>
+            <div class="exp-card-footer">
+              <div style="display:flex;gap:6px;align-items:center;">
+                <div class="verified-chip">✓ Verified Venue</div>
+                <div class="exp-tag">Artsy</div>
+              </div>
+              <button class="heart-btn" onclick="toggleHeart(event,this)">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-card" onclick="openExperience(&#39;hike&#39;)">
+          <img class="exp-card-img" src="./wtmm app v2_files/photo-1551632811-561732d1e306(1)" alt="Hike">
+          <div class="exp-card-body">
+            <div class="exp-card-top">
+              <div class="exp-card-info">
+                <div class="exp-card-cat" style="color:var(--amber)">⛰️ Adventure</div>
+                <div class="exp-card-title">Sunrise Hike with Guide</div>
+                <div class="exp-card-host">Summit Guide Co.</div>
+              </div>
+              <div class="exp-card-price-col">
+                <div class="exp-card-price">$65</div>
+                <div class="exp-card-price-sub">per person</div>
+              </div>
+            </div>
+            <div class="exp-card-footer">
+              <div style="display:flex;gap:6px;align-items:center;">
+                <div class="verified-chip">✓ Verified Guide</div>
+                <div class="exp-tag">Thrill</div>
+              </div>
+              <button class="heart-btn" onclick="toggleHeart(event,this)">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-card" onclick="openExperience(&#39;wine&#39;)">
+          <img class="exp-card-img" src="./wtmm app v2_files/photo-1510812431401-41d2bd2722f3" alt="Wine">
+          <div class="exp-card-body">
+            <div class="exp-card-top">
+              <div class="exp-card-info">
+                <div class="exp-card-cat" style="color:var(--purple)">🍷 Dining</div>
+                <div class="exp-card-title">Sommelier-Led Wine Tasting</div>
+                <div class="exp-card-host">Cellar &amp; Vine</div>
+              </div>
+              <div class="exp-card-price-col">
+                <div class="exp-card-price">$110</div>
+                <div class="exp-card-price-sub">per person</div>
+              </div>
+            </div>
+            <div class="exp-card-footer">
+              <div style="display:flex;gap:6px;align-items:center;">
+                <div class="verified-chip">✓ Verified Host</div>
+                <div class="exp-tag">Date Night</div>
+              </div>
+              <button class="heart-btn" onclick="toggleHeart(event,this)">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo(&#39;home&#39;)">
+        <svg viewBox="0 0 24 24"><path class="nav-icon-fill" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22" fill="var(--bg)"></polyline></svg>
+        <span>Home</span>
+      </div>
+      <div class="nav-item active" onclick="goTo(&#39;explore&#39;)">
+        <svg viewBox="0 0 24 24"><circle class="nav-icon-fill" cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="var(--bg)" stroke-width="1.5" fill="none"></line></svg>
+        <span>Explore</span>
+      </div>
+      <div class="nav-item" onclick="goTo(&#39;my-plans&#39;)">
+        <svg viewBox="0 0 24 24"><rect class="nav-icon-fill" x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9" stroke="var(--bg)" stroke-width="1.5" fill="none"></line><line x1="9" y1="21" x2="9" y2="9" stroke="var(--bg)" stroke-width="1.5" fill="none"></line></svg>
+        <span>My Plans</span>
+      </div>
+      <div class="nav-item" onclick="goTo(&#39;profile-screen&#39;)">
+        <svg viewBox="0 0 24 24"><path class="nav-icon-fill" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4" class="nav-icon-fill"></circle></svg>
+        <span>Profile</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ EXPERIENCE DETAIL ══ -->
+  <div class="screen" id="exp-detail">
+    <div class="detail-back" onclick="goBack()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </div>
+    <div class="detail-share" onclick="showToast(&#39;🔗&#39;,&#39;Link copied to clipboard&#39;)">
+      <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+    </div>
+    <div class="scroll-content" style="position:relative;">
+      <img class="detail-hero" id="detailHeroImg" src="./wtmm app v2_files/photo-1556910103-1c02745aae4d(2)" alt="">
+      <div class="detail-content">
+        <div class="detail-cat-row">
+          <div class="detail-cat-label" id="detailCatLabel" style="color:var(--purple)">🍽️ DINING</div>
+          <div class="verified-chip" id="detailVerified">✓ Verified Chef</div>
+        </div>
+        <div class="detail-title" id="detailTitle">Private Chef Tasting Experience</div>
+        <div class="detail-host-line" id="detailHostLine">Chef Marcus Williams · Los Angeles</div>
+        <div class="detail-meta-row">
+          <div class="detail-meta-chip">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            3 hours
+          </div>
+          <div class="detail-meta-chip">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>
+            2–8 guests
+          </div>
+          <div class="detail-meta-chip">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            At your location
+          </div>
+        </div>
+
+        <div class="detail-section-title">The Experience</div>
+        <div class="detail-desc" id="detailDesc">An intimate, restaurant-quality dining experience brought directly to your home or private venue. Chef Marcus designs a custom 5-course tasting menu tailored to your occasion, dietary preferences, and flavor palette. From the first amuse-bouche to the final petit four, every detail is crafted for an unforgettable evening.</div>
+
+        <div id="detailExtras"></div>
+
+        <div class="detail-section-title">Select a Date</div>
+        <div id="miniCalendar" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-top:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <span style="font-family:var(--font-display);font-weight:700;">April 2026</span>
+            <div style="display:flex;gap:8px;">
+              <div style="cursor:pointer;color:var(--text3);">‹</div>
+              <div style="cursor:pointer;color:var(--text3);">›</div>
+            </div>
+          </div>
+          <div class="calendar-grid">
+            <div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div>
+            <div class="cal-day past">1</div><div class="cal-day past">2</div><div class="cal-day past">3</div><div class="cal-day past">4</div><div class="cal-day past">5</div><div class="cal-day past">6</div><div class="cal-day past">7</div>
+            <div class="cal-day past">8</div><div class="cal-day past">9</div><div class="cal-day past">10</div><div class="cal-day past">11</div><div class="cal-day past">12</div><div class="cal-day past">13</div><div class="cal-day past">14</div>
+            <div class="cal-day past">15</div><div class="cal-day past">16</div><div class="cal-day past">17</div><div class="cal-day past">18</div><div class="cal-day past">19</div><div class="cal-day past">20</div><div class="cal-day past">21</div>
+            <div class="cal-day today" onclick="selectCalDay(this)">22</div><div class="cal-day" onclick="selectCalDay(this)">23</div><div class="cal-day" onclick="selectCalDay(this)">24</div><div class="cal-day" onclick="selectCalDay(this)">25</div><div class="cal-day" onclick="selectCalDay(this)">26</div><div class="cal-day selected" onclick="selectCalDay(this)">27</div><div class="cal-day" onclick="selectCalDay(this)">28</div>
+            <div class="cal-day" onclick="selectCalDay(this)">29</div><div class="cal-day" onclick="selectCalDay(this)">30</div>
+          </div>
+        </div>
+
+        <div class="detail-section-title">Guests</div>
+        <div class="guest-counter">
+          <div class="counter-btn" onclick="changeGuests(-1)">−</div>
+          <div class="counter-num" id="guestCount">2</div>
+          <div class="counter-btn" onclick="changeGuests(1)">+</div>
+          <div style="font-size:12px;color:var(--text3);">+$75 per additional guest</div>
+        </div>
+
+        <div style="height:30px;"></div>
+      </div>
+    </div>
+    <div class="detail-cta-bar">
+      <div>
+        <div style="font-size:10px;color:var(--text3);">From</div>
+        <div style="font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--purple);" id="detailPrice">$195</div>
+      </div>
+      <button class="btn-add-plans" onclick="addToPlans()">Add To Plans</button>
+      <button class="btn-book-now" onclick="goTo(&#39;booking-step1&#39;)">Book Now</button>
+    </div>
+  </div>
+
+  <!-- ══ BOOKING STEP 1 ══ -->
+  <div class="screen" id="booking-step1">
+    <div class="status-bar"><span class="time">8:44</span><div class="status-icons"><svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="22" height="10" rx="2" fill="none" stroke="white" stroke-width="1"></rect><rect x="1" y="2" width="19" height="8" rx="1.5" fill="white"></rect></svg></div></div>
+    <div class="booking-header">
+      <div class="back-btn" onclick="goTo(&#39;exp-detail&#39;)" style="margin-bottom:16px;">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </div>
+      <div class="step-indicators">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
+      <div class="booking-title">Date &amp; Time</div>
+      <div class="booking-sub">Choose when you'd like to experience this.</div>
+    </div>
+    <div class="scroll-content" style="padding:0 20px 120px;">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <span style="font-family:var(--font-display);font-weight:700;">April 2026</span>
+          <div style="display:flex;gap:10px;">
+            <div style="cursor:pointer;color:var(--text3);font-size:18px;">‹</div>
+            <div style="cursor:pointer;color:var(--text2);font-size:18px;">›</div>
+          </div>
+        </div>
+        <div class="calendar-grid">
+          <div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div>
+          <div class="cal-day past">1</div><div class="cal-day past">2</div><div class="cal-day past">3</div><div class="cal-day past">4</div><div class="cal-day past">5</div><div class="cal-day past">6</div><div class="cal-day past">7</div>
+          <div class="cal-day past">8</div><div class="cal-day past">9</div><div class="cal-day past">10</div><div class="cal-day past">11</div><div class="cal-day past">12</div><div class="cal-day past">13</div><div class="cal-day past">14</div>
+          <div class="cal-day past">15</div><div class="cal-day past">16</div><div class="cal-day past">17</div><div class="cal-day past">18</div><div class="cal-day past">19</div><div class="cal-day past">20</div><div class="cal-day past">21</div>
+          <div class="cal-day today" onclick="selectBookingDay(this,&#39;Apr 22&#39;)">22</div><div class="cal-day" onclick="selectBookingDay(this,&#39;Apr 23&#39;)">23</div><div class="cal-day" onclick="selectBookingDay(this,&#39;Apr 24&#39;)">24</div><div class="cal-day" onclick="selectBookingDay(this,&#39;Apr 25&#39;)">25</div><div class="cal-day" onclick="selectBookingDay(this,&#39;Apr 26&#39;)">26</div><div class="cal-day selected" onclick="selectBookingDay(this,&#39;Apr 27&#39;)">27</div><div class="cal-day" onclick="selectBookingDay(this,&#39;Apr 28&#39;)">28</div>
+          <div class="cal-day" onclick="selectBookingDay(this,&#39;Apr 29&#39;)">29</div><div class="cal-day" onclick="selectBookingDay(this,&#39;Apr 30&#39;)">30</div>
+        </div>
+      </div>
+
+      <div style="font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:10px;">Available Times — <span id="selectedDay">Apr 27</span></div>
+      <div class="time-grid">
+        <div class="time-chip" onclick="selectTime(this)">5:00 PM</div>
+        <div class="time-chip" onclick="selectTime(this)">6:00 PM</div>
+        <div class="time-chip selected" onclick="selectTime(this)">7:00 PM</div>
+        <div class="time-chip" onclick="selectTime(this)">7:30 PM</div>
+        <div class="time-chip unavailable">8:00 PM</div>
+        <div class="time-chip" onclick="selectTime(this)">8:30 PM</div>
+        <div class="time-chip unavailable">9:00 PM</div>
+      </div>
+    </div>
+    <div class="detail-cta-bar">
+      <button class="btn-book-now" style="flex:1;" onclick="goTo(&#39;booking-step2&#39;)">Continue</button>
+    </div>
+  </div>
+
+  <!-- ══ BOOKING STEP 2 ══ -->
+  <div class="screen" id="booking-step2">
+    <div class="status-bar"><span class="time">8:44</span><div class="status-icons"><svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="22" height="10" rx="2" fill="none" stroke="white" stroke-width="1"></rect><rect x="1" y="2" width="19" height="8" rx="1.5" fill="white"></rect></svg></div></div>
+    <div class="booking-header">
+      <div class="back-btn" onclick="goTo(&#39;booking-step1&#39;)" style="margin-bottom:16px;">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </div>
+      <div class="step-indicators">
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+      </div>
+      <div class="booking-title">Guests &amp; Add-Ons</div>
+      <div class="booking-sub">Customize your experience.</div>
+    </div>
+    <div class="scroll-content" style="padding:0 20px 120px;">
+      <div style="font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:10px;">Number of Guests</div>
+      <div class="guest-counter" style="margin-bottom:20px;">
+        <div class="counter-btn" onclick="changeBookingGuests(-1)">−</div>
+        <div class="counter-num" id="bookingGuests">2</div>
+        <div class="counter-btn" onclick="changeBookingGuests(1)">+</div>
+        <div style="font-size:12px;color:var(--text3);">+$75 per additional guest</div>
+      </div>
+
+      <div style="font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:10px;">Enhance Your Evening</div>
+      <div class="addon-card" id="addon-flowers" onclick="toggleAddon(this,&#39;flowers&#39;,45)">
+        <div class="addon-emoji">💐</div>
+        <div class="addon-info">
+          <div class="addon-name">Fresh Floral Arrangement</div>
+          <div class="addon-desc">Seasonal blooms delivered before your experience</div>
+        </div>
+        <div class="addon-price">+$45</div>
+        <div class="addon-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+      </div>
+      <div class="addon-card" id="addon-wine" onclick="toggleAddon(this,&#39;wine&#39;,65)">
+        <div class="addon-emoji">🍷</div>
+        <div class="addon-info">
+          <div class="addon-name">Wine Pairing Package</div>
+          <div class="addon-desc">Sommelier-selected wines for each course</div>
+        </div>
+        <div class="addon-price">+$65</div>
+        <div class="addon-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+      </div>
+      <div class="addon-card selected" id="addon-photo" onclick="toggleAddon(this,&#39;photo&#39;,95)">
+        <div class="addon-emoji">📸</div>
+        <div class="addon-info">
+          <div class="addon-name">Professional Photography</div>
+          <div class="addon-desc">1-hour session, 30+ edited digital photos delivered</div>
+        </div>
+        <div class="addon-price">+$95</div>
+        <div class="addon-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+      </div>
+      <div class="addon-card" id="addon-car" onclick="toggleAddon(this,&#39;car&#39;,120)">
+        <div class="addon-emoji">🚙</div>
+        <div class="addon-info">
+          <div class="addon-name">Luxury Car Service</div>
+          <div class="addon-desc">Round-trip private car for up to 4 guests</div>
+        </div>
+        <div class="addon-price">+$120</div>
+        <div class="addon-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+      </div>
+
+      <div style="font-family:var(--font-display);font-size:15px;font-weight:700;margin:16px 0 8px;">Special Requests</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">Dietary needs, occasion, allergies — Chef Marcus will confirm all accommodations.</div>
+      <textarea class="special-req-textarea" rows="3" placeholder="e.g. Celebrating our anniversary, one guest has a shellfish allergy, we&#39;d love a vegetarian option for one guest."></textarea>
+
+      <div class="running-total">
+        <div class="total-row"><span>Base (2 guests)</span><span>$390</span></div>
+        <div class="total-row" id="guestExtraRow" style="display:none;"><span id="guestExtraLabel">Extra guests</span><span id="guestExtraAmt"></span></div>
+        <div class="total-row addon-total-row" id="photoRow"><span>Photography</span><span>$95</span></div>
+        <div class="total-row divider-row grand"><span>Total</span><span class="amt" id="step2Total">$485</span></div>
+      </div>
+    </div>
+    <div class="detail-cta-bar">
+      <button class="btn-book-now" style="flex:1;" onclick="goTo(&#39;booking-step3&#39;)">Continue</button>
+    </div>
+  </div>
+
+  <!-- ══ BOOKING STEP 3 ══ -->
+  <div class="screen" id="booking-step3">
+    <div class="status-bar"><span class="time">8:44</span><div class="status-icons"><svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="22" height="10" rx="2" fill="none" stroke="white" stroke-width="1"></rect><rect x="1" y="2" width="19" height="8" rx="1.5" fill="white"></rect></svg></div></div>
+    <div class="booking-header">
+      <div class="back-btn" onclick="goTo(&#39;booking-step2&#39;)" style="margin-bottom:16px;">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </div>
+      <div class="step-indicators">
+        <div class="step-dot done"></div>
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+      </div>
+      <div class="booking-title">Review &amp; Pay</div>
+      <div class="booking-sub">Almost there — confirm your booking.</div>
+    </div>
+    <div class="scroll-content" style="padding:0 20px 120px;">
+      <div class="summary-card">
+        <div class="summary-exp-row">
+          <img class="summary-exp-img" src="./wtmm app v2_files/photo-1556910103-1c02745aae4d(3)" alt="">
+          <div>
+            <div class="summary-exp-name">Private Chef Tasting Experience</div>
+            <div class="summary-exp-date">Sunday, April 27 · 7:00 PM</div>
+            <div class="summary-exp-date" style="margin-top:2px;">2 guests · Photography add-on</div>
+          </div>
+        </div>
+        <div class="total-row"><span>Base (2 guests)</span><span>$390</span></div>
+        <div class="total-row"><span>Professional Photography</span><span>$95</span></div>
+        <div class="total-row divider-row grand"><span>Total</span><span class="amt">$485</span></div>
+      </div>
+
+      <div style="font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:12px;">Payment Method</div>
+      <div class="payment-options">
+        <div class="payment-opt selected" onclick="selectPayment(this)">
+          <div class="payment-opt-icon">💳</div>
+          <div class="payment-opt-label">Credit or Debit Card</div>
+          <div class="payment-radio"><div class="payment-radio-dot"></div></div>
+        </div>
+        <div class="payment-opt" onclick="selectPayment(this)">
+          <div class="payment-opt-icon" style="background:black;border-radius:6px;color:white;font-size:12px;font-weight:800;letter-spacing:-0.5px;padding:0 4px;justify-content:center;display:flex;align-items:center;"> Pay</div>
+          <div class="payment-opt-label">Apple Pay</div>
+          <div class="payment-radio"><div class="payment-radio-dot"></div></div>
+        </div>
+        <div class="payment-opt" onclick="selectPayment(this)">
+          <div class="payment-opt-icon" style="font-size:11px;font-weight:800;color:#003087;letter-spacing:-0.5px;">PayPal</div>
+          <div class="payment-opt-label">PayPal</div>
+          <div class="payment-radio"><div class="payment-radio-dot"></div></div>
+        </div>
+        <div class="payment-opt" onclick="selectPayment(this)">
+          <div class="payment-opt-icon" style="font-size:10px;font-weight:800;color:#4ade80;letter-spacing:-0.5px;">G Pay</div>
+          <div class="payment-opt-label">Google Pay</div>
+          <div class="payment-radio"><div class="payment-radio-dot"></div></div>
+        </div>
+      </div>
+
+      <div class="installment-section">
+        <div class="installment-label">Pay Over Time</div>
+        <div class="installment-options">
+          <div class="installment-opt selected" onclick="selectInstall(this)">Affirm</div>
+          <div class="installment-opt" onclick="selectInstall(this)">Afterpay</div>
+          <div class="installment-opt" onclick="selectInstall(this)">Klarna</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:12px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:var(--radius-sm);display:flex;gap:8px;align-items:flex-start;">
+        <span style="font-size:16px;">🔒</span>
+        <div style="font-size:11px;color:var(--text3);line-height:1.5;">Your payment is secured with 256-bit encryption. The price you see is the price you pay — no taxes, no service fees, no surprises.</div>
+      </div>
+    </div>
+    <div class="detail-cta-bar">
+      <div>
+        <div style="font-size:10px;color:var(--text3);">Total</div>
+        <div style="font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--purple);">$485</div>
+      </div>
+      <button class="btn-book-now" style="flex:2;" onclick="goTo(&#39;booking-confirm&#39;)">Confirm Booking</button>
+    </div>
+  </div>
+
+  <!-- ══ BOOKING CONFIRMATION ══ -->
+  <div class="screen" id="booking-confirm">
+    <div class="status-bar"><span class="time">8:44</span><div class="status-icons"><svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="22" height="10" rx="2" fill="none" stroke="white" stroke-width="1"></rect><rect x="1" y="2" width="19" height="8" rx="1.5" fill="white"></rect></svg></div></div>
+    <div class="glow-tl"></div>
+    <div class="scroll-content">
+      <div class="confirm-content">
+        <div style="height:30px;"></div>
+        <div class="confirm-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="confirm-title">You're Booked! 🎉</div>
+        <div class="confirm-sub">Private Chef Tasting Experience<br>Sunday, April 27 · 7:00 PM · 2 guests</div>
+
+        <div class="share-card">
+          <div class="share-card-booking">Booking Confirmed</div>
+          <div class="share-card-title">Private Chef Tasting Experience</div>
+          <div class="share-card-date">Sunday, April 27 · 7:00 PM · Los Angeles</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;">
+            <div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:2px;">CONFIRMATION</div>
+              <div style="font-family:var(--font-display);font-size:14px;font-weight:700;">#WTM-2026-4892</div>
+            </div>
+            <div class="share-card-brand">What's the Move</div>
+          </div>
+        </div>
+
+        <div class="cal-btns">
+          <button class="cal-btn" onclick="showToast(&#39;📅&#39;,&#39;Added to Apple Calendar&#39;)">
+            <span>🍎</span> Apple Calendar
+          </button>
+          <button class="cal-btn" onclick="showToast(&#39;📅&#39;,&#39;Added to Google Calendar&#39;)">
+            <span>📅</span> Google Calendar
+          </button>
+        </div>
+
+        <div style="font-family:var(--font-display);font-size:14px;font-weight:700;margin-bottom:12px;align-self:flex-start;">Share Your Move</div>
+        <div class="share-row">
+          <div class="share-dest" onclick="showToast(&#39;&#39;,&#39;Message sent!&#39;)">
+            <div class="share-dest-icon" style="background:#1c8ef9;">
+              <svg viewBox="0 0 32 32" width="24" height="24" fill="none"><path d="M4 6h24v16a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" fill="white"></path><path d="M4 6l12 11L28 6" stroke="#1c8ef9" stroke-width="2"></path></svg>
+            </div>
+            <span>Text</span>
+          </div>
+          <div class="share-dest" onclick="showToast(&#39;&#39;,&#39;Opening Instagram&#39;)">
+            <div class="share-dest-icon" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);padding:0;">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="2"></rect><circle cx="12" cy="12" r="4" fill="none" stroke="white" stroke-width="2"></circle><circle cx="17.5" cy="6.5" r="1.5" fill="white"></circle></svg>
+            </div>
+            <span>Instagram</span>
+          </div>
+          <div class="share-dest" onclick="showToast(&#39;&#39;,&#39;Opening Snapchat&#39;)">
+            <div class="share-dest-icon" style="background:#FFFC00;padding:0;">
+              <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2C8 2 5.5 4.5 5.5 8v1.5c-.8.3-1.5.8-1.5 1.5 0 .5.5 1 1 1.2-.3 1.3-1 2.8-3 3.3.5.8 2 1 3 1.2.2.6.5 1.3.8 1.8H12h3.2c.3-.5.6-1.2.8-1.8 1-.2 2.5-.4 3-1.2-2-.5-2.7-2-3-3.3.5-.2 1-.7 1-1.2 0-.7-.7-1.2-1.5-1.5V8C15.5 4.5 16 2 12 2z" fill="#000"></path></svg>
+            </div>
+            <span>Snapchat</span>
+          </div>
+          <div class="share-dest" onclick="showToast(&#39;&#39;,&#39;Opening X&#39;)">
+            <div class="share-dest-icon" style="background:#000;padding:0;">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+            </div>
+            <span>X</span>
+          </div>
+          <div class="share-dest" onclick="showToast(&#39;🔗&#39;,&#39;Link copied!&#39;)">
+            <div class="share-dest-icon" style="background:var(--surface3);">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--text2)" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path></svg>
+            </div>
+            <span>Copy Link</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goTo(&#39;home&#39;)" style="margin-top:24px;width:100%;">Back To Home</button>
+        <button class="btn-ghost" onclick="goTo(&#39;my-plans&#39;)" style="width:100%;margin-top:8px;">View My Plans</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MY PLANS ══ -->
+  <div class="screen" id="my-plans">
+    <div class="glow-tl"></div>
+    <div class="status-bar">
+      <span class="time">8:44</span>
+      <div class="status-icons"><svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="22" height="10" rx="2" fill="none" stroke="white" stroke-width="1"></rect><rect x="1" y="2" width="19" height="8" rx="1.5" fill="white"></rect></svg></div>
+    </div>
+    <div style="padding:16px 20px 14px;flex-shrink:0;">
+      <div style="font-family:var(--font-display);font-size:26px;font-weight:800;margin-bottom:14px;">My Plans</div>
+      <div class="plans-tabs">
+        <div class="plans-tab active" onclick="switchPlansTab(this,&#39;list&#39;)">All Bookings</div>
+        <div class="plans-tab" onclick="switchPlansTab(this,&#39;named&#39;)">My Plans</div>
+      </div>
+    </div>
+    <div class="scroll-content">
+      <div id="plans-list-view">
+        <div class="plan-group" style="padding:0 20px;">
+          <div class="plan-group-name">Upcoming</div>
+          <div class="plan-exp-card" onclick="goTo(&#39;exp-detail&#39;)">
+            <img class="plan-exp-img" src="./wtmm app v2_files/photo-1556910103-1c02745aae4d(3)" alt="">
+            <div class="plan-exp-info">
+              <div class="plan-exp-title">Private Chef Tasting Experience</div>
+              <div class="plan-exp-date">Sun, Apr 27 · 7:00 PM · 2 guests</div>
+              <div class="plan-status-chip status-confirmed">✓ Confirmed</div>
+            </div>
+          </div>
+          <div class="plan-exp-card" onclick="openExperience(&#39;yacht&#39;)">
+            <img class="plan-exp-img" src="./wtmm app v2_files/photo-1567899378494-47b22a2ae96a(2)" alt="">
+            <div class="plan-exp-info">
+              <div class="plan-exp-title">Sunset Yacht &amp; Cocktails</div>
+              <div class="plan-exp-date">Sat, May 3 · 5:30 PM · 4 guests</div>
+              <div class="plan-status-chip status-upcoming">Upcoming</div>
+            </div>
+          </div>
+        </div>
+        <div class="plan-group" style="padding:0 20px;margin-top:4px;">
+          <div class="plan-group-name">Past</div>
+          <div class="plan-exp-card" onclick="openExperience(&#39;jazz&#39;)" style="opacity:0.7;">
+            <img class="plan-exp-img" src="./wtmm app v2_files/photo-1415201364774-f6f0bb35f28f(2)" alt="">
+            <div class="plan-exp-info">
+              <div class="plan-exp-title">Intimate Jazz Club Evening</div>
+              <div class="plan-exp-date">Fri, Mar 14 · 8:00 PM</div>
+              <div class="plan-status-chip status-past">Completed</div>
+            </div>
+          </div>
+          <div class="plan-exp-card" onclick="openExperience(&#39;hike&#39;)" style="opacity:0.7;">
+            <img class="plan-exp-img" src="./wtmm app v2_files/photo-1551632811-561732d1e306(2)" alt="">
+            <div class="plan-exp-info">
+              <div class="plan-exp-title">Sunrise Hike with Guide</div>
+              <div class="plan-exp-date">Sun, Feb 23 · 5:30 AM</div>
+              <div class="plan-status-chip status-past">Completed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="plans-named-view" style="display:none;padding:0 20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="font-size:14px;color:var(--text3);">2 saved plans</div>
+          <div style="font-size:13px;color:var(--purple);font-weight:600;cursor:pointer;" onclick="showToast(&#39;✨&#39;,&#39;New plan created&#39;)">+ New Plan</div>
+        </div>
+        <div class="named-plan-card" onclick="toggleTimeline(this)">
+          <div class="named-plan-header">
+            <div class="named-plan-title">🌅 Anniversary Weekend</div>
+            <div class="named-plan-count">2 experiences</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot-col"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+            <div class="timeline-info">
+              <div class="timeline-time">Apr 27 · 7:00 PM</div>
+              <div class="timeline-name">Private Chef Tasting Experience</div>
+              <div class="timeline-loc">At your location · Confirmed</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot-col"><div class="timeline-dot" style="background:var(--teal);"></div></div>
+            <div class="timeline-info">
+              <div class="timeline-time">Apr 28 · 5:30 PM</div>
+              <div class="timeline-name">Sunset Yacht &amp; Cocktails</div>
+              <div class="timeline-loc">Marina del Rey · Upcoming</div>
+            </div>
+          </div>
+        </div>
+        <div class="named-plan-card">
+          <div class="named-plan-header">
+            <div class="named-plan-title">🎨 Creative Day Out</div>
+            <div class="named-plan-count">1 experience</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot-col"><div class="timeline-dot" style="background:var(--pink);"></div></div>
+            <div class="timeline-info">
+              <div class="timeline-time">May 10 · 2:00 PM</div>
+              <div class="timeline-name">Intimate Jazz Club Evening</div>
+              <div class="timeline-loc">The Blue Note Lounge · Upcoming</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo(&#39;home&#39;)">
+        <svg viewBox="0 0 24 24"><path class="nav-icon-fill" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22" fill="var(--bg)"></polyline></svg>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" onclick="goTo(&#39;explore&#39;)">
+        <svg viewBox="0 0 24 24"><circle class="nav-icon-fill" cx="11" cy="11" r="8"></circle></svg>
+        <span>Explore</span>
+      </div>
+      <div class="nav-item active" onclick="goTo(&#39;my-plans&#39;)">
+        <svg viewBox="0 0 24 24"><rect class="nav-icon-fill" x="3" y="3" width="18" height="18" rx="2"></rect></svg>
+        <span>My Plans</span>
+      </div>
+      <div class="nav-item" onclick="goTo(&#39;profile-screen&#39;)">
+        <svg viewBox="0 0 24 24"><path class="nav-icon-fill" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4" class="nav-icon-fill"></circle></svg>
+        <span>Profile</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROFILE SCREEN ══ -->
+  <div class="screen" id="profile-screen">
+    <div class="glow-tl"></div>
+    <div class="glow-tr"></div>
+    <div class="status-bar">
+      <span class="time">8:44</span>
+      <div class="status-icons"><svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="22" height="10" rx="2" fill="none" stroke="white" stroke-width="1"></rect><rect x="1" y="2" width="19" height="8" rx="1.5" fill="white"></rect></svg></div>
+    </div>
+    <div class="scroll-content">
+      <div class="profile-hero">
+        <div class="profile-avatar-wrap">
+          <img class="profile-avatar" src="./wtmm app v2_files/photo-1507003211169-0a1dd7228f2d" alt="">
+          <div class="profile-avatar-ring"></div>
+        </div>
+        <div class="profile-name">Jordan Williams</div>
+        <div class="profile-city">📍 Los Angeles, CA</div>
+        <div class="profile-tags">
+          <div class="profile-tag">🌿 Touch Grass</div>
+          <div class="profile-tag">🎭 Entertainment</div>
+          <div class="profile-tag">🍽️ Food</div>
+          <div class="profile-tag">✈️ Travel</div>
+        </div>
+      </div>
+
+      <div class="profile-stat-row">
+        <div class="stat-card">
+          <div class="stat-num">8</div>
+          <div class="stat-label">Experiences</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Plans</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Saved</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-family:var(--font-display);font-size:16px;font-weight:700;">Saved Experiences</div>
+        <div style="font-size:12px;color:var(--purple);font-weight:600;cursor:pointer;">See All</div>
+      </div>
+      <div style="display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:20px;">
+        <div style="flex-shrink:0;width:130px;cursor:pointer;" onclick="openExperience(&#39;yacht&#39;)">
+          <img src="./wtmm app v2_files/photo-1567899378494-47b22a2ae96a(2)" style="width:100%;height:90px;object-fit:cover;border-radius:var(--radius-sm);" alt="">
+          <div style="font-size:12px;font-weight:600;margin-top:5px;line-height:1.3;">Sunset Yacht</div>
+        </div>
+        <div style="flex-shrink:0;width:130px;cursor:pointer;" onclick="openExperience(&#39;spa&#39;)">
+          <img src="./wtmm app v2_files/photo-1600334089648-b0d9d3028eb2(1)" style="width:100%;height:90px;object-fit:cover;border-radius:var(--radius-sm);" alt="">
+          <div style="font-size:12px;font-weight:600;margin-top:5px;line-height:1.3;">Couples Spa</div>
+        </div>
+        <div style="flex-shrink:0;width:130px;cursor:pointer;" onclick="openExperience(&#39;wine&#39;)">
+          <img src="./wtmm app v2_files/photo-1510812431401-41d2bd2722f3(1)" style="width:100%;height:90px;object-fit:cover;border-radius:var(--radius-sm);" alt="">
+          <div style="font-size:12px;font-weight:600;margin-top:5px;line-height:1.3;">Wine Tasting</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-family:var(--font-display);font-size:16px;font-weight:700;">My Reviews</div>
+      </div>
+      <div class="review-card">
+        <div class="review-exp-name">Intimate Jazz Club Evening</div>
+        <div class="stars-row"><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span></div>
+        <div class="review-text">Absolutely incredible. The venue was intimate and the live performance was world-class. WTM made the whole booking process seamless. Already planning a return visit.</div>
+      </div>
+      <div class="review-card">
+        <div class="review-exp-name">Sunrise Hike with Guide</div>
+        <div class="stars-row"><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span></div>
+        <div class="review-text">Our guide was incredibly knowledgeable and kept the energy high the whole hike. The sunrise views were worth every bit of the 5am wake-up. Highly recommend for any outdoor enthusiast.</div>
+      </div>
+
+      <div style="margin-top:20px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);">
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:12px;">Account Settings</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="showToast(&#39;✏️&#39;,&#39;Editing preferences&#39;)">
+            <span style="font-size:14px;color:var(--text2);">Edit Preferences</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+          <div style="height:1px;background:var(--border);"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="showToast(&#39;🔔&#39;,&#39;Notifications settings&#39;)">
+            <span style="font-size:14px;color:var(--text2);">Notifications</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+          <div style="height:1px;background:var(--border);"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="showToast(&#39;🔒&#39;,&#39;Opening privacy settings&#39;)">
+            <span style="font-size:14px;color:var(--text2);">Privacy &amp; Security</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+          <div style="height:1px;background:var(--border);"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="showToast(&#39;👋&#39;,&#39;Signed out&#39;)">
+            <span style="font-size:14px;color:#f87171;">Sign Out</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </div>
+      </div>
+      <div style="height:100px;"></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo(&#39;home&#39;)">
+        <svg viewBox="0 0 24 24"><path class="nav-icon-fill" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" onclick="goTo(&#39;explore&#39;)">
+        <svg viewBox="0 0 24 24"><circle class="nav-icon-fill" cx="11" cy="11" r="8"></circle></svg>
+        <span>Explore</span>
+      </div>
+      <div class="nav-item" onclick="goTo(&#39;my-plans&#39;)">
+        <svg viewBox="0 0 24 24"><rect class="nav-icon-fill" x="3" y="3" width="18" height="18" rx="2"></rect></svg>
+        <span>My Plans</span>
+      </div>
+      <div class="nav-item active" onclick="goTo(&#39;profile-screen&#39;)">
+        <svg viewBox="0 0 24 24"><path class="nav-icon-fill" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4" class="nav-icon-fill"></circle></svg>
+        <span>Profile</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SURPRISE ME FLOW ══ -->
+  <div class="screen" id="surprise-flow">
+    <div class="glow-tl"></div>
+    <div class="status-bar"><span class="time">8:44</span><div class="status-icons"><svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="22" height="10" rx="2" fill="none" stroke="white" stroke-width="1"></rect><rect x="1" y="2" width="19" height="8" rx="1.5" fill="white"></rect></svg></div></div>
+    <div style="padding:16px 20px 0;flex-shrink:0;">
+      <div class="back-btn" onclick="goTo(&#39;home&#39;)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </div>
+      <div style="font-family:var(--font-display);font-size:26px;font-weight:800;margin-bottom:4px;">🎁 Surprise Me</div>
+      <div style="font-size:14px;color:var(--text3);margin-bottom:4px;">Pick your vibe — we'll handle the rest.</div>
+    </div>
+    <div class="scroll-content">
+      <div class="surprise-flow-content">
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:12px;">What's the mood tonight?</div>
+        <div class="surprise-vibe-grid">
+          <div class="surprise-vibe-card selected" onclick="selectSurpriseVibe(this)">
+            <img src="./wtmm app v2_files/photo-1414235077428-338989a2e8c0(1)" alt="Date Night">
+            <div class="surprise-vibe-card-overlay"></div>
+            <div class="surprise-vibe-card-label">💕 Date Night</div>
+          </div>
+          <div class="surprise-vibe-card" onclick="selectSurpriseVibe(this)">
+            <img src="./wtmm app v2_files/photo-1527529482837-4698179dc6ce" alt="Celebration">
+            <div class="surprise-vibe-card-overlay"></div>
+            <div class="surprise-vibe-card-label">🎉 Celebration</div>
+          </div>
+          <div class="surprise-vibe-card" onclick="selectSurpriseVibe(this)">
+            <img src="./wtmm app v2_files/photo-1529156069898-49953e39b3ac" alt="Group">
+            <div class="surprise-vibe-card-overlay"></div>
+            <div class="surprise-vibe-card-label">👥 Group</div>
+          </div>
+          <div class="surprise-vibe-card" onclick="selectSurpriseVibe(this)">
+            <img src="./wtmm app v2_files/photo-1506126613408-eca07ce68773" alt="Chill">
+            <div class="surprise-vibe-card-overlay"></div>
+            <div class="surprise-vibe-card-label">🧘 Chill</div>
+          </div>
+          <div class="surprise-vibe-card" onclick="selectSurpriseVibe(this)">
+            <img src="./wtmm app v2_files/photo-1551632811-561732d1e306(3)" alt="Thrill">
+            <div class="surprise-vibe-card-overlay"></div>
+            <div class="surprise-vibe-card-label">⚡ Thrill</div>
+          </div>
+          <div class="surprise-vibe-card" onclick="selectSurpriseVibe(this)">
+            <img src="./wtmm app v2_files/photo-1492684223066-81342ee5ff30" alt="Artsy">
+            <div class="surprise-vibe-card-overlay"></div>
+            <div class="surprise-vibe-card-label">🎨 Artsy</div>
+          </div>
+        </div>
+
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:700;margin:20px 0 10px;">Budget Range</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div class="filter-chip" onclick="setFilter(this,&#39;$0–$75&#39;)">$0–$75</div>
+          <div class="filter-chip active" onclick="setFilter(this,&#39;$75–$200&#39;)">$75–$200</div>
+          <div class="filter-chip" onclick="setFilter(this,&#39;$200–$500&#39;)">$200–$500</div>
+          <div class="filter-chip" onclick="setFilter(this,&#39;$500+&#39;)">$500+</div>
+        </div>
+
+        <button class="btn-primary" onclick="openExperience(&#39;chef&#39;)" style="margin-top:24px;">Pick My Move 🎲</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CATEGORY PAGE ══ -->
+  <div class="screen" id="category-page">
+    <div class="detail-back" onclick="goBack()" style="top:56px;">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </div>
+    <div class="category-hero">
+      <img id="catHeroImg" src="./wtmm app v2_files/photo-1414235077428-338989a2e8c0" alt="">
+      <div class="category-hero-overlay"></div>
+      <div class="category-hero-title" id="catHeroTitle">Dining</div>
+    </div>
+    <div class="scroll-content">
+      <div class="exp-list" style="padding-top:16px;">
+        <div class="exp-card" onclick="openExperience(&#39;chef&#39;)">
+          <img class="exp-card-img" src="./wtmm app v2_files/photo-1556910103-1c02745aae4d(1)" alt="">
+          <div class="exp-card-body">
+            <div class="exp-card-top">
+              <div class="exp-card-info">
+                <div class="exp-card-cat" id="catCardColor" style="color:var(--purple)">🍽️ Dining</div>
+                <div class="exp-card-title">Private Chef Tasting Experience</div>
+                <div class="exp-card-host">Chef Marcus Williams</div>
+              </div>
+              <div class="exp-card-price-col">
+                <div class="exp-card-price">$195</div>
+                <div class="exp-card-price-sub">per person</div>
+              </div>
+            </div>
+            <div class="exp-card-footer">
+              <div class="verified-chip">✓ Verified Chef</div>
+              <button class="heart-btn" onclick="toggleHeart(event,this)">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="exp-card" onclick="openExperience(&#39;wine&#39;)">
+          <img class="exp-card-img" src="./wtmm app v2_files/photo-1510812431401-41d2bd2722f3" alt="">
+          <div class="exp-card-body">
+            <div class="exp-card-top">
+              <div class="exp-card-info">
+                <div class="exp-card-cat" style="color:var(--purple)">🍷 Dining</div>
+                <div class="exp-card-title">Sommelier-Led Wine Tasting</div>
+                <div class="exp-card-host">Cellar &amp; Vine</div>
+              </div>
+              <div class="exp-card-price-col">
+                <div class="exp-card-price">$110</div>
+                <div class="exp-card-price-sub">per person</div>
+              </div>
+            </div>
+            <div class="exp-card-footer">
+              <div class="verified-chip">✓ Verified Host</div>
+              <button class="heart-btn" onclick="toggleHeart(event,this)">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+// ─── STATE ───
+let currentScreen = 'splash';
+let prevScreen = null;
+let guestCount = 2;
+let bookingGuests = 2;
+let addons = { photo: 95 };
+let selectedDay = 'Apr 27';
+let selectedVibe = null;
+
+const BASE_PRICE = 195;
+const GUEST_EXTRA = 75;
+
+const EXPERIENCES = {
+  chef: {
+    img: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&q=90',
+    cat: '🍽️ DINING', catColor: 'var(--purple)', verified: '✓ Verified Chef',
+    title: 'Private Chef Tasting Experience',
+    host: 'Chef Marcus Williams · Los Angeles',
+    desc: 'An intimate, restaurant-quality dining experience brought directly to your home or private venue. Chef Marcus designs a custom 5-course tasting menu tailored to your occasion, dietary preferences, and flavor palette.',
+    price: '$195'
+  },
+  yacht: {
+    img: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=90',
+    cat: '⛵ WATER', catColor: 'var(--teal)', verified: '✓ Verified Captain',
+    title: 'Sunset Yacht & Cocktails',
+    host: 'Captain Diego Martinez · Marina del Rey',
+    desc: 'Set sail on a private 44-foot catamaran as the sun dips below the Pacific. Craft cocktails, fresh bites, and the sound of the ocean. Perfect for date nights, celebrations, or group outings up to 12 guests.',
+    price: '$275'
+  },
+  jazz: {
+    img: 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=800&q=90',
+    cat: '🎶 ARTS & MUSIC', catColor: 'var(--pink)', verified: '✓ Verified Venue',
+    title: 'Intimate Jazz Club Evening',
+    host: 'The Blue Note Lounge · West Hollywood',
+    desc: 'Step into the golden age of jazz. An intimate evening of live performances in a venue that holds just 40 guests — no bad seats, no distractions, pure music. Cocktail service included.',
+    price: '$85'
+  },
+  hike: {
+    img: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=90',
+    cat: '⛰️ ADVENTURE', catColor: 'var(--amber)', verified: '✓ Verified Guide',
+    title: 'Sunrise Hike with Expert Guide',
+    host: 'Summit Guide Co. · Griffith Park',
+    desc: 'Beat the crowd to the summit. Our certified guide leads you on a 6-mile ridge loop timed perfectly for golden-hour sunrise views over the city. All levels welcome; gear checklist provided after booking.',
+    price: '$65'
+  },
+  spa: {
+    img: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=800&q=90',
+    cat: '🧘 WELLNESS', catColor: 'var(--green)', verified: '✓ Verified Experience',
+    title: 'Luxury Couples Spa Retreat',
+    host: 'Serenity Wellness Spa · Beverly Hills',
+    desc: 'A 3-hour couples retreat featuring aromatherapy steam, dual massage therapy, mineral soaks, and a champagne toast. Robes, slippers, and all amenities included.',
+    price: '$180'
+  },
+  wine: {
+    img: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=90',
+    cat: '🍷 DINING', catColor: 'var(--purple)', verified: '✓ Verified Host',
+    title: 'Sommelier-Led Wine Tasting',
+    host: 'Cellar & Vine · Silver Lake',
+    desc: 'A guided tasting of 8 curated wines across three regions, led by a certified sommelier. Perfect pairings, tasting notes, and a wine education you can actually use. Small groups of 6 max.',
+    price: '$110'
+  }
+};
+
+const CATEGORY_DATA = {
+  Dining: { img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=90', color: 'var(--purple)', emoji: '🍽️' },
+  Water: { img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=90', color: 'var(--teal)', emoji: '⛵' },
+  Arts: { img: 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&q=90', color: 'var(--pink)', emoji: '🎨' },
+  Adventure: { img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=90', color: 'var(--amber)', emoji: '⛰️' },
+  Travel: { img: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=90', color: 'var(--blue)', emoji: '✈️' },
+  Wellness: { img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&q=90', color: 'var(--green)', emoji: '🧘' },
+  Nightlife: { img: 'https://images.unsplash.com/photo-1571266752602-da4e4f3c3025?w=800&q=90', color: 'var(--indigo)', emoji: '🌙' }
+};
+
+const GREETINGS = [
+  'Less planning. <span class="grad">More living.</span>',
+  'Good things are <span class="grad">happening right now.</span>',
+  'Your next favorite <span class="grad">memory starts here.</span>',
+  'Unforgettable moments, <span class="grad">made simple.</span>',
+  'Every moment, <span class="grad">thoughtfully curated.</span>',
+  'The moments that matter, <span class="grad">made easy.</span>',
+  'More memories, <span class="grad">seamless planning.</span>'
+];
+
+// ─── NAVIGATION ───
+function goTo(id) {
+  const prev = document.querySelector('.screen.active');
+  if (prev) prev.classList.remove('active');
+  const next = document.getElementById(id);
+  if (next) { next.classList.add('active'); prevScreen = currentScreen; currentScreen = id; }
+}
+
+function goBack() { if (prevScreen) goTo(prevScreen); }
+
+// splash stays until user taps
+
+// ─── GREETING ROTATION ───
+const randomGreeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+document.getElementById('homeGreeting').innerHTML = randomGreeting;
+
+// Time of day greeting
+const h = new Date().getHours();
+const tod = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+document.getElementById('homeGreetingSmall').textContent = tod;
+
+// ─── EXPERIENCE DETAIL ───
+function openExperience(key) {
+  const e = EXPERIENCES[key];
+  if (!e) return;
+  document.getElementById('detailHeroImg').src = e.img;
+  document.getElementById('detailCatLabel').textContent = e.cat;
+  document.getElementById('detailCatLabel').style.color = e.catColor;
+  document.getElementById('detailVerified').textContent = e.verified;
+  document.getElementById('detailTitle').textContent = e.title;
+  document.getElementById('detailHostLine').textContent = e.host;
+  document.getElementById('detailDesc').textContent = e.desc;
+  document.getElementById('detailPrice').textContent = e.price;
+
+  // Build dynamic extras
+  const extras = e.extras || {};
+  let extrasHTML = '';
+
+  // Photo tiles (menu / route / what to expect) — only if present
+  if (extras.tiles && extras.tiles.length) {
+    extrasHTML += `<div class="detail-section-title">${extras.sectionLabel || 'Highlights'}</div>
+    <div class="detail-photo-tiles">`;
+    extras.tiles.forEach(t => {
+      extrasHTML += `<div class="detail-photo-tile">
+        <img src="${t.img}" alt="${t.name}">
+        <div class="detail-tile-label">
+          <div class="detail-tile-name">${t.name}</div>
+          <div class="detail-tile-desc">${t.desc}</div>
+        </div>
+      </div>`;
+    });
+    extrasHTML += `</div>`;
+  }
+
+  // What's included — only if present
+  if (extras.included && extras.included.length) {
+    extrasHTML += `<div class="detail-section-title">What's Included</div><div class="included-list">`;
+    extras.included.forEach(item => {
+      extrasHTML += `<div class="included-item"><div class="check-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" stroke="#4ade80" stroke-width="2.5" fill="none"/></svg></div>${item}</div>`;
+    });
+    extrasHTML += `</div>`;
+  }
+
+  // Host/chef/guide/captain bio — only if present
+  if (extras.host) {
+    const h = extras.host;
+    extrasHTML += `<div class="detail-section-title">${h.label}</div>
+    <div class="bio-card">
+      <img class="bio-avatar" src="${h.img}" alt="${h.name}">
+      <div>
+        <div class="bio-name">${h.name}</div>
+        <div class="bio-text">${h.bio}</div>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('detailExtras').innerHTML = extrasHTML;
+  prevScreen = currentScreen;
+  goTo('exp-detail');
+}
+
+// ─── CATEGORY PAGE ───
+function openCategory(name, colorVar) {
+  const d = CATEGORY_DATA[name];
+  if (!d) return;
+  document.getElementById('catHeroImg').src = d.img;
+  document.getElementById('catHeroTitle').textContent = name;
+  prevScreen = currentScreen;
+  goTo('category-page');
+}
+
+// ─── TAGS & CITY ───
+function toggleTag(el) { el.classList.toggle('selected'); }
+function selectCity(el) {
+  el.closest('.tag-grid').querySelectorAll('.tag-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ─── GUEST COUNTER ───
+function changeGuests(delta) {
+  guestCount = Math.max(1, Math.min(12, guestCount + delta));
+  document.getElementById('guestCount').textContent = guestCount;
+}
+
+function changeBookingGuests(delta) {
+  bookingGuests = Math.max(1, Math.min(12, bookingGuests + delta));
+  document.getElementById('bookingGuests').textContent = bookingGuests;
+  updateStep2Total();
+}
+
+// ─── BOOKING LOGIC ───
+function updateStep2Total() {
+  const base = BASE_PRICE * bookingGuests;
+  const extra = Math.max(0, bookingGuests - 2) * GUEST_EXTRA;
+  let addonTotal = Object.values(addons).reduce((a,b) => a+b, 0);
+  const total = base + addonTotal;
+
+  const extraRow = document.getElementById('guestExtraRow');
+  if (extra > 0) {
+    extraRow.style.display = 'flex';
+    document.getElementById('guestExtraLabel').textContent = `+${bookingGuests - 2} extra guest(s)`;
+    document.getElementById('guestExtraAmt').textContent = `$${extra}`;
+  } else {
+    extraRow.style.display = 'none';
+  }
+  document.getElementById('step2Total').textContent = `$${total}`;
+}
+
+function toggleAddon(el, key, price) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) {
+    addons[key] = price;
+    // show/hide row
+    const rowId = { photo:'photoRow', flowers:'flowersRow', wine:'wineRow', car:'carRow' }[key];
+  } else {
+    delete addons[key];
+  }
+  updateStep2Total();
+}
+
+function addToPlans() { showToast('📋', 'Added to Anniversary Weekend'); }
+
+// ─── CALENDAR ───
+function selectCalDay(el) {
+  document.querySelectorAll('#miniCalendar .cal-day.selected').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectBookingDay(el, label) {
+  document.querySelectorAll('#booking-step1 .cal-day.selected').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('selectedDay').textContent = label;
+  selectedDay = label;
+}
+
+function selectTime(el) {
+  document.querySelectorAll('.time-chip.selected').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ─── FILTERS ───
+function setFilter(el, val) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.filter-chip, .installment-opt').forEach(c => c.classList.remove('active','selected'));
+  el.classList.add('active');
+}
+
+function setVibe(el) {
+  document.querySelectorAll('.vibe-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function selectSurpriseVibe(el) {
+  document.querySelectorAll('.surprise-vibe-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function filterExplore(val) { /* live search stub */ }
+
+function showFilterModal() { showToast('⚙️', 'Filter options coming soon'); }
+
+// ─── PAYMENT ───
+function selectPayment(el) {
+  document.querySelectorAll('.payment-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectInstall(el) {
+  document.querySelectorAll('.installment-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ─── HEART / WISHLIST ───
+function toggleHeart(e, el) {
+  e.stopPropagation();
+  el.classList.toggle('liked');
+  if (el.classList.contains('liked')) showToast('❤️', 'Saved to your wishlist');
+}
+
+// ─── PLANS ───
+function switchPlansTab(el, tab) {
+  document.querySelectorAll('.plans-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('plans-list-view').style.display = tab === 'list' ? 'block' : 'none';
+  document.getElementById('plans-named-view').style.display = tab === 'named' ? 'block' : 'none';
+}
+
+// ─── TOAST ───
+function showToast(icon, msg) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<span class="toast-icon">${icon}</span><span>${msg}</span>`;
+  document.getElementById('phone').appendChild(toast);
+  setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3000);
+}
+
+// ─── STATUS BAR CLOCK ───
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours();
+  const m = now.getMinutes().toString().padStart(2,'0');
+  const t = `${h > 12 ? h-12 : h || 12}:${m}`;
+  document.querySelectorAll('.status-bar .time').forEach(el => el.textContent = t);
+}
+updateClock();
+setInterval(updateClock, 60000);
+</script>
+
+
+</body></html>
