@@ -1,19 +1,18 @@
 /**
- * WTM — Authentication & Session Security  v2.0
- * ─────────────────────────────────────────────────────────────────────────────
- * Covers:
- *   • Password hashing  (bcrypt, cost 12)
- *   • JWT tokens        (httpOnly cookies ONLY — never localStorage)
- *   • Refresh token rotation with single-use enforcement
- *   • MFA              (TOTP / speakeasy)
- *   • Rate limiting    (Redis-backed, per-IP and per-account)
- *   • Account lockout  (exponential back-off)
- *   • CSRF protection  (double-submit cookie + signed token)
- *   • Session fixation prevention
- *   • Timing-safe comparisons throughout
- * ─────────────────────────────────────────────────────────────────────────────
+  WTM — Authentication & Session Security  v2.0
+  ─────────────────────────────────────────────────────────────────────────────
+  Covers:
+    • Password hashing  (bcrypt, cost 12)
+    • JWT tokens        (httpOnly cookies ONLY — never localStorage)
+    • Refresh token rotation with single-use enforcement
+    • MFA              (TOTP / speakeasy)
+    • Rate limiting    (Redis-backed, per-IP and per-account)
+    • Account lockout  (exponential back-off)
+    • CSRF protection  (double-submit cookie + signed token)
+    • Session fixation prevention
+    • Timing-safe comparisons throughout
+  ─────────────────────────────────────────────────────────────────────────────
  */
-
 'use strict';
 
 const bcrypt      = require('bcrypt');
@@ -296,6 +295,30 @@ function buildApiLimiter(redis) {
 }
 
 // ─────────────────────────────────────────────
+// MFA RATE LIMITER (Redis-backed)
+// FIX v2.1: Prevents sustained TOTP brute-force across windows.
+// 5 attempts per 5 minutes per account — separate from login limiter.
+// ─────────────────────────────────────────────
+function buildMfaLimiter(redis) {
+  return rateLimit({
+    windowMs : 5 * 60 * 1000,  // 5 minutes
+    max      : 5,               // 5 attempts only
+    keyGenerator: (req) => `mfa:${req.user?.id || req.ip}`,
+    store    : new RedisStore({
+      sendCommand: (...args) => redis.sendCommand(args),
+      prefix: 'rl:mfa:',
+    }),
+    standardHeaders : true,
+    legacyHeaders   : false,
+    handler(req, res) {
+      res.status(429).json({
+        error: 'Too many authentication attempts. Please wait 5 minutes.',
+      });
+    },
+  });
+}
+
+// ─────────────────────────────────────────────
 // ACCOUNT LOCKOUT (Redis)
 // Tracks per-account failures independently of IP limits.
 // Uses exponential back-off: each lockout doubles duration.
@@ -428,6 +451,7 @@ module.exports = {
   requireCsrf,
   buildAuthLimiter,
   buildApiLimiter,
+  buildMfaLimiter,
   isAccountLocked,
   recordLoginFailure,
   clearLoginFailures,
