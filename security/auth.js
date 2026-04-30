@@ -1,31 +1,307 @@
 /**
-  WTM — Server Entry Point  v2.0
-  ─────────────────────────────────────────────────────────────────────────────
-  Middleware order is critical — do NOT reorder without review.
-  Raw body for Stripe MUST be registered before express.json().
-  ─────────────────────────────────────────────────────────────────────────────
+ * WTM — Authentication & Session Security  v2.0
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Covers:
+ *   • Password hashing  (bcrypt, cost 12)
+ *   • JWT tokens        (httpOnly cookies ONLY — never localStorage)
+ *   • Refresh token rotation with single-use enforcement
+ *   • MFA              (TOTP / speakeasy)
+ *   • Rate limiting    (Redis-backed, per-IP and per-account)
+ *   • Account lockout  (exponential back-off)
+ *   • CSRF protection  (double-submit cookie + signed token)
+ *   • Session fixation prevention
+ *   • Timing-safe comparisons throughout
+ * ─────────────────────────────────────────────────────────────────────────────
  */
+
 'use strict';
-require('dotenv').config();
 
-const express      = require('express');
-const cookieParser = require('cookie-parser');
-const { createClient } = require('redis');
+const bcrypt      = require('bcrypt');
+const jwt         = require('jsonwebtoken');
+const speakeasy   = require('speakeasy');
+const rateLimit   = require('express-rate-limit');
+const RedisStore  = require('rate-limit-redis');
+const crypto      = require('crypto');
 
-const {
-  corsMiddleware,
-  securityHeaders,
-  permissionsPolicy,
-  requestId,
-  enforceJsonContentType,
-  hppMiddleware,
-  validate,
-  validateUuidParam,
-  errorHandler,
-  notFoundHandler,
-} = require('./security/api');
+const BCRYPT_ROUNDS    = 12;
+const MAX_LOGIN_FAILS  = 5;
+const LOCKOUT_MS       = 15 * 60 * 1000;
+const MAX_LOCKOUT_MS   = 60 * 60 * 1000;
+const ACCESS_TTL       = '15m';
+const REFRESH_TTL      = '7d';
+const CSRF_TTL_S       = 3600;
 
-const {
+const ACCESS_SECRET  = process.env.JWT_ACCESS_SECRET;
+const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+const CSRF_SECRET    = process.env.CSRF_SECRET;
+
+if (!ACCESS_SECRET || !REFRESH_SECRET || !CSRF_SECRET) {
+  console.error('[FATAL] JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, and CSRF_SECRET must be set');
+  process.exit(1);
+}
+
+const COOKIE_DEFAULTS = {
+  httpOnly : true,
+  secure   : true,
+  sameSite : 'Strict',
+  path     : '/',
+};
+
+const ACCESS_COOKIE_NAME  = '__Host-wtm_at';
+const REFRESH_COOKIE_NAME = '__Host-wtm_rt';
+const CSRF_COOKIE_NAME    = '__Host-wtm_csrf';
+
+async function hashPassword(plaintext) {
+  if (!plaintext || typeof plaintext !== 'string') throw new Error('Invalid password input');
+  const prehash = crypto.createHash('sha512').update(plaintext).digest('base64');
+  return bcrypt.hash(prehash, BCRYPT_ROUNDS);
+}
+
+async function verifyPassword(plaintext, hash) {
+  if (!plaintext || !hash) return false;
+  const prehash = crypto.createHash('sha512').update(String(plaintext)).digest('base64');
+  return bcrypt.compare(prehash, hash);
+}
+
+function issueTokens(userId, roles = ['user']) {
+  if (!userId) throw new Error('userId required');
+  const jti = crypto.randomBytes(16).toString('hex');
+  const accessToken = jwt.sign(
+    { sub: userId, roles, type: 'access', jti },
+    ACCESS_SECRET,
+    { expiresIn: ACCESS_TTL, algorithm: 'HS256' }
+  );
+  const refreshJti = crypto.randomBytes(16).toString('hex');
+  const refreshToken = jwt.sign(
+    { sub: userId, type: 'refresh', jti: refreshJti },
+    REFRESH_SECRET,
+    { expiresIn: REFRESH_TTL, algorithm: 'HS256' }
+  );
+  return { accessToken, refreshToken, refreshJti };
+}
+
+function verifyAccessToken(token) {
+  const payload = jwt.verify(token, ACCESS_SECRET, { algorithms: ['HS256'] });
+  if (payload.type !== 'access') throw new Error('Wrong token type');
+  return payload;
+}
+
+function verifyRefreshToken(token) {
+  const payload = jwt.verify(token, REFRESH_SECRET, { algorithms: ['HS256'] });
+  if (payload.type !== 'refresh') throw new Error('Wrong token type');
+  return payload;
+}
+
+function setAuthCookies(res, { accessToken, refreshToken }) {
+  res.cookie(ACCESS_COOKIE_NAME, accessToken, {
+    ...COOKIE_DEFAULTS,
+    maxAge: 15 * 60 * 1000,
+  });
+  res.cookie(REFRESH_COOKIE_NAME, refreshToken, {
+    ...COOKIE_DEFAULTS,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+}
+
+function clearAuthCookies(res) {
+  res.clearCookie(ACCESS_COOKIE_NAME,  { ...COOKIE_DEFAULTS });
+  res.clearCookie(REFRESH_COOKIE_NAME, { ...COOKIE_DEFAULTS });
+  res.clearCookie(CSRF_COOKIE_NAME,    { ...COOKIE_DEFAULTS, httpOnly: false });
+}
+
+function generateCsrfToken(userId) {
+  const random  = crypto.randomBytes(32).toString('hex');
+  const ts      = Math.floor(Date.now() / 1000);
+  const payload = `${userId}:${random}:${ts}`;
+  const sig     = crypto.createHmac('sha256', CSRF_SECRET).update(payload).digest('hex');
+  return `${payload}.${sig}`;
+}
+
+function verifyCsrfToken(token, userId) {
+  if (!token || typeof token !== 'string') return false;
+  const lastDot = token.lastIndexOf('.');
+  if (lastDot === -1) return false;
+  const payload     = token.slice(0, lastDot);
+  const receivedSig = token.slice(lastDot + 1);
+  const expectedSig = crypto.createHmac('sha256', CSRF_SECRET).update(payload).digest('hex');
+  const sigBufA = Buffer.from(receivedSig.padEnd(64, '0'));
+  const sigBufB = Buffer.from(expectedSig.padEnd(64, '0'));
+  if (sigBufA.length !== sigBufB.length) return false;
+  if (!crypto.timingSafeEqual(sigBufA, sigBufB)) return false;
+  const [tokenUserId, , tsStr] = payload.split(':');
+  if (tokenUserId !== String(userId)) return false;
+  const age = Math.floor(Date.now() / 1000) - parseInt(tsStr, 10);
+  if (age > CSRF_TTL_S || age < 0) return false;
+  return true;
+}
+
+function setCsrfCookie(res, token) {
+  res.cookie(CSRF_COOKIE_NAME, token, {
+    secure   : true,
+    sameSite : 'Strict',
+    path     : '/',
+    maxAge   : CSRF_TTL_S * 1000,
+  });
+}
+
+function requireAuth(req, res, next) {
+  const token = req.cookies?.[ACCESS_COOKIE_NAME];
+  if (!token) return res.status(401).json({ error: 'Authentication required.' });
+  try {
+    const payload = verifyAccessToken(token);
+    req.user = { id: payload.sub, roles: payload.roles, jti: payload.jti };
+    next();
+  } catch (err) {
+    clearAuthCookies(res);
+    return res.status(401).json({ error: 'Session expired. Please sign in again.' });
+  }
+}
+
+function requireAdmin(req, res, next) {
+  requireAuth(req, res, () => {
+    if (!req.user?.roles?.includes('admin')) {
+      return res.status(403).json({ error: 'Insufficient permissions.' });
+    }
+    next();
+  });
+}
+
+function requireCsrf(req, res, next) {
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
+  const headerToken = req.headers['x-csrf-token'];
+  const cookieToken = req.cookies?.[CSRF_COOKIE_NAME];
+  if (!headerToken || !cookieToken) return res.status(403).json({ error: 'CSRF token missing.' });
+  if (!timingSafeEqual(headerToken, cookieToken)) return res.status(403).json({ error: 'CSRF token mismatch.' });
+  const userId = req.user?.id || 'anonymous';
+  if (!verifyCsrfToken(cookieToken, userId)) return res.status(403).json({ error: 'CSRF token invalid or expired.' });
+  next();
+}
+
+function buildAuthLimiter(redis) {
+  return rateLimit({
+    windowMs : 15 * 60 * 1000,
+    max      : 10,
+    store    : new RedisStore({ sendCommand: (...args) => redis.sendCommand(args), prefix: 'rl:auth:' }),
+    standardHeaders: true,
+    legacyHeaders  : false,
+    handler(req, res) {
+      res.status(429).json({ error: 'Too many attempts. Please try again in 15 minutes.' });
+    },
+  });
+}
+
+function buildApiLimiter(redis) {
+  return rateLimit({
+    windowMs : 60 * 1000,
+    max      : 100,
+    store    : new RedisStore({ sendCommand: (...args) => redis.sendCommand(args), prefix: 'rl:api:' }),
+    standardHeaders: true,
+    legacyHeaders  : false,
+    handler(req, res) {
+      res.status(429).json({ error: 'Rate limit exceeded. Please slow down.' });
+    },
+  });
+}
+
+function buildMfaLimiter(redis) {
+  return rateLimit({
+    windowMs     : 5 * 60 * 1000,
+    max          : 5,
+    keyGenerator : (req) => `mfa:${req.user?.id || req.ip}`,
+    store        : new RedisStore({ sendCommand: (...args) => redis.sendCommand(args), prefix: 'rl:mfa:' }),
+    standardHeaders: true,
+    legacyHeaders  : false,
+    handler(req, res) {
+      res.status(429).json({ error: 'Too many authentication attempts. Please wait 5 minutes.' });
+    },
+  });
+}
+
+async function isAccountLocked(redis, userId) {
+  const val = await redis.get(`lock:${userId}`);
+  return val !== null;
+}
+
+async function recordLoginFailure(redis, userId) {
+  const failKey  = `fail:${userId}`;
+  const lockKey  = `lock:${userId}`;
+  const countKey = `failcount:${userId}`;
+  const fails    = await redis.incr(failKey);
+  await redis.expire(failKey, 15 * 60);
+  if (fails >= MAX_LOGIN_FAILS) {
+    const lockouts = (await redis.incr(countKey)) || 1;
+    const lockMs   = Math.min(LOCKOUT_MS * Math.pow(2, lockouts - 1), MAX_LOCKOUT_MS);
+    await redis.set(lockKey, '1', { PX: lockMs });
+    await redis.del(failKey);
+    return { locked: true, lockMs };
+  }
+  return { locked: false, fails };
+}
+
+async function clearLoginFailures(redis, userId) {
+  await redis.del(`fail:${userId}`);
+  await redis.del(`lock:${userId}`);
+  await redis.del(`failcount:${userId}`);
+}
+
+async function rotateTokens(redis, req, res) {
+  const oldToken = req.cookies?.[REFRESH_COOKIE_NAME];
+  if (!oldToken) return res.status(401).json({ error: 'Refresh token missing.' });
+  let payload;
+  try {
+    payload = verifyRefreshToken(oldToken);
+  } catch {
+    clearAuthCookies(res);
+    return res.status(401).json({ error: 'Invalid refresh token.' });
+  }
+  const revokedKey = `revoked_jti:${payload.jti}`;
+  const isRevoked  = await redis.get(revokedKey);
+  if (isRevoked) {
+    clearAuthCookies(res);
+    return res.status(401).json({ error: 'Token has been revoked.' });
+  }
+  const ttl = Math.max(payload.exp - Math.floor(Date.now() / 1000), 1);
+  await redis.set(revokedKey, '1', { EX: ttl });
+  const tokens    = issueTokens(payload.sub);
+  setAuthCookies(res, tokens);
+  const csrfToken = generateCsrfToken(payload.sub);
+  setCsrfCookie(res, csrfToken);
+  return { userId: payload.sub };
+}
+
+function generateMFASecret(userEmail) {
+  const secret = speakeasy.generateSecret({ name: `WTM (${userEmail})`, length: 32 });
+  return { base32: secret.base32, otpauth_url: secret.otpauth_url };
+}
+
+function verifyMFAToken(secret, token) {
+  if (!secret || !token) return false;
+  return speakeasy.totp.verify({
+    secret,
+    encoding : 'base32',
+    token    : String(token).replace(/\s/g, ''),
+    window   : 1,
+  });
+}
+
+function timingSafeEqual(a, b) {
+  const bufA = Buffer.from(String(a).padEnd(256, '\0'));
+  const bufB = Buffer.from(String(b).padEnd(256, '\0'));
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
+module.exports = {
+  hashPassword,
+  verifyPassword,
+  issueTokens,
+  verifyAccessToken,
+  verifyRefreshToken,
+  setAuthCookies,
+  clearAuthCookies,
+  generateCsrfToken,
+  verifyCsrfToken,
+  setCsrfCookie,
   requireAuth,
   requireAdmin,
   requireCsrf,
@@ -36,495 +312,12 @@ const {
   recordLoginFailure,
   clearLoginFailures,
   rotateTokens,
-  setAuthCookies,
-  clearAuthCookies,
-  generateCsrfToken,
-  setCsrfCookie,
-  issueTokens,
-  hashPassword,
-  verifyPassword,
   generateMFASecret,
   verifyMFAToken,
-  COOKIE_NAMES,
-} = require('./security/auth');
-
-const {
-  logEvent,
-  auditLog,
-  EVENTS,
-  checkSuspiciousLogin,
-  trackPaymentResult,
-  checkInjectionAttempt,
-} = require('./security/monitoring');
-
-const {
-  verifyWebhookSignature,
-  handleWebhookEvent,
-  chargeBooking,
-  calculateBookingTotal,
-  createSetupIntent,
-  savePaymentMethod,
-  createStripeCustomer,
-  refundPayment,
-} = require('./security/payments');
-
-const {
-  hashPassword: hashPw,
-  verifyPassword: verifyPw,
-  issueTokens: issue,
-  hashResetToken,
-  generateResetToken,
-  generateBookingCode,
-  hmacField,
-} = require('./security/encryption');
-
-const {
-  getUserByEmailHmac,
-  getUserById,
-  createUser,
-  updateUserProfile,
-  storeResetToken,
-  consumeResetToken,
-  updatePasswordHash,
-  createBooking,
-  confirmBooking,
-  getUserBookings,
-  createReview,
-  deleteUserAccount,
-  storeMfaSecret,
-  enableMfa,
-  saveStripeCustomerId,
-} = require('./security/database');
-
-const app = express();
-
-// ─────────────────────────────────────────────
-// REDIS
-// ─────────────────────────────────────────────
-const redis = createClient({ url: process.env.REDIS_URL || 'redis://localhost:6379' });
-redis.connect().catch(err => {
-  console.error('[FATAL] Redis connection failed:', err.message);
-  process.exitCode = 1;
-  setTimeout(() => process.exit(process.exitCode), 1000).unref();
-});
-
-// ─────────────────────────────────────────────
-// RATE LIMITERS
-// ─────────────────────────────────────────────
-const authLimiter = buildAuthLimiter(redis);
-const apiLimiter  = buildApiLimiter(redis);
-const mfaLimiter  = buildMfaLimiter(redis);
-
-// ─────────────────────────────────────────────
-// MIDDLEWARE — ORDER IS CRITICAL
-// ─────────────────────────────────────────────
-app.set('trust proxy', 1);      // trust load balancer's X-Forwarded-For
-app.use(requestId);             // 1. attach request ID (trace all requests)
-app.use(securityHeaders);       // 2. Helmet headers before any response
-app.use(permissionsPolicy);     // 3. Permissions-Policy header
-app.use(corsMiddleware);        // 4. CORS check
-app.use(cookieParser());        // 5. parse httpOnly cookies
-app.use(auditLog);              // 6. log all requests
-app.use(checkInjectionAttempt); // 7. log injection patterns (non-blocking)
-app.use(hppMiddleware);         // 8. HTTP parameter pollution prevention
-
-// ─────────────────────────────────────────────
-// STRIPE WEBHOOK — raw body, BEFORE express.json()
-// ─────────────────────────────────────────────
-app.post(
-  '/webhooks/stripe',
-  express.raw({ type: 'application/json' }),
-  async (req, res) => {
-    const sig = req.headers['stripe-signature'];
-    let event;
-    try {
-      event = verifyWebhookSignature(req.body, sig);
-    } catch (err) {
-      logEvent('webhook_signature_failure', null, { error: err.message }, 'error');
-      return res.status(400).json({ error: 'Webhook signature verification failed.' });
-    }
-
-    logEvent(EVENTS.WEBHOOK_RECEIVED, null, { type: event.type, id: event.id });
-    const { getPool } = require('./security/database');
-    await handleWebhookEvent(event, getPool());
-    res.json({ received: true });
-  }
-);
-
-// ─────────────────────────────────────────────
-// JSON PARSING — AFTER stripe webhook route
-// ─────────────────────────────────────────────
-app.use(express.json({ limit: '100kb' }));   // reject oversized payloads
-app.use(enforceJsonContentType);
-app.use(apiLimiter);
-
-// ─────────────────────────────────────────────
-// ROUTES
-// ─────────────────────────────────────────────
-
-// ── REGISTER ──
-app.post('/auth/register', authLimiter, validate('register'), async (req, res, next) => {
-  try {
-    const { email, password, name, city } = req.body;
-
-    const passwordHash = await hashPassword(password);
-    const user = await createUser({ email, passwordHash, name, city });
-
-    // Create Stripe customer
-    const stripeId = await createStripeCustomer(user.id, email, name);
-    await saveStripeCustomerId(user.id, stripeId);
-
-    // Issue tokens
-    const tokens = issueTokens(user.id);
-    setAuthCookies(res, tokens);
-
-    const csrfToken = generateCsrfToken(user.id);
-    setCsrfCookie(res, csrfToken);
-
-    logEvent(EVENTS.USER_CREATED, user.id, { requestId: req.requestId });
-
-    res.status(201).json({
-      user : { id: user.id, name: user.name, city: user.city },
-      csrf : csrfToken,
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── LOGIN ──
-app.post('/auth/login', authLimiter, validate('login'), async (req, res, next) => {
-  try {
-    const { email, password, mfaToken } = req.body;
-    const emailHmac = hmacField(email);
-    const user      = await getUserByEmailHmac(emailHmac);
-
-    // Always perform bcrypt compare to prevent user enumeration via timing
-    const dummyHash = '$2b$12$dummyhashfortimingprotectiononly000000000000000000000000';
-    const hash      = user?.password_hash || dummyHash;
-
-    const locked = user && await isAccountLocked(redis, user.id);
-    if (locked) {
-      return res.status(429).json({ error: 'Account temporarily locked. Please try again later.' });
-    }
-
-    const valid = await verifyPassword(password, hash);
-
-    if (!user || !valid) {
-      if (user) await recordLoginFailure(redis, user.id);
-      logEvent(EVENTS.LOGIN_FAILURE, user?.id || null, { requestId: req.requestId }, 'warn');
-      return res.status(401).json({ error: 'Incorrect email or password.' });
-    }
-
-    // MFA check
-    if (user.mfa_enabled) {
-      if (!mfaToken) return res.status(200).json({ mfaRequired: true });
-      if (!verifyMFAToken(user.mfa_secret, mfaToken)) {
-        logEvent(EVENTS.MFA_FAILURE, user.id, { requestId: req.requestId }, 'warn');
-        return res.status(401).json({ error: 'Invalid authentication code.' });
-      }
-    }
-
-    await clearLoginFailures(redis, user.id);
-    await checkSuspiciousLogin(redis, user.id, req);
-
-    const tokens = issueTokens(user.id, [user.role]);
-    setAuthCookies(res, tokens);
-
-    const csrfToken = generateCsrfToken(user.id);
-    setCsrfCookie(res, csrfToken);
-
-    logEvent(EVENTS.LOGIN_SUCCESS, user.id, { requestId: req.requestId });
-
-    res.json({
-      user : { id: user.id, name: user.name, city: user.city, role: user.role },
-      csrf : csrfToken,
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── LOGOUT ──
-app.post('/auth/logout', requireAuth, requireCsrf, (req, res) => {
-  clearAuthCookies(res);
-  logEvent(EVENTS.LOGOUT, req.user.id, { requestId: req.requestId });
-  res.json({ message: 'Signed out successfully.' });
-});
-
-// ── REFRESH TOKENS ──
-app.post('/auth/refresh', async (req, res, next) => {
-  try {
-    const result = await rotateTokens(redis, req, res);
-    if (!result?.userId) return; // rotateTokens already sent response
-    res.json({ ok: true });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── ME ──
-app.get('/auth/me', requireAuth, async (req, res, next) => {
-  try {
-    const user = await getUserById(req.user.id);
-    if (!user) return res.status(404).json({ error: 'User not found.' });
-    res.json({ user: { id: user.id, name: user.name, city: user.city, role: user.role, preferences: user.preferences } });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── PASSWORD RESET REQUEST ──
-app.post('/auth/password-reset', authLimiter, validate('passwordReset'), async (req, res, next) => {
-  try {
-    const emailHmac = hmacField(req.body.email);
-    const user      = await getUserByEmailHmac(emailHmac);
-
-    // Always return same response — prevents user enumeration
-    if (user) {
-      const rawToken  = generateResetToken();
-      const tokenHash = hashResetToken(rawToken);
-      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-      await storeResetToken(user.id, tokenHash, expiresAt);
-      logEvent(EVENTS.PASSWORD_RESET_REQUEST, user.id, { requestId: req.requestId });
-      // TODO: Send email with rawToken (implement email service)
-      // sendPasswordResetEmail(user.email, rawToken);
-    }
-
-    res.json({ message: 'If that email exists, a reset link has been sent.' });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── PASSWORD CHANGE (via reset token) ──
-app.post('/auth/password-change', authLimiter, validate('passwordChange'), async (req, res, next) => {
-  try {
-    const { token, newPassword } = req.body;
-    const tokenHash = hashResetToken(token);
-    const userId    = await consumeResetToken(tokenHash);
-
-    if (!userId) {
-      return res.status(400).json({ error: 'Invalid or expired reset token.' });
-    }
-
-    const newHash = await hashPassword(newPassword);
-    await updatePasswordHash(userId, newHash);
-
-    logEvent(EVENTS.PASSWORD_CHANGED, userId, { requestId: req.requestId });
-    res.json({ message: 'Password updated successfully.' });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── PROFILE UPDATE ──
-app.patch('/users/me', requireAuth, requireCsrf, validate('profileUpdate'), async (req, res, next) => {
-  try {
-    const updated = await updateUserProfile(req.user.id, req.body);
-    res.json({ user: updated });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── DELETE ACCOUNT ──
-app.delete('/users/me', requireAuth, requireCsrf, async (req, res, next) => {
-  try {
-    const user = await getUserById(req.user.id);
-    await deleteUserAccount(req.user.id, user?.stripe_customer_id);
-    clearAuthCookies(res);
-    logEvent(EVENTS.USER_DELETED, req.user.id, { requestId: req.requestId });
-    res.json({ message: 'Account deleted.' });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── BOOKING: CREATE ──
-app.post('/bookings', requireAuth, requireCsrf, validate('bookingCreate'), async (req, res, next) => {
-  try {
-    const { experienceId, date, timeSlot, guestCount, addons, specialRequests, paymentMethodId } = req.body;
-    const { getPool } = require('./security/database');
-
-    // Server-side amount calculation — never trust client
-    const totals = await calculateBookingTotal(getPool(), experienceId, guestCount, addons);
-
-    const bookingCode = generateBookingCode();
-    const booking     = await createBooking({
-      userId: req.user.id,
-      experienceId, date, timeSlot, guestCount,
-      addonIds: addons, specialRequests, bookingCode,
-    });
-
-    // Charge
-    const user = await getUserById(req.user.id);
-    const charge = await chargeBooking({
-      stripeCustomerId : user.stripe_customer_id,
-      paymentMethodId,
-      amountCents      : totals.totalCents,
-      bookingId        : booking.id,
-      description      : `WTM Booking ${bookingCode}`,
-    });
-
-    await confirmBooking(booking.id, charge.paymentIntentId, totals.totalCents);
-    await trackPaymentResult(redis, true, req.user.id, { bookingId: booking.id });
-
-    logEvent(EVENTS.BOOKING_CONFIRMED, req.user.id, { bookingId: booking.id, bookingCode });
-
-    res.status(201).json({
-      booking: {
-        id          : booking.id,
-        bookingCode,
-        status      : 'confirmed',
-        amountCents : totals.totalCents,
-      },
-    });
-  } catch (err) {
-    await trackPaymentResult(redis, false, req.user?.id, { error: err.message });
-    next(err);
-  }
-});
-
-// ── BOOKING: LIST ──
-app.get('/bookings', requireAuth, async (req, res, next) => {
-  try {
-    const bookings = await getUserBookings(req.user.id);
-    res.json({ bookings });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── REVIEW: CREATE ──
-app.post('/reviews', requireAuth, requireCsrf, validate('reviewCreate'), async (req, res, next) => {
-  try {
-    const { bookingId, rating, body } = req.body;
-    // Look up experienceId from booking (security: don't trust client)
-    const { getPool } = require('./security/database');
-    const bResult = await getPool().query(
-      `SELECT experience_id FROM bookings WHERE id = $1 AND user_id = $2 LIMIT 1`,
-      [bookingId, req.user.id]
-    );
-    if (!bResult.rows.length) {
-      return res.status(403).json({ error: 'Booking not found.' });
-    }
-    const review = await createReview({
-      userId: req.user.id,
-      bookingId,
-      experienceId: bResult.rows[0].experience_id,
-      rating,
-      body,
-    });
-    res.status(201).json({ review });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── MFA SETUP ──
-app.post('/auth/mfa/setup', requireAuth, requireCsrf, mfaLimiter, async (req, res, next) => {
-  try {
-    const user   = await getUserById(req.user.id);
-    const { base32, otpauth_url } = generateMFASecret(user.email);
-    await storeMfaSecret(req.user.id, base32);
-    res.json({ otpauth_url }); // Client uses this to generate QR code
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.post('/auth/mfa/verify', requireAuth, requireCsrf, mfaLimiter, async (req, res, next) => {
-  try {
-    const { token } = req.body;
-    const user      = await getUserById(req.user.id);
-
-    // Re-fetch to get secret (getUserById doesn't return it by default)
-    const { getPool } = require('./security/database');
-    const r = await getPool().query(
-      `SELECT mfa_secret_encrypted FROM users WHERE id = $1`, [req.user.id]
-    );
-    const { decrypt } = require('./security/encryption');
-    const secret = decrypt(r.rows[0].mfa_secret_encrypted);
-
-    if (!verifyMFAToken(secret, token)) {
-      logEvent(EVENTS.MFA_FAILURE, req.user.id, { step: 'verify' }, 'warn');
-      return res.status(400).json({ error: 'Invalid code.' });
-    }
-
-    await enableMfa(req.user.id);
-    logEvent(EVENTS.MFA_ENABLED, req.user.id, { requestId: req.requestId });
-    res.json({ message: 'Two-factor authentication enabled.' });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── PAYMENT METHOD: SETUP ──
-app.post('/payment-methods/setup', requireAuth, requireCsrf, async (req, res, next) => {
-  try {
-    const user         = await getUserById(req.user.id);
-    const clientSecret = await createSetupIntent(user.stripe_customer_id);
-    res.json({ clientSecret }); // Client uses with Stripe.js — no card data here
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── ADMIN: PROTECTED ──
-app.get('/admin/users', requireAdmin, async (req, res, next) => {
-  try {
-    logEvent(EVENTS.ADMIN_ACTION, req.user.id, { action: 'list_users', requestId: req.requestId });
-    const { getPool } = require('./security/database');
-    const result = await getPool().query(
-      `SELECT id, name, city, role, active, created_at FROM users ORDER BY created_at DESC LIMIT 100`
-    );
-    res.json({ users: result.rows });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ─────────────────────────────────────────────
-// ERROR + 404 HANDLERS — must be last
-// ─────────────────────────────────────────────
-app.use(notFoundHandler);
-app.use(errorHandler);
-
-// ─────────────────────────────────────────────
-// GRACEFUL SHUTDOWN
-// ─────────────────────────────────────────────
-
-// ─────────────────────────────────────────────
-// UNCAUGHT EXCEPTION / UNHANDLED REJECTION
-// FIX v2.1: use process.exitCode so in-flight cleanup can run
-// ─────────────────────────────────────────────
-process.on('uncaughtException', (err) => {
-  console.error(JSON.stringify({ level: 'fatal', event: 'uncaught_exception', message: err.message, stack: err.stack }));
-  process.exitCode = 1;
-  setTimeout(() => process.exit(process.exitCode), 1000).unref();
-});
-
-process.on('unhandledRejection', (reason) => {
-  console.error(JSON.stringify({ level: 'fatal', event: 'unhandled_rejection', reason: String(reason) }));
-  process.exitCode = 1;
-  setTimeout(() => process.exit(process.exitCode), 1000).unref();
-});
-
-const PORT = parseInt(process.env.PORT || '3000', 10);
-const server = app.listen(PORT, () => {
-  console.log(JSON.stringify({ level: 'info', event: 'server_start', port: PORT, env: process.env.NODE_ENV }));
-});
-
-function shutdown(signal) {
-  console.log(JSON.stringify({ level: 'info', event: 'shutdown', signal }));
-  server.close(async () => {
-    await redis.quit();
-    process.exit(0);
-  });
-  setTimeout(() => { process.exitCode = 1; process.exit(process.exitCode); }, 10000).unref(); // force exit after 10s
-}
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT',  () => shutdown('SIGINT'));
-
-module.exports = app;
+  timingSafeEqual,
+  COOKIE_NAMES: {
+    ACCESS  : ACCESS_COOKIE_NAME,
+    REFRESH : REFRESH_COOKIE_NAME,
+    CSRF    : CSRF_COOKIE_NAME,
+  },
+};
